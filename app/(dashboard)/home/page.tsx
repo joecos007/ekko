@@ -106,10 +106,11 @@ export default function Home() {
       const finalSongs = [...fetchedSongs]
 
       for (const local of LOCAL_SONGS) {
-        // Loose matching on title or exact matching on file path
+        // Exact title match (case-insensitive) or file path match
+        const normalizedLocalTitle = local.title.toLowerCase().trim()
         const exists = finalSongs.some(s =>
-          s.title.toLowerCase().includes(local.title.toLowerCase()) ||
-          s.audio_path?.includes(local.file)
+          s.title.toLowerCase().trim() === normalizedLocalTitle ||
+          s.audio_path?.endsWith(local.file)
         )
 
         if (!exists) {

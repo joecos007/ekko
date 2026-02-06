@@ -112,8 +112,12 @@ export const usePlayer = create<PlayerState>((set, get) => ({
 
     seekRequest: null,
     resetSeekRequest: () => set({ seekRequest: null }),
-    requestSeek: (time: number) => set({ seekRequest: time, currentTime: time }),
+    requestSeek: (time: number) => {
+        const { duration } = get()
+        const clamped = duration > 0 ? Math.max(0, Math.min(time, duration)) : Math.max(0, time)
+        set({ seekRequest: clamped, currentTime: clamped })
+    },
 
-    previousVolume: 0,
+    previousVolume: 1,
     setPreviousVolume: (v: number) => set({ previousVolume: v })
 }))
