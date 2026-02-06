@@ -32,6 +32,10 @@ type PlayerState = {
     isExpanded: boolean
     toggleExpanded: () => void
     setExpanded: (expanded: boolean) => void
+
+    seekRequest: number | null
+    resetSeekRequest: () => void
+    requestSeek: (time: number) => void
 }
 
 export const usePlayer = create<PlayerState>((set, get) => ({
@@ -101,5 +105,9 @@ export const usePlayer = create<PlayerState>((set, get) => ({
 
     isExpanded: false,
     toggleExpanded: () => set((s) => ({ isExpanded: !s.isExpanded })),
-    setExpanded: (expanded: boolean) => set({ isExpanded: expanded })
+    setExpanded: (expanded: boolean) => set({ isExpanded: expanded }),
+
+    seekRequest: null,
+    resetSeekRequest: () => set({ seekRequest: null }),
+    requestSeek: (time: number) => set({ seekRequest: time, currentTime: time })
 }))

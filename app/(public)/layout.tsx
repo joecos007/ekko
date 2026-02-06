@@ -10,14 +10,14 @@ export default function PublicLayout({
 }>) {
     return (
         <div className="min-h-screen bg-background text-foreground flex flex-col font-geist-sans">
-            <header className="fixed top-0 w-full z-50 px-6 py-4 flex items-center justify-between transition-all duration-300 bg-black/50 backdrop-blur-md border-b border-white/5 supports-[backdrop-filter]:bg-black/20">
-                <div className="flex items-center gap-2 group cursor-pointer">
+            <header className="fixed top-0 w-full z-50 px-6 md:px-12 py-4 flex items-center justify-between transition-all duration-300 bg-black/50 backdrop-blur-md border-b border-white/5 supports-[backdrop-filter]:bg-black/20">
+                <Link href="/" className="flex items-center gap-2 group cursor-pointer">
                     <div className="relative">
                         <div className="absolute inset-0 bg-primary/20 blur-md rounded-full group-hover:bg-primary/40 transition-all" />
                         <Disc className="w-8 h-8 text-primary relative z-10 animate-spin-slow" />
                     </div>
                     <span className="text-2xl font-black tracking-tighter bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent drop-shadow-sm">EKKO</span>
-                </div>
+                </Link>
                 <div className="flex items-center gap-6">
                     <div className="hidden md:flex items-center gap-6">
                         <Link href="/login">

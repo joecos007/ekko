@@ -42,19 +42,8 @@ export function ProgressBar() {
                     setLocalValue(val)
                 }}
                 onValueCommit={(val) => {
-                    setCurrentTime(val[0])
+                    usePlayer.getState().requestSeek(val[0])
                     setIsDragging(false)
-                    // AudioProvider listener for 'currentTime' update?
-                    // Actually Zustand set logic usually just sets state.
-                    // AudioProvider doesn't listen to currentTime state to update audio.currentTime usually (loop).
-                    // We need a way to tell AudioProvider to SEEK.
-                    // Best way: usePlayer sets a 'seekTrigger' timestamp or we assume AudioProvider listens to currentTime.
-                    // But AudioProvider *updating* currentTime creates a loop if we listen to it too.
-                    // We need direct ref access or a 'seekTo' action.
-                    // Let's modify AudioProvider to handle this.
-                    // But for now, we'll try this. If it fails, I'll add 'seekTo' method to store using a timestamp trigger.
-                    const audio = document.querySelector('audio')
-                    if (audio) audio.currentTime = val[0]
                 }}
             />
 
