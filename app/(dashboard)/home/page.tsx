@@ -38,7 +38,7 @@ export default function Home() {
       if (error) throw error
 
       // Signed URLs batch or local paths
-      const songs = await Promise.all(data.map(async (song: any) => {
+      const fetchedSongs = await Promise.all(data.map(async (song: any) => {
         let audioUrl = ""
         if (song.audio_path?.startsWith('/')) {
           audioUrl = song.audio_path
@@ -59,24 +59,77 @@ export default function Home() {
         }
       }))
 
-      // Force inject "Mga Isla Sa Gitna Natin" if missing (Fallback for RLS/Seed issues)
-      const specialTitle = "Mga Isla Sa Gitna Natin"
-      const hasSpecial = songs.some(s => s.title.includes(specialTitle))
-
-      if (!hasSpecial) {
-        songs.unshift({
-          id: 'special-feature-local', // clear indicator it's local
-          title: specialTitle,
+      // Define all local songs to guarantee presence
+      // Filenames based on verified public/music directory listing
+      const LOCAL_SONGS = [
+        {
+          title: "Mga Isla Sa Gitna Natin",
+          file: "Mga Isla Sa Gitna Natin.mp3",
           artist: "Team Ekko (Special)",
-          isSpecial: true,
-          duration: 180,
-          audio_path: "/music/Mga Isla Sa Gitna Natin.mp3",
-          audioUrl: "/music/Mga Isla Sa Gitna Natin.mp3",
-          coverUrl: getCoverArt({ title: specialTitle })
-        })
+          special: true
+        },
+        {
+          title: "Poblacion 3 Groove",
+          file: "Poblacion 3 Groove.mp3",
+          artist: "Team Ekko",
+          special: false
+        },
+        {
+          title: "Si Jai sa Store",
+          file: "Si Jai sa Store.mp3",
+          artist: "Team Ekko",
+          special: false
+        },
+        {
+          title: "Sumasayaw Siya Sa Lahat",
+          file: "Sumasayaw Siya Sa Lahat (She Dances Through It All).mp3",
+          artist: "Team Ekko",
+          special: false
+        },
+        {
+          title: "Dito sa Tiaong",
+          file: "“Dito sa Tiaong”.mp3", // Includes smart quotes as seen on disk
+          artist: "Team Ekko",
+          special: false
+        },
+        {
+          title: "Groove ni Chele",
+          file: "“Groove ni Chele”.mp3", // Includes smart quotes as seen on disk
+          artist: "Team Ekko",
+          special: false
+        }
+      ]
+
+      // Merge: For each local song, if not already in fetchedSongs (by title or audio path), add it.
+      const specialTitle = "Mga Isla Sa Gitna Natin"
+      const finalSongs = [...fetchedSongs]
+
+      for (const local of LOCAL_SONGS) {
+        // Loose matching on title or exact matching on file path
+        const exists = finalSongs.some(s =>
+          s.title.toLowerCase().includes(local.title.toLowerCase()) ||
+          s.audio_path?.includes(local.file)
+        )
+
+        if (!exists) {
+          finalSongs.unshift({
+            id: `local-${local.file}`,
+            title: local.title,
+            artist: local.artist,
+            isSpecial: local.title.includes(specialTitle), // Ensure logic holds
+            duration: 180, // Default duration if local
+            audio_path: `/music/${local.file}`,
+            audioUrl: `/music/${local.file}`,
+            coverUrl: getCoverArt({ title: local.title })
+          })
+        }
       }
 
-      return songs
+      // Ensure "Mga Isla" is marked special if it came from DB
+      return finalSongs.map(s => ({
+        ...s,
+        isSpecial: s.title.includes("Mga Isla")
+      }))
     }
   })
 
