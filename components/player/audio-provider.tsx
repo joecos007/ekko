@@ -3,8 +3,11 @@
 import { useEffect, useRef } from 'react'
 import { usePlayer } from '@/store/player-store'
 import { Howl } from 'howler'
+import { useKeyboardShortcuts } from '@/hooks/use-keyboard-shortcuts'
 
 export function AudioProvider() {
+    // Enable global keyboard shortcuts
+    useKeyboardShortcuts()
     const soundRef = useRef<Howl | null>(null)
     const rafRef = useRef<number | null>(null)
 

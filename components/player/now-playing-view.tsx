@@ -8,6 +8,7 @@ import Image from 'next/image'
 import { cn } from '@/lib/utils'
 import { useEffect, useState } from 'react'
 import { MediaItemActionMenu } from '@/components/media/media-item-action-menu'
+import { useSwipeGesture } from '@/hooks/use-swipe-gesture'
 
 export function NowPlayingView() {
     const {
@@ -47,10 +48,19 @@ export function NowPlayingView() {
         return `${mins}:${secs.toString().padStart(2, '0')}`
     }
 
+    // Swipe down to close the Now Playing view
+    const swipeHandlers = useSwipeGesture({
+        onSwipeDown: () => toggleExpanded(),
+        threshold: 50
+    })
+
     if (!isExpanded || !song) return null
 
     return (
-        <div className="fixed inset-0 z-[100] bg-black flex flex-col font-geist-sans">
+        <div
+            className="fixed inset-0 z-[100] bg-black flex flex-col font-geist-sans"
+            {...swipeHandlers}
+        >
             {/* Background Blur */}
             <div className="absolute inset-0 z-0 overflow-hidden">
                 {song.coverUrl && (

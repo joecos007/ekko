@@ -182,6 +182,21 @@
     text-shadow: 0 0 20px currentColor, 0 0 40px currentColor;
   }
 
+  /* Button pulse on hover */
+  .btn-pulse:hover {
+    animation: pulse-glow 1s ease-in-out;
+  }
+
+  /* Play button glow */
+  .play-btn-glow {
+    @apply transition-all duration-300;
+  }
+
+  .play-btn-glow:hover {
+    box-shadow: 0 0 25px rgba(34, 197, 94, 0.6);
+    transform: scale(1.1);
+  }
+
   /* Stagger animation delays */
   .stagger-1 { animation-delay: 0.1s; }
   .stagger-2 { animation-delay: 0.2s; }

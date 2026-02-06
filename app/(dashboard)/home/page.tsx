@@ -8,6 +8,7 @@ import { Play } from "lucide-react"
 import { useEffect, useState } from "react"
 import { MediaItemActionMenu } from "@/components/media/media-item-action-menu"
 import { getCoverArt, PLAYLIST_COVERS } from "@/lib/cover-art"
+import { SongGridSkeleton } from "@/components/ui/skeleton"
 
 function GreetingComponent() {
   const [greeting, setGreeting] = useState("")
@@ -26,7 +27,7 @@ export default function Home() {
   const { setQueue } = usePlayer()
 
   // Fetch some "New Releases" (latest songs)
-  const { data: newReleases } = useQuery({
+  const { data: newReleases, isLoading: isLoadingReleases } = useQuery({
     queryKey: ['new-releases'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -38,7 +39,7 @@ export default function Home() {
       if (error) throw error
 
       // Signed URLs batch or local paths
-      const songs = await Promise.all(data.map(async (song: any) => {
+      const fetchedSongs = await Promise.all(data.map(async (song: any) => {
         let audioUrl = ""
         if (song.audio_path?.startsWith('/')) {
           audioUrl = song.audio_path
@@ -59,24 +60,78 @@ export default function Home() {
         }
       }))
 
-      // Force inject "Mga Isla Sa Gitna Natin" if missing (Fallback for RLS/Seed issues)
-      const specialTitle = "Mga Isla Sa Gitna Natin"
-      const hasSpecial = songs.some(s => s.title.includes(specialTitle))
-
-      if (!hasSpecial) {
-        songs.unshift({
-          id: 'special-feature-local', // clear indicator it's local
-          title: specialTitle,
+      // Define all local songs to guarantee presence
+      // Filenames based on verified public/music directory listing
+      const LOCAL_SONGS = [
+        {
+          title: "Mga Isla Sa Gitna Natin",
+          file: "Mga Isla Sa Gitna Natin.mp3",
           artist: "Team Ekko (Special)",
-          isSpecial: true,
-          duration: 180,
-          audio_path: "/music/Mga Isla Sa Gitna Natin.mp3",
-          audioUrl: "/music/Mga Isla Sa Gitna Natin.mp3",
-          coverUrl: getCoverArt({ title: specialTitle })
-        })
+          special: true
+        },
+        {
+          title: "Poblacion 3 Groove",
+          file: "Poblacion 3 Groove.mp3",
+          artist: "Team Ekko",
+          special: false
+        },
+        {
+          title: "Si Jai sa Store",
+          file: "Si Jai sa Store.mp3",
+          artist: "Team Ekko",
+          special: false
+        },
+        {
+          title: "Sumasayaw Siya Sa Lahat",
+          file: "Sumasayaw Siya Sa Lahat (She Dances Through It All).mp3",
+          artist: "Team Ekko",
+          special: false
+        },
+        {
+          title: "Dito sa Tiaong",
+          file: "Dito sa Tiaong.mp3",
+          artist: "Team Ekko",
+          special: false
+        },
+        {
+          title: "Groove ni Chele",
+          file: "Groove ni Chele.mp3",
+          artist: "Team Ekko",
+          special: false
+        }
+      ]
+
+      // Merge: For each local song, if not already in fetchedSongs (by title or audio path), add it.
+      const specialTitle = "Mga Isla Sa Gitna Natin"
+      const finalSongs = [...fetchedSongs]
+
+      for (const local of LOCAL_SONGS) {
+        // Exact title match (case-insensitive) or file path match
+        const normalizedLocalTitle = local.title.toLowerCase().trim()
+        const exists = finalSongs.some(s =>
+          s.title.toLowerCase().trim() === normalizedLocalTitle ||
+          s.audio_path?.endsWith(local.file)
+        )
+
+        if (!exists) {
+          finalSongs.unshift({
+            id: `local-${local.file}`,
+            title: local.title,
+            artist: local.artist,
+            isSpecial: local.title.includes(specialTitle), // Ensure logic holds
+            duration: 180, // Default duration if local
+            audio_path: `/music/${local.file}`,
+            audioUrl: `/music/${local.file}`,
+            coverUrl: getCoverArt({ title: local.title })
+          })
+        }
       }
 
-      return songs
+      // Ensure "Mga Isla" is marked special if it came from DB
+      return finalSongs.map(s => ({
+        ...s,
+        isSpecial: s.title.includes("Mga Isla")
+      }))
     }
   })
 
@@ -86,50 +141,54 @@ export default function Home() {
 
       <section className="mb-8">
         <h2 className="text-xl font-bold mb-4">New Releases</h2>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {newReleases?.map((song: any, i: number) => (
-            <div
-              key={song.id}
-              className={`glass-card p-4 rounded-md group cursor-pointer hover:scale-[1.02] transition-all ${song.isSpecial ? 'border-yellow-500/50 shadow-[0_0_15px_rgba(234,179,8,0.3)]' : 'glow-teal'}`}
-              onClick={() => setQueue(newReleases, i)} // Correct: uses array reference
-            >
-              <div className="relative aspect-square w-full mb-4 bg-neutral-900 shadow-md overflow-hidden rounded-sm">
-                {/* Cover Art */}
-                <img
-                  src={song.coverUrl}
-                  alt={song.title}
-                  className="absolute inset-0 w-full h-full object-cover transition-transform group-hover:scale-110"
-                />
-
-                {/* Special Overlay */}
-                {song.isSpecial && (
-                  <div className="absolute top-0 right-0 bg-yellow-500 text-black text-[10px] uppercase font-bold px-2 py-0.5 z-20">
-                    Special Feature
-                  </div>
-                )}
-
-                {/* Hover Play Button */}
-                <div className="absolute bottom-2 right-2 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all z-10">
-                  <Button size="icon" className={`rounded-full text-black shadow-lg h-10 w-10 ${song.isSpecial ? 'bg-yellow-500 hover:bg-yellow-400' : 'bg-green-500 hover:bg-green-400'}`}>
-                    <Play className="fill-black w-5 h-5 ml-0.5" />
-                  </Button>
-                </div>
-
-                {/* Action Menu */}
-                <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity z-20" onClick={(e) => e.stopPropagation()}>
-                  <MediaItemActionMenu
-                    songId={song.id}
-                    songTitle={song.title}
-                    artistName={song.artist}
-                    className="h-8 w-8 bg-black/50 hover:bg-black/70 text-white rounded-full backdrop-blur-sm"
+        {isLoadingReleases ? (
+          <SongGridSkeleton count={6} />
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {newReleases?.map((song: any, i: number) => (
+              <div
+                key={song.id}
+                className={`glass-card p-4 rounded-md group cursor-pointer hover:scale-[1.02] transition-all ${song.isSpecial ? 'border-yellow-500/50 shadow-[0_0_15px_rgba(234,179,8,0.3)]' : 'glow-teal'}`}
+                onClick={() => setQueue(newReleases, i)} // Correct: uses array reference
+              >
+                <div className="relative aspect-square w-full mb-4 bg-neutral-900 shadow-md overflow-hidden rounded-sm">
+                  {/* Cover Art */}
+                  <img
+                    src={song.coverUrl}
+                    alt={song.title}
+                    className="absolute inset-0 w-full h-full object-cover transition-transform group-hover:scale-110"
                   />
+
+                  {/* Special Overlay */}
+                  {song.isSpecial && (
+                    <div className="absolute top-0 right-0 bg-yellow-500 text-black text-[10px] uppercase font-bold px-2 py-0.5 z-20">
+                      Special Feature
+                    </div>
+                  )}
+
+                  {/* Hover Play Button */}
+                  <div className="absolute bottom-2 right-2 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all z-10">
+                    <Button size="icon" className={`rounded-full text-black shadow-lg h-10 w-10 ${song.isSpecial ? 'bg-yellow-500 hover:bg-yellow-400' : 'bg-green-500 hover:bg-green-400'}`}>
+                      <Play className="fill-black w-5 h-5 ml-0.5" />
+                    </Button>
+                  </div>
+
+                  {/* Action Menu */}
+                  <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity z-20" onClick={(e) => e.stopPropagation()}>
+                    <MediaItemActionMenu
+                      songId={song.id}
+                      songTitle={song.title}
+                      artistName={song.artist}
+                      className="h-8 w-8 bg-black/50 hover:bg-black/70 text-white rounded-full backdrop-blur-sm"
+                    />
+                  </div>
                 </div>
+                <h3 className={`font-bold truncate ${song.isSpecial ? 'text-yellow-400' : ''}`}>{song.title}</h3>
+                <p className="text-sm text-neutral-400 truncate mt-1">{song.artist}</p>
               </div>
-              <h3 className={`font-bold truncate ${song.isSpecial ? 'text-yellow-400' : ''}`}>{song.title}</h3>
-              <p className="text-sm text-neutral-400 truncate mt-1">{song.artist}</p>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </section>
 
       <section className="mb-8">

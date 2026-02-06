@@ -6,16 +6,26 @@ import { VolumeControl } from './volume-control'
 import { TrackInfo } from './track-info'
 import { NowPlayingView } from './now-playing-view'
 import { usePlayer } from '@/store/player-store'
+import { useSwipeGesture } from '@/hooks/use-swipe-gesture'
 
 export function PlayerBar() {
-    const { queue, currentIndex } = usePlayer()
+    const { queue, currentIndex, setExpanded } = usePlayer()
     const song = queue[currentIndex]
+
+    // Swipe up to expand Now Playing view on mobile
+    const swipeHandlers = useSwipeGesture({
+        onSwipeUp: () => setExpanded(true),
+        threshold: 30
+    })
 
     // If no song is loaded/playing, we might hide the bar or show disabled state?
     // Spotify shows empty state.
 
     return (
-        <div className="fixed bottom-16 md:bottom-0 left-0 right-0 h-16 md:h-24 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-t border-border z-40 transition-all">
+        <div
+            className="fixed bottom-16 md:bottom-0 left-0 right-0 h-16 md:h-24 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-t border-border z-40 transition-all touch-pan-x"
+            {...swipeHandlers}
+        >
             <div className="h-full px-4 flex flex-col justify-center">
                 <div className="flex items-center justify-between gap-2 h-full">
                     {/* Track Info - Left */}

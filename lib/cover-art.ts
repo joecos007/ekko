@@ -8,6 +8,7 @@ export function getCoverArt(song: { title: string; coverUrl?: string; artist?: s
     if (titleLower.includes("si jai")) return "/cover-si-jai.png"
     if (titleLower.includes("sumasayaw")) return "/cover-sumasayaw.png"
     if (titleLower.includes("dito sa tiaong")) return "/cover-dito-sa-tiaong.png"
+    if (titleLower.includes("poblacion")) return "/cover-pablacion-3-groove.png"
     if (titleLower.includes("groove ni chele")) return "/cover-groove-ni-chele.png"
 
     // Fallback to existing coverUrl if available
