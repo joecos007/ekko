@@ -36,6 +36,9 @@ type PlayerState = {
     seekRequest: number | null
     resetSeekRequest: () => void
     requestSeek: (time: number) => void
+
+    previousVolume: number
+    setPreviousVolume: (v: number) => void
 }
 
 export const usePlayer = create<PlayerState>((set, get) => ({
@@ -109,5 +112,8 @@ export const usePlayer = create<PlayerState>((set, get) => ({
 
     seekRequest: null,
     resetSeekRequest: () => set({ seekRequest: null }),
-    requestSeek: (time: number) => set({ seekRequest: time, currentTime: time })
+    requestSeek: (time: number) => set({ seekRequest: time, currentTime: time }),
+
+    previousVolume: 0,
+    setPreviousVolume: (v: number) => set({ previousVolume: v })
 }))

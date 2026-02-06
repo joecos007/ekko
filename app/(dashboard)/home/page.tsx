@@ -89,13 +89,13 @@ export default function Home() {
         },
         {
           title: "Dito sa Tiaong",
-          file: "“Dito sa Tiaong”.mp3", // Includes smart quotes as seen on disk
+          file: "Dito sa Tiaong.mp3",
           artist: "Team Ekko",
           special: false
         },
         {
           title: "Groove ni Chele",
-          file: "“Groove ni Chele”.mp3", // Includes smart quotes as seen on disk
+          file: "Groove ni Chele.mp3",
           artist: "Team Ekko",
           special: false
         }

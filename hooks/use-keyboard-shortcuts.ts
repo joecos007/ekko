@@ -24,6 +24,8 @@ export function useKeyboardShortcuts() {
         prev,
         volume,
         setVolume,
+        previousVolume,
+        setPreviousVolume,
         queue
     } = usePlayer()
 
@@ -71,8 +73,13 @@ export function useKeyboardShortcuts() {
 
             case 'KeyM':
                 e.preventDefault()
-                // Toggle mute (set to 0 or restore to 1)
-                setVolume(volume > 0 ? 0 : 1)
+                // Toggle mute (set to 0 or restore previous volume)
+                if (volume > 0) {
+                    setPreviousVolume(volume)
+                    setVolume(0)
+                } else {
+                    setVolume(previousVolume || 1)
+                }
                 break
 
             case 'KeyL':
