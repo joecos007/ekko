@@ -8,6 +8,7 @@ import { Play } from "lucide-react"
 import { useEffect, useState } from "react"
 import { MediaItemActionMenu } from "@/components/media/media-item-action-menu"
 import { getCoverArt, PLAYLIST_COVERS } from "@/lib/cover-art"
+import { SongGridSkeleton } from "@/components/ui/skeleton"
 
 function GreetingComponent() {
   const [greeting, setGreeting] = useState("")
@@ -26,7 +27,7 @@ export default function Home() {
   const { setQueue } = usePlayer()
 
   // Fetch some "New Releases" (latest songs)
-  const { data: newReleases } = useQuery({
+  const { data: newReleases, isLoading: isLoadingReleases } = useQuery({
     queryKey: ['new-releases'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -139,50 +140,54 @@ export default function Home() {
 
       <section className="mb-8">
         <h2 className="text-xl font-bold mb-4">New Releases</h2>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {newReleases?.map((song: any, i: number) => (
-            <div
-              key={song.id}
-              className={`glass-card p-4 rounded-md group cursor-pointer hover:scale-[1.02] transition-all ${song.isSpecial ? 'border-yellow-500/50 shadow-[0_0_15px_rgba(234,179,8,0.3)]' : 'glow-teal'}`}
-              onClick={() => setQueue(newReleases, i)} // Correct: uses array reference
-            >
-              <div className="relative aspect-square w-full mb-4 bg-neutral-900 shadow-md overflow-hidden rounded-sm">
-                {/* Cover Art */}
-                <img
-                  src={song.coverUrl}
-                  alt={song.title}
-                  className="absolute inset-0 w-full h-full object-cover transition-transform group-hover:scale-110"
-                />
-
-                {/* Special Overlay */}
-                {song.isSpecial && (
-                  <div className="absolute top-0 right-0 bg-yellow-500 text-black text-[10px] uppercase font-bold px-2 py-0.5 z-20">
-                    Special Feature
-                  </div>
-                )}
-
-                {/* Hover Play Button */}
-                <div className="absolute bottom-2 right-2 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all z-10">
-                  <Button size="icon" className={`rounded-full text-black shadow-lg h-10 w-10 ${song.isSpecial ? 'bg-yellow-500 hover:bg-yellow-400' : 'bg-green-500 hover:bg-green-400'}`}>
-                    <Play className="fill-black w-5 h-5 ml-0.5" />
-                  </Button>
-                </div>
-
-                {/* Action Menu */}
-                <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity z-20" onClick={(e) => e.stopPropagation()}>
-                  <MediaItemActionMenu
-                    songId={song.id}
-                    songTitle={song.title}
-                    artistName={song.artist}
-                    className="h-8 w-8 bg-black/50 hover:bg-black/70 text-white rounded-full backdrop-blur-sm"
+        {isLoadingReleases ? (
+          <SongGridSkeleton count={6} />
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {newReleases?.map((song: any, i: number) => (
+              <div
+                key={song.id}
+                className={`glass-card p-4 rounded-md group cursor-pointer hover:scale-[1.02] transition-all ${song.isSpecial ? 'border-yellow-500/50 shadow-[0_0_15px_rgba(234,179,8,0.3)]' : 'glow-teal'}`}
+                onClick={() => setQueue(newReleases, i)} // Correct: uses array reference
+              >
+                <div className="relative aspect-square w-full mb-4 bg-neutral-900 shadow-md overflow-hidden rounded-sm">
+                  {/* Cover Art */}
+                  <img
+                    src={song.coverUrl}
+                    alt={song.title}
+                    className="absolute inset-0 w-full h-full object-cover transition-transform group-hover:scale-110"
                   />
+
+                  {/* Special Overlay */}
+                  {song.isSpecial && (
+                    <div className="absolute top-0 right-0 bg-yellow-500 text-black text-[10px] uppercase font-bold px-2 py-0.5 z-20">
+                      Special Feature
+                    </div>
+                  )}
+
+                  {/* Hover Play Button */}
+                  <div className="absolute bottom-2 right-2 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all z-10">
+                    <Button size="icon" className={`rounded-full text-black shadow-lg h-10 w-10 ${song.isSpecial ? 'bg-yellow-500 hover:bg-yellow-400' : 'bg-green-500 hover:bg-green-400'}`}>
+                      <Play className="fill-black w-5 h-5 ml-0.5" />
+                    </Button>
+                  </div>
+
+                  {/* Action Menu */}
+                  <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity z-20" onClick={(e) => e.stopPropagation()}>
+                    <MediaItemActionMenu
+                      songId={song.id}
+                      songTitle={song.title}
+                      artistName={song.artist}
+                      className="h-8 w-8 bg-black/50 hover:bg-black/70 text-white rounded-full backdrop-blur-sm"
+                    />
+                  </div>
                 </div>
+                <h3 className={`font-bold truncate ${song.isSpecial ? 'text-yellow-400' : ''}`}>{song.title}</h3>
+                <p className="text-sm text-neutral-400 truncate mt-1">{song.artist}</p>
               </div>
-              <h3 className={`font-bold truncate ${song.isSpecial ? 'text-yellow-400' : ''}`}>{song.title}</h3>
-              <p className="text-sm text-neutral-400 truncate mt-1">{song.artist}</p>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </section>
 
       <section className="mb-8">
