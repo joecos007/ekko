@@ -16,6 +16,9 @@ const CreatePlaylistDialog = dynamic(
     { ssr: false }
 )
 
+import { UploadSongDialog } from "@/components/upload/upload-song-dialog"
+import { PlusCircle } from "lucide-react"
+
 export function Sidebar() {
     const { playlists } = usePlaylists()
     const pathname = usePathname()
@@ -105,6 +108,12 @@ export function Sidebar() {
                     Playlists
                 </div>
                 <CreatePlaylistDialog />
+                <UploadSongDialog>
+                    <Button variant="ghost" className="w-full justify-start gap-4 text-base font-normal hover:text-white group px-2">
+                        <PlusCircle className="w-6 h-6" />
+                        Upload Song
+                    </Button>
+                </UploadSongDialog>
                 <Link href="/liked">
                     <Button variant="ghost" className="w-full justify-start gap-4 text-base font-normal hover:text-white group px-2">
                         <div className="w-6 h-6 flex items-center justify-center bg-gradient-to-br from-indigo-500 to-purple-500 rounded-[2px] mr-4">
