@@ -1,334 +1,237 @@
 import Link from "next/link";
-// UI Components
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
-import { Music, Headphones, Users, Radio, Zap, Heart, Sparkles, Star, Play, Volume2 } from "lucide-react";
-
-const features = [
-    {
-        icon: Headphones,
-        title: "HD Audio Quality",
-        description: "Crystal-clear sound with lossless audio streaming up to 24-bit/192kHz.",
-        color: "from-purple-500 to-pink-500"
-    },
-    {
-        icon: Users,
-        title: "Social Listening",
-        description: "Share sessions with friends and discover music together in real-time.",
-        color: "from-blue-500 to-cyan-500"
-    },
-    {
-        icon: Radio,
-        title: "Smart Radio",
-        description: "AI-powered playlists that learn your taste and mood preferences.",
-        color: "from-orange-500 to-red-500"
-    },
-    {
-        icon: Zap,
-        title: "Instant Sync",
-        description: "Seamless playback across all your devices with zero latency.",
-        color: "from-green-500 to-emerald-500"
-    },
-];
-
-const testimonials = [
-    {
-        name: "Sarah Chen",
-        role: "Music Producer",
-        avatar: "SC",
-        quote: "EKKO has completely transformed how I discover new music. The audio quality is unmatched.",
-        rating: 5
-    },
-    {
-        name: "Marcus Johnson",
-        role: "DJ & Artist",
-        avatar: "MJ",
-        quote: "The collaborative playlists feature is a game-changer for my creative process.",
-        rating: 5
-    },
-    {
-        name: "Elena Rodriguez",
-        role: "Music Enthusiast",
-        avatar: "ER",
-        quote: "Finally, a platform that treats audio quality as a priority. Love the community features!",
-        rating: 5
-    },
-];
-
-const steps = [
-    {
-        number: "01",
-        title: "Create Your Account",
-        description: "Sign up in seconds with email or social login. No credit card required.",
-        icon: Sparkles
-    },
-    {
-        number: "02",
-        title: "Discover Your Sound",
-        description: "Explore millions of tracks, curated playlists, and personalized recommendations.",
-        icon: Music
-    },
-    {
-        number: "03",
-        title: "Connect & Enjoy",
-        description: "Stream anywhere, share with friends, and immerse yourself in pure audio bliss.",
-        icon: Heart
-    },
-];
+import { Button } from "@/components/ui/button";
+import { Music, Headphones, Users, Radio, Zap, Heart, Sparkles, Star, Play, ArrowRight, Disc } from "lucide-react";
 
 export default function LandingPage() {
     return (
-        <div className="relative isolate min-h-screen flex flex-col font-geist-sans bg-black overflow-hidden">
-            {/* Animated Background Elements */}
-            <div className="fixed inset-0 pointer-events-none">
-                <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-[120px] animate-pulse-glow" />
-                <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-primary/10 rounded-full blur-[120px] animate-pulse-glow" style={{ animationDelay: "1.5s" }} />
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-pink-500/5 rounded-full blur-[150px] animate-pulse-glow" style={{ animationDelay: "3s" }} />
-            </div>
+        <div className="min-h-screen flex flex-col font-geist-sans bg-[#050505] text-white overflow-x-hidden selection:bg-[#14F195] selection:text-black">
 
-            {/* Hero Content */}
-            <section className="relative z-10 flex flex-col items-center justify-center min-h-[100vh] px-4 text-center overflow-hidden">
-                <div className="absolute inset-0 z-0">
-                    <Image
-                        src="/hero-main.png"
-                        alt="Valley of Harmony"
-                        fill
-                        className="object-cover opacity-60"
-                        priority
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-black" />
+            {/* Navigation Bar - Minimalist */}
+            <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/10 bg-[#050505]/90 backdrop-blur-md h-16 flex items-center justify-between px-6 lg:px-12 bg-black">
+                <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 bg-[#14F195]" />
+                    <span className="font-bold tracking-widest text-lg">EKKO</span>
                 </div>
-
-                {/* Sound wave decoration - Simplified */}
-                <div className="absolute bottom-0 left-0 right-0 h-24 flex items-end justify-center gap-1 opacity-10">
-                    {Array.from({ length: 40 }).map((_, i) => (
-                        <div
-                            key={i}
-                            className="w-1 bg-primary/50 rounded-full animate-pulse"
-                            style={{
-                                height: `${Math.sin(i * 0.3) * 40 + 50}%`,
-                                animationDelay: `${i * 0.05}s`,
-                                animationDuration: `${2 + Math.random()}s`
-                            }}
-                        />
-                    ))}
-                </div>
-
-                <div className="relative z-10 max-w-4xl mx-auto space-y-8 animate-fade-in-up">
-                    <Badge className="px-4 py-1.5 text-xs bg-primary/10 text-primary border-primary/20 backdrop-blur-md animate-float">
-                        🎵 v1.0 Public Beta is Live
-                    </Badge>
-
-                    <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tighter">
-                        <span className="bg-gradient-to-b from-white to-white/70 bg-clip-text text-transparent drop-shadow-2xl">
-                            Music for the{" "}
-                        </span>
-                        <span className="bg-gradient-to-r from-primary via-purple-400 to-pink-400 bg-clip-text text-transparent glow-text animate-gradient">
-                            Soul
-                        </span>
-                        <span className="bg-gradient-to-b from-white to-white/70 bg-clip-text text-transparent">.</span>
-                    </h1>
-
-                    <p className="text-lg md:text-xl text-neutral-300 max-w-xl mx-auto drop-shadow-md leading-relaxed">
-                        Experience audio reimagined. A world of sound, community, and harmony awaits you.
-                    </p>
-
-                    {/* Stats - Simplified */}
-                    <div className="flex flex-wrap items-center justify-center gap-8 pt-2 text-neutral-400 text-sm">
-                        <div className="flex items-center gap-2">
-                            <span className="text-white font-bold">10K+</span> Songs
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <span className="text-white font-bold">5K+</span> Artists
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <span className="text-white font-bold">100 Pesos</span> per month
-                        </div>
-                    </div>
-
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center pt-6">
-                        <Link href="/signup">
-                            <Button size="lg" className="h-12 px-8 text-base bg-primary hover:bg-primary/90 text-black font-bold rounded-full shadow-[0_0_20px_rgba(20,241,149,0.3)] hover:shadow-[0_0_30px_rgba(20,241,149,0.5)] hover:scale-105 transition-all group">
-                                <Play className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform" />
-                                Start Listening Free
-                            </Button>
-                        </Link>
-                        <Link href="/login">
-                            <Button size="lg" variant="outline" className="h-12 px-8 text-base rounded-full border-white/20 bg-white/5 hover:bg-white/10 text-white hover:border-white/50 backdrop-blur-sm transition-all">
-                                <Volume2 className="w-4 h-4 mr-2" />
-                                Login
-                            </Button>
-                        </Link>
-                    </div>
-                </div>
-
-                {/* Scroll indicator */}
-                <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-bounce">
-                    <span className="text-xs text-neutral-500 uppercase tracking-widest">Scroll</span>
-                    <div className="w-5 h-8 rounded-full border-2 border-neutral-700 flex items-start justify-center p-1">
-                        <div className="w-1 h-2 bg-neutral-500 rounded-full animate-pulse" />
-                    </div>
-                </div>
-            </section>
-
-            {/* Feature Highlights with Community Image */}
-            <section className="py-24 md:py-32 px-4 bg-neutral-950 relative overflow-hidden">
-                <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 lg:gap-16 items-center">
-                    <div className="relative aspect-video rounded-3xl overflow-hidden shadow-2xl border border-white/10 group order-2 md:order-1">
-                        <Image
-                            src="/community-connect.png"
-                            alt="Community Connect"
-                            fill
-                            className="object-cover transition-transform duration-700 group-hover:scale-105"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                        <div className="absolute bottom-6 left-6 flex items-center gap-3">
-                            <div className="w-12 h-12 rounded-full bg-primary/20 backdrop-blur-md flex items-center justify-center border border-primary/30">
-                                <Play className="w-5 h-5 text-primary" />
-                            </div>
-                            <div>
-                                <p className="text-white font-medium">Live Session</p>
-                                <p className="text-neutral-400 text-sm">234 listening now</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="space-y-8 order-1 md:order-2">
-                        <Badge className="bg-purple-500/10 text-purple-400 border-purple-500/20">Community</Badge>
-                        <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white">Connect Through Sound</h2>
-                        <p className="text-lg md:text-xl text-neutral-400 leading-relaxed">
-                            Join a village of listeners. Share playlists, discover hidden gems, and experience music together in our virtual town square.
-                        </p>
-                        <ul className="space-y-4">
-                            {[
-                                'Real-time immersive listening sessions',
-                                'Collaborative playlists tailored to your mood',
-                                'Artist community events and live streams'
-                            ].map((item, i) => (
-                                <li key={i} className="flex items-center gap-4 text-lg text-neutral-300">
-                                    <div className="h-3 w-3 rounded-full bg-gradient-to-r from-primary to-purple-500 shadow-[0_0_10px_rgba(20,241,149,0.5)]" />
-                                    {item}
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                </div>
-            </section>
-
-            {/* Features Grid */}
-            <section className="py-24 md:py-32 px-4 relative">
-                <div className="max-w-6xl mx-auto">
-                    <div className="text-center mb-16">
-                        <Badge className="mb-4 bg-blue-500/10 text-blue-400 border-blue-500/20">Features</Badge>
-                        <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">Everything You Need</h2>
-                        <p className="text-neutral-400 text-lg max-w-2xl mx-auto">
-                            Packed with premium features designed to elevate your listening experience.
-                        </p>
-                    </div>
-                    <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                        {features.map((feature, i) => (
-                            <div
-                                key={i}
-                                className="group p-6 rounded-2xl bg-neutral-900/50 border border-neutral-800 hover:border-neutral-700 backdrop-blur-sm transition-all duration-300 hover:scale-[1.02] hover:shadow-xl"
-                            >
-                                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${feature.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
-                                    <feature.icon className="w-6 h-6 text-white" />
-                                </div>
-                                <h3 className="text-lg font-bold text-white mb-2">{feature.title}</h3>
-                                <p className="text-neutral-400 text-sm leading-relaxed">{feature.description}</p>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </section>
-
-            {/* How It Works */}
-            <section className="py-24 md:py-32 px-4 bg-gradient-to-b from-neutral-950 to-black relative">
-                <div className="max-w-5xl mx-auto">
-                    <div className="text-center mb-16">
-                        <Badge className="mb-4 bg-pink-500/10 text-pink-400 border-pink-500/20">Getting Started</Badge>
-                        <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">How It Works</h2>
-                        <p className="text-neutral-400 text-lg">Start your musical journey in three simple steps.</p>
-                    </div>
-                    <div className="grid md:grid-cols-3 gap-8">
-                        {steps.map((step, i) => (
-                            <div key={i} className="relative text-center group">
-                                <div className="relative inline-flex mb-6">
-                                    <span className="absolute -top-2 -right-2 text-6xl font-black text-neutral-900 group-hover:text-neutral-800 transition-colors">
-                                        {step.number}
-                                    </span>
-                                    <div className="relative w-20 h-20 rounded-2xl bg-gradient-to-br from-neutral-800 to-neutral-900 border border-neutral-700 flex items-center justify-center group-hover:border-primary/50 transition-colors">
-                                        <step.icon className="w-8 h-8 text-primary" />
-                                    </div>
-                                </div>
-                                <h3 className="text-xl font-bold text-white mb-2">{step.title}</h3>
-                                <p className="text-neutral-400">{step.description}</p>
-                                {i < steps.length - 1 && (
-                                    <div className="hidden md:block absolute top-10 left-[60%] w-[80%] h-0.5 bg-gradient-to-r from-neutral-800 to-transparent" />
-                                )}
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </section>
-
-            {/* Testimonials */}
-            <section className="py-24 md:py-32 px-4 relative">
-                <div className="max-w-6xl mx-auto">
-                    <div className="text-center mb-16">
-                        <Badge className="mb-4 bg-orange-500/10 text-orange-400 border-orange-500/20">Testimonials</Badge>
-                        <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">Loved by Music Lovers</h2>
-                        <p className="text-neutral-400 text-lg">See what our community has to say about EKKO.</p>
-                    </div>
-                    <div className="grid md:grid-cols-3 gap-6">
-                        {testimonials.map((testimonial, i) => (
-                            <div
-                                key={i}
-                                className="p-6 rounded-2xl bg-neutral-900/50 border border-neutral-800 backdrop-blur-sm hover:border-neutral-700 transition-all"
-                            >
-                                <div className="flex items-center gap-4 mb-4">
-                                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-purple-500 flex items-center justify-center text-black font-bold">
-                                        {testimonial.avatar}
-                                    </div>
-                                    <div>
-                                        <h4 className="font-bold text-white">{testimonial.name}</h4>
-                                        <p className="text-neutral-500 text-sm">{testimonial.role}</p>
-                                    </div>
-                                </div>
-                                <div className="flex gap-1 mb-3">
-                                    {Array.from({ length: testimonial.rating }).map((_, j) => (
-                                        <Star key={j} className="w-4 h-4 fill-yellow-500 text-yellow-500" />
-                                    ))}
-                                </div>
-                                <p className="text-neutral-300 leading-relaxed">&ldquo;{testimonial.quote}&rdquo;</p>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </section>
-
-            {/* Final CTA */}
-            <section className="py-24 md:py-32 px-4 relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-purple-500/10 to-pink-500/10" />
-                <div className="absolute inset-0">
-                    <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-[150px]" />
-                    <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-[150px]" />
-                </div>
-                <div className="relative max-w-3xl mx-auto text-center">
-                    <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
-                        Ready to <span className="bg-gradient-to-r from-primary via-purple-400 to-pink-400 bg-clip-text text-transparent">Transform</span> Your Listening?
-                    </h2>
-                    <p className="text-lg md:text-xl text-neutral-400 mb-10 max-w-xl mx-auto">
-                        Join thousands of music lovers who&apos;ve already made the switch. Start streaming for free today.
-                    </p>
+                <div className="flex items-center gap-4 md:gap-8">
+                    <Link href="/login" className="text-sm text-neutral-400 hover:text-white transition-colors uppercase tracking-widest text-[10px] hidden md:block">
+                        Login
+                    </Link>
                     <Link href="/signup">
-                        <Button size="lg" className="h-16 px-12 text-xl bg-white hover:bg-neutral-100 text-black font-bold rounded-full shadow-[0_0_40px_rgba(255,255,255,0.3)] hover:shadow-[0_0_60px_rgba(255,255,255,0.5)] hover:scale-105 transition-all">
-                            Get Started — It&apos;s Free
+                        <Button className="rounded-none bg-white hover:bg-neutral-200 text-black font-bold h-9 px-4 md:px-6 uppercase tracking-widest text-[10px] transition-all hover:translate-x-1 hover:-translate-y-1">
+                            Get Access
                         </Button>
                     </Link>
-                    <p className="mt-4 text-neutral-500 text-sm">No credit card required • Cancel anytime</p>
+                </div>
+            </nav>
+
+            {/* Hero Section */}
+            <section className="relative pt-16 min-h-screen flex flex-col lg:flex-row border-b border-white/10">
+                {/* Left Content */}
+                <div className="flex-1 flex flex-col justify-center px-6 lg:px-12 py-12 lg:py-20 relative border-r border-white/10 z-10 bg-[#050505]">
+                    <div className="absolute top-0 left-0 p-4 border-b border-r border-white/10 hidden lg:block">
+                        <span className="text-[10px] uppercase tracking-[0.3em] text-neutral-500">System v1.0</span>
+                    </div>
+
+                    <div className="space-y-6 md:space-y-8 max-w-2xl relative">
+                        <div className="inline-flex items-center gap-2 border border-[#14F195] px-3 py-1 text-[#14F195] text-[10px] uppercase tracking-widest mb-2 w-fit">
+                            <span className="relative flex h-2 w-2">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#14F195] opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-2 w-2 bg-[#14F195]"></span>
+                            </span>
+                            Live Beta Access
+                        </div>
+
+                        <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tighter leading-[0.9]">
+                            FUTURE <br />
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-neutral-500">AUDIO</span> <br />
+                            STREAM.
+                        </h1>
+
+                        <p className="text-neutral-400 text-base md:text-lg max-w-md leading-relaxed">
+                            High-fidelity AI-driven music streaming. Precision engineered for the audiophile of tomorrow.
+                        </p>
+
+                        <div className="flex flex-col sm:flex-row gap-4 pt-4 md:pt-8 w-full sm:w-auto">
+                            <Link href="/signup" className="w-full sm:w-auto">
+                                <Button className="w-full sm:w-auto rounded-none h-12 md:h-14 px-8 text-base bg-[#14F195] hover:bg-[#10c479] text-black font-bold uppercase tracking-widest transition-all hover:translate-x-1 hover:-translate-y-1 border border-[#14F195]">
+                                    Initialize ///
+                                </Button>
+                            </Link>
+                            <Link href="/about" className="w-full sm:w-auto">
+                                <Button variant="outline" className="w-full sm:w-auto rounded-none h-12 md:h-14 px-8 text-base border-neutral-700 hover:bg-white hover:text-black hover:border-white text-white font-bold uppercase tracking-widest transition-all">
+                                    Read Manifesto
+                                </Button>
+                            </Link>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Right Visual - Image Fix */}
+                <div className="h-[40vh] lg:h-auto lg:w-[45%] relative bg-neutral-900 border-l border-white/5 overflow-hidden group">
+                    <Image
+                        src="/hero-main.png"
+                        alt="Hero"
+                        fill
+                        className="object-cover opacity-60 grayscale group-hover:grayscale-0 transition-all duration-1000"
+                        priority
+                    />
+                    <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] opacity-20" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent lg:bg-gradient-to-l" />
+
+                    {/* Stats Overlay */}
+                    <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8 border-t border-white/10 bg-black/80 backdrop-blur-sm grid grid-cols-2 gap-4">
+                        <div>
+                            <span className="block text-xl md:text-2xl font-bold text-white">24/192</span>
+                            <span className="text-[10px] uppercase tracking-widest text-neutral-500">kHz Resolution</span>
+                        </div>
+                        <div className="text-right">
+                            <span className="block text-xl md:text-2xl font-bold text-[#14F195]">0.01ms</span>
+                            <span className="text-[10px] uppercase tracking-widest text-neutral-500">Latency</span>
+                        </div>
+                    </div>
                 </div>
             </section>
+
+            {/* Marquee Separator */}
+            <div className="border-b border-white/10 py-3 overflow-hidden bg-white text-black">
+                <div className="flex whitespace-nowrap animate-marquee gap-8 items-center cursor-default select-none">
+                    {Array.from({ length: 10 }).map((_, i) => (
+                        <div key={i} className="flex items-center gap-8">
+                            <span className="text-sm font-bold uppercase tracking-widest">Next Gen Audio</span>
+                            <Disc className="w-4 h-4 animate-spin-slow" />
+                            <span className="text-sm font-bold uppercase tracking-widest">Community Driven</span>
+                            <Disc className="w-4 h-4 animate-spin-slow" />
+                            <span className="text-sm font-bold uppercase tracking-widest">AI Powered</span>
+                            <Disc className="w-4 h-4 animate-spin-slow" />
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            {/* Features Grid - Strict Lines */}
+            <section className="border-b border-white/10">
+                <div className="grid md:grid-cols-2 lg:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-white/10">
+                    {[
+                        { icon: Headphones, title: "LOSSLESS KERNEL", desc: "Bit-perfect streaming engine." },
+                        { icon: Users, title: "HIVE MIND", desc: "Real-time social synchronization." },
+                        { icon: Radio, title: "NEURAL RADIO", desc: "Adaptive algorithmic curation." },
+                        { icon: Zap, title: "ZERO LATENCY", desc: "Instantaneous network response." }
+                    ].map((feature, i) => (
+                        <div key={i} className="group p-8 lg:p-12 hover:bg-neutral-900/50 transition-colors relative overflow-hidden">
+                            <div className="absolute top-4 right-4 text-[10px] text-neutral-700 font-mono">0{i + 1}</div>
+                            <feature.icon className="w-8 h-8 text-[#14F195] mb-6 group-hover:scale-110 transition-transform duration-300" />
+                            <h3 className="text-lg font-bold mb-2 uppercase tracking-wide">{feature.title}</h3>
+                            <p className="text-sm text-neutral-400 font-mono leading-relaxed">{feature.desc}</p>
+                        </div>
+                    ))}
+                </div>
+            </section>
+
+            {/* Community Section - Cyberpunk / Manila Vibe */}
+            <section className="flex flex-col lg:flex-row min-h-[80vh] border-b border-white/10 bg-[#050505]">
+                {/* Image Side - Fixed size/fit */}
+                <div className="relative w-full lg:w-1/2 min-h-[40vh] lg:min-h-full border-b lg:border-b-0 lg:border-r border-white/10 group overflow-hidden order-2 lg:order-1">
+                    <Image
+                        src="/Community-illustration.png"
+                        alt="Community"
+                        fill
+                        className="object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-[#050505]/20 group-hover:bg-transparent transition-colors" />
+
+                    {/* Overlay Widget */}
+                    <div className="absolute bottom-6 left-6 md:bottom-8 md:left-8 bg-black/90 border border-white/20 p-4 backdrop-blur-md max-w-[250px]">
+                        <div className="flex items-center gap-3 mb-2">
+                            <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+                            <span className="text-[10px] uppercase tracking-widest font-bold">Live Session</span>
+                        </div>
+                        <div className="font-mono text-xl text-white">EKKO_LIVE_RADIO</div>
+                        <div className="text-xs text-neutral-400 mt-1">1,204 Listeners • <span className="text-[#14F195]">Active</span></div>
+                    </div>
+                </div>
+
+                {/* Content Side */}
+                <div className="relative w-full lg:w-1/2 flex flex-col justify-center p-8 lg:p-24 bg-[#050505] order-1 lg:order-2">
+                    <div className="absolute top-0 right-0 p-4 hidden lg:block">
+                        <span className="text-[10px] uppercase tracking-[0.3em] text-neutral-500 rotate-90 origin-top-right block translate-y-8">Connect</span>
+                    </div>
+
+                    <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tighter mb-8 leading-none">
+                        DIGITAL <br />
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#14F195] to-emerald-600">VILLAGE</span>
+                    </h2>
+
+                    <p className="text-base md:text-lg text-neutral-400 mb-8 md:mb-12 max-w-md leading-relaxed">
+                        Join the global network. Share frequencies, discover hidden gems, and sync with the collective.
+                    </p>
+
+                    <div className="space-y-4">
+                        {[
+                            "IMMERSIVE AUDIO ROOMS",
+                            "COLLABORATIVE SEQUENCING",
+                            "VIRTUAL LISTENING PARTIES"
+                        ].map((item, i) => (
+                            <div key={i} className="flex items-center gap-4 border-b border-white/10 pb-4 group cursor-pointer hover:border-[#14F195] transition-colors">
+                                <ArrowRight className="w-5 h-5 text-neutral-600 group-hover:text-[#14F195] -translate-x-2 group-hover:translate-x-0 transition-all" />
+                                <span className="font-mono text-xs md:text-sm tracking-widest">{item}</span>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* Testimonials - Terminal Style */}
+            <section className="py-16 md:py-24 px-6 border-b border-white/10 bg-neutral-950/50">
+                <div className="max-w-6xl mx-auto">
+                    <div className="flex items-end justify-between mb-8 md:mb-12 border-b border-white/10 pb-4">
+                        <h2 className="text-2xl md:text-3xl font-bold uppercase tracking-tight">User Logs</h2>
+                        <span className="font-mono text-xs text-neutral-500 hidden md:inline">/var/logs/reviews.txt</span>
+                    </div>
+
+                    <div className="grid md:grid-cols-3 gap-6 md:gap-8">
+                        {[
+                            { name: "SARAH", role: "PRODUCER", text: "Latency is non-existent. The fidelity matches my studio monitors." },
+                            { name: "MARCUS", role: "ARTIST", text: "The collaborative playlists are revolutionary. It's truly a hive mind." },
+                            { name: "ELENA", role: "LISTENER", text: "Finally, a platform that respects the audio spectrum. Pure bliss." }
+                        ].map((log, i) => (
+                            <div key={i} className="border border-white/10 p-6 bg-black hover:border-[#14F195]/50 transition-colors shadow-2xl">
+                                <div className="flex items-center justify-between mb-4 text-[10px] font-mono text-neutral-500">
+                                    <span>UID: {log.name}</span>
+                                    <span>ROLE: {log.role}</span>
+                                </div>
+                                <p className="text-neutral-300 font-mono text-sm leading-relaxed mb-4">
+                                    &gt; "{log.text}"
+                                </p>
+                                <div className="flex gap-1">
+                                    {Array.from({ length: 5 }).map((_, j) => (
+                                        <div key={j} className="w-1 h-1 bg-[#14F195]" />
+                                    ))}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+
+            {/* Footer - Minimal */}
+            <footer className="py-12 px-6 lg:px-12 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-8">
+                <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 bg-[#14F195]" />
+                    <span className="font-bold tracking-widest text-lg">EKKO</span>
+                </div>
+
+                <div className="flex flex-wrap justify-center gap-4 md:gap-8 text-[10px] uppercase tracking-widest text-neutral-500">
+                    <Link href="#" className="hover:text-white transition-colors">Privacy Protocol</Link>
+                    <Link href="#" className="hover:text-white transition-colors">Terms of Service</Link>
+                    <Link href="#" className="hover:text-white transition-colors">System Status</Link>
+                </div>
+
+                <div className="font-mono text-[10px] text-neutral-600 text-center md:text-right">
+                    © 2026 EKKO SYSTEMS. ALL RIGHTS RESERVED.
+                </div>
+            </footer>
         </div>
     );
 }

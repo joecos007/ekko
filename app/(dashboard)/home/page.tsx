@@ -9,6 +9,7 @@ import { useEffect, useState } from "react"
 import { MediaItemActionMenu } from "@/components/media/media-item-action-menu"
 import { getCoverArt, PLAYLIST_COVERS } from "@/lib/cover-art"
 import { SongGridSkeleton } from "@/components/ui/skeleton"
+import { TurntableLoader } from "@/components/ui/turntable-loader"
 
 function GreetingComponent() {
   const [greeting, setGreeting] = useState("")
@@ -38,12 +39,18 @@ export default function Home() {
 
       if (error) throw error
 
-      // Signed URLs batch or local paths
+      // Signed URLs batch or local paths & uploaded paths
       const fetchedSongs = await Promise.all(data.map(async (song: any) => {
         let audioUrl = ""
-        if (song.audio_path?.startsWith('/')) {
+        // If it's a full URL (uploaded song), use it directly
+        if (song.audio_path?.startsWith('http')) {
+          audioUrl = song.audio_path
+        }
+        // If it's a local path (seed data), use it directly 
+        else if (song.audio_path?.startsWith('/')) {
           audioUrl = song.audio_path
         } else {
+          // Fallback legacy behavior: if it's a path in storage but not full URL
           const { data } = await supabase.storage.from('songs').createSignedUrl(song.audio_path, 3600)
           audioUrl = data?.signedUrl || ""
         }
@@ -51,12 +58,12 @@ export default function Home() {
         return {
           id: song.id,
           title: song.title,
-          artist: song.title.includes("Mga Isla") ? "Team Ekko (Special)" : "Team Ekko",
+          artist: song.artist || (song.title.includes("Mga Isla") ? "Team Ekko (Special)" : "Team Ekko"),
           isSpecial: song.title.includes("Mga Isla"),
           duration: song.duration,
           audio_path: song.audio_path,
           audioUrl: audioUrl,
-          coverUrl: getCoverArt({ title: song.title, coverUrl: song.cover_url })
+          coverUrl: song.image_path?.startsWith('http') ? song.image_path : getCoverArt({ title: song.title, coverUrl: song.cover_url })
         }
       }))
 
@@ -98,6 +105,13 @@ export default function Home() {
           file: "Groove ni Chele.mp3",
           artist: "Team Ekko",
           special: false
+        },
+        {
+          title: "Kapag Muli Kang Nahanap ng Araw",
+          file: "Kapag Muli Kang Nahanap ng Araw.mp3",
+          artist: "Team Ekko",
+          special: false,
+          cover: "/cover-kapag-muli-kang-nahanap-ng-araw.png"
         }
       ]
 
@@ -122,7 +136,7 @@ export default function Home() {
             duration: 180, // Default duration if local
             audio_path: `/music/${local.file}`,
             audioUrl: `/music/${local.file}`,
-            coverUrl: getCoverArt({ title: local.title })
+            coverUrl: (local as any).cover || getCoverArt({ title: local.title })
           })
         }
       }
@@ -142,7 +156,9 @@ export default function Home() {
       <section className="mb-8">
         <h2 className="text-xl font-bold mb-4">New Releases</h2>
         {isLoadingReleases ? (
-          <SongGridSkeleton count={6} />
+          <div className="flex justify-center py-12">
+            <TurntableLoader size="lg" showText />
+          </div>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {newReleases?.map((song: any, i: number) => (
@@ -207,6 +223,11 @@ export default function Home() {
                 className="w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+            </div>
+
+            {/* Turntable Animation Accent */}
+            <div className="absolute bottom-0 right-0 opacity-0 group-hover:opacity-30 transition-opacity duration-500 pointer-events-none z-0">
+              <TurntableLoader size="md" />
             </div>
 
             <div className="relative z-10 p-4 mb-2">
