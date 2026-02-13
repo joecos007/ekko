@@ -76,8 +76,8 @@
   }
 
   .glow-teal:hover {
-    box-shadow: 0 0 20px rgba(20, 241, 149, 0.4);
-    border-color: rgba(20, 241, 149, 0.5);
+    box-shadow: 0 0 20px rgb(20 241 149 / 40%);
+    border-color: rgb(20 241 149 / 50%);
   }
 
   .glow-purple {
@@ -85,8 +85,8 @@
   }
 
   .glow-purple:hover {
-    box-shadow: 0 0 20px rgba(153, 69, 255, 0.4);
-    border-color: rgba(153, 69, 255, 0.5);
+    box-shadow: 0 0 20px rgb(153 69, 255 / 40%);
+    border-color: rgb(153 69, 255 / 50%);
   }
 
   .glow-pink {
@@ -94,47 +94,94 @@
   }
 
   .glow-pink:hover {
-    box-shadow: 0 0 20px rgba(255, 107, 157, 0.4);
-    border-color: rgba(255, 107, 157, 0.5);
+    box-shadow: 0 0 20px rgb(255, 107, 157 / 40%);
+    border-color: rgb(255, 107, 157 / 50%);
   }
 
   /* Floating animation */
   @keyframes float {
-    0%, 100% { transform: translateY(0) rotate(0deg); }
-    50% { transform: translateY(-20px) rotate(5deg); }
+
+    0%,
+    100% {
+      transform: translateY(0) rotate(0deg);
+    }
+
+    50% {
+      transform: translateY(-20px) rotate(5deg);
+    }
   }
 
   /* Pulse glow animation */
   @keyframes pulse-glow {
-    0%, 100% { opacity: 0.4; transform: scale(1); }
-    50% { opacity: 0.8; transform: scale(1.05); }
+
+    0%,
+    100% {
+      opacity: 0.4;
+      transform: scale(1);
+    }
+
+    50% {
+      opacity: 0.8;
+      transform: scale(1.05);
+    }
   }
 
   /* Gradient shift animation */
   @keyframes gradient-shift {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+    0% {
+      background-position: 0% 50%;
+    }
+
+    50% {
+      background-position: 100% 50%;
+    }
+
+    100% {
+      background-position: 0% 50%;
+    }
   }
 
   /* Music note float */
   @keyframes music-note-float {
-    0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
-    10% { opacity: 0.6; }
-    90% { opacity: 0.6; }
-    100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+    0% {
+      transform: translateY(100vh) rotate(0deg);
+      opacity: 0;
+    }
+
+    10% {
+      opacity: 0.6;
+    }
+
+    90% {
+      opacity: 0.6;
+    }
+
+    100% {
+      transform: translateY(-100vh) rotate(360deg);
+      opacity: 0;
+    }
   }
 
   /* Shimmer effect */
   @keyframes shimmer {
-    0% { background-position: -200% 0; }
-    100% { background-position: 200% 0; }
+    0% {
+      background-position: -200% 0;
+    }
+
+    100% {
+      background-position: 200% 0;
+    }
   }
 
   /* Spin slow */
   @keyframes spin-slow {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+    from {
+      transform: rotate(0deg);
+    }
+
+    to {
+      transform: rotate(360deg);
+    }
   }
 
   /* Fade in up */
@@ -143,6 +190,7 @@
       opacity: 0;
       transform: translateY(30px);
     }
+
     to {
       opacity: 1;
       transform: translateY(0);
@@ -172,7 +220,7 @@
   }
 
   .animate-shimmer {
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    background: linear-gradient(90deg, transparent, rgb(255 255 255 / 10%), transparent);
     background-size: 200% 100%;
     animation: shimmer 2s infinite;
   }
@@ -193,14 +241,28 @@
   }
 
   .play-btn-glow:hover {
-    box-shadow: 0 0 25px rgba(34, 197, 94, 0.6);
+    box-shadow: 0 0 25px rgb(34 197, 94 / 60%);
     transform: scale(1.1);
   }
 
   /* Stagger animation delays */
-  .stagger-1 { animation-delay: 0.1s; }
-  .stagger-2 { animation-delay: 0.2s; }
-  .stagger-3 { animation-delay: 0.3s; }
-  .stagger-4 { animation-delay: 0.4s; }
-  .stagger-5 { animation-delay: 0.5s; }
+  .stagger-1 {
+    animation-delay: 0.1s;
+  }
+
+  .stagger-2 {
+    animation-delay: 0.2s;
+  }
+
+  .stagger-3 {
+    animation-delay: 0.3s;
+  }
+
+  .stagger-4 {
+    animation-delay: 0.4s;
+  }
+
+  .stagger-5 {
+    animation-delay: 0.5s;
+  }
 }

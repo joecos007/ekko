@@ -3,11 +3,13 @@
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/lib/supabase';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Loader2, Mail, Lock, Eye, EyeOff, Shield, Clock, LayoutTemplate, MessageSquare, Disc } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function LoginPage() {
+    const router = useRouter();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
@@ -27,8 +29,7 @@ export default function LoginPage() {
             toast.error(error.message);
         } else {
             toast.success('Successfully logged in!');
-            // Redirect handled by middleware/next logic usually, or we can force it here if needed
-            window.location.href = '/home';
+            router.push('/home');
         }
         setLoading(false);
     };
@@ -117,6 +118,7 @@ export default function LoginPage() {
                                             id="password"
                                             type={showPassword ? "text" : "password"}
                                             required
+                                            minLength={6}
                                             placeholder="••••••••"
                                             className="w-full bg-transparent px-3 py-2.5 text-sm text-white placeholder:text-neutral-600 focus:outline-none"
                                             value={password}
@@ -126,6 +128,7 @@ export default function LoginPage() {
                                             type="button"
                                             onClick={() => setShowPassword(!showPassword)}
                                             className="mr-3 text-neutral-500 hover:text-white transition-colors focus:outline-none"
+                                            aria-label={showPassword ? "Hide password" : "Show password"}
                                         >
                                             {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                                         </button>

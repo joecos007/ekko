@@ -141,6 +141,7 @@ export default function SignupPage() {
                                             id="password"
                                             type={showPassword ? "text" : "password"}
                                             required
+                                            minLength={6}
                                             placeholder="••••••••"
                                             className="w-full bg-transparent px-3 py-2.5 text-sm text-white placeholder:text-neutral-600 focus:outline-none"
                                             value={password}

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useCallback } from "react"
+import { useState, useCallback, useMemo, useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import { useUser } from "@/hooks/use-user"
@@ -30,6 +30,14 @@ function createClient() {
     )
 }
 
+interface UploadFormValues {
+    author: string
+    title: string
+    song: File | null
+    image: File | null
+    duration: number
+}
+
 interface UploadSongDialogProps {
     children: React.ReactNode
 }
@@ -50,12 +58,12 @@ export function UploadSongDialog({ children }: UploadSongDialogProps) {
         setValue,
         watch,
         formState: { errors }
-    } = useForm({
+    } = useForm<UploadFormValues>({
         defaultValues: {
             author: '',
             title: '',
-            song: null as File | null,
-            image: null as File | null,
+            song: null,
+            image: null,
             duration: 0
         }
     })
@@ -63,16 +71,39 @@ export function UploadSongDialog({ children }: UploadSongDialogProps) {
     const songFile = watch('song')
     const imageFile = watch('image')
 
+    // Memoize and Revoke image preview URL to avoid memory leaks
+    const imagePreviewUrl = useMemo(() => {
+        if (!imageFile) return null;
+        return URL.createObjectURL(imageFile);
+    }, [imageFile]);
+
+    useEffect(() => {
+        return () => {
+            if (imagePreviewUrl) {
+                URL.revokeObjectURL(imagePreviewUrl);
+            }
+        };
+    }, [imagePreviewUrl]);
+
     // Handle file drop for song
     const onDropSong = useCallback((acceptedFiles: File[]) => {
-        const file = acceptedFiles[0]
-        if (file) {
-            setValue('song', file)
+        const fileToUpload = acceptedFiles[0]
+        if (fileToUpload) {
+            setValue('song', fileToUpload)
 
             // Calculate duration
-            const audio = new Audio(URL.createObjectURL(file))
+            const blobUrl = URL.createObjectURL(fileToUpload)
+            const audio = new Audio(blobUrl)
             audio.onloadedmetadata = () => {
                 setValue('duration', Math.round(audio.duration))
+                URL.revokeObjectURL(blobUrl)
+                // Cleanup audio
+                audio.src = ''
+                audio.load()
+                audio.remove()
+            }
+            audio.onerror = () => {
+                URL.revokeObjectURL(blobUrl)
             }
         }
     }, [setValue])
@@ -97,7 +128,7 @@ export function UploadSongDialog({ children }: UploadSongDialogProps) {
         maxFiles: 1
     })
 
-    const onSubmit = async (values: any) => {
+    const onSubmit = async (values: UploadFormValues) => {
         try {
             setIsLoading(true)
             setUploadProgress(0)
@@ -337,7 +368,7 @@ export function UploadSongDialog({ children }: UploadSongDialogProps) {
                             <input {...getImageInputProps()} />
                             {imageFile ? (
                                 <div className="relative w-full h-full">
-                                    <img src={URL.createObjectURL(imageFile)} className="w-full h-full object-cover" alt="Preview" />
+                                    <img src={imagePreviewUrl || ''} className="w-full h-full object-cover" alt="Preview" />
                                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                                         <p className="text-xs font-bold">Change</p>
                                     </div>

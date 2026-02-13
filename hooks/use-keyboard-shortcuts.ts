@@ -90,7 +90,7 @@ export function useKeyboardShortcuts() {
             default:
                 break
         }
-    }, [isPlaying, play, pause, next, prev, volume, setVolume, queue])
+    }, [isPlaying, play, pause, next, prev, volume, setVolume, queue, previousVolume, setPreviousVolume])
 
     useEffect(() => {
         window.addEventListener('keydown', handleKeyDown)
