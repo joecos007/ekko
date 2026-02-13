@@ -19,6 +19,8 @@ export function AudioProvider() {
         next,
         setCurrentTime,
         setDuration,
+        isRadio,
+        toggleRadio
     } = usePlayer()
 
     const currentSong = queue[currentIndex]
@@ -39,19 +41,33 @@ export function AudioProvider() {
 
     // Initialize or change song
     useEffect(() => {
-        if (!currentSong) return
-
         // Unload previous sound to free resources
         if (soundRef.current) {
             soundRef.current.unload()
         }
 
+        let src = ""
+        let isLive = false
+
+        if (isRadio) {
+            // EKKO Live Radio Stream (Mock URL for now, or use a real Icecast stream)
+            // Using a reliable chill stream for demo purposes
+            src = "https://stream.zeno.fm/f3wvbbqmdg8uv" // Example stable stream
+            isLive = true
+        } else if (currentSong) {
+            src = currentSong.audioUrl
+        } else {
+            // No radio and no song? Do nothing.
+            return
+        }
+
         const sound = new Howl({
-            src: [currentSong.audioUrl],
+            src: [src],
             html5: true, // Forces HTML5 Audio to support large files/streaming
             volume: volume,
+            format: isLive ? ['mp3'] : undefined,
             onplay: () => {
-                setDuration(sound.duration())
+                setDuration(isLive ? Infinity : sound.duration())
                 startProgressLoop()
             },
             onpause: () => {
@@ -61,13 +77,17 @@ export function AudioProvider() {
                 if (rafRef.current) cancelAnimationFrame(rafRef.current)
             },
             onend: () => {
-                next()
+                if (!isLive) next()
             },
             onload: () => {
-                setDuration(sound.duration())
+                setDuration(isLive ? Infinity : sound.duration())
             },
             onloaderror: (id, err) => {
                 console.error('Load Error:', err)
+                if (isLive) {
+                    // Simple retry logic could go here
+                    // toggleRadio() // Turn off if failed?
+                }
             },
             onplayerror: (id, err) => {
                 console.error('Play Error:', err)
@@ -90,7 +110,7 @@ export function AudioProvider() {
             if (rafRef.current) cancelAnimationFrame(rafRef.current)
             sound.unload()
         }
-    }, [currentSong]) // Re-run only when song changes
+    }, [currentSong, isRadio]) // Re-run when song changes OR radio mode toggles
 
     // Handle Play/Pause State
     useEffect(() => {

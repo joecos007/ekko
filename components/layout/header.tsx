@@ -9,6 +9,16 @@ import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { LogOut, User as UserSettings } from "lucide-react"
+import { toast } from "sonner"
 
 export function Header() {
     const [user, setUser] = useState<User | null>(null)
@@ -38,12 +48,18 @@ export function Header() {
         return () => subscription.unsubscribe()
     }, [])
 
-
+    const handleSignOut = async () => {
+        try {
+            await supabase.auth.signOut()
+            toast.success("Signed out successfully")
+            router.push('/')
+        } catch (error: any) {
+            toast.error(error.message || "Failed to sign out")
+        }
+    }
 
     return (
         <div className="h-16 flex items-center justify-between px-6 sticky top-0 bg-background/95 backdrop-blur z-40">
-
-
             <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2 group md:hidden">
                     <div className="relative">
@@ -63,15 +79,29 @@ export function Header() {
             <div className="flex items-center gap-4">
                 {user ? (
                     <div className="flex items-center gap-4">
-                        <Link href="/profile">
-                            <Avatar className="h-8 w-8 transition-transform hover:scale-105 border-2 border-transparent hover:border-white/20">
-                                {/* Use a key to force re-render if avatar updates elsewhere, though simple refetch works for now */}
-                                <AvatarImage src={avatarUrl || user.user_metadata?.avatar_url || ""} className="object-cover" />
-                                <AvatarFallback className="bg-gradient-to-br from-indigo-500 to-purple-600 text-white text-xs font-bold">
-                                    {user.email?.[0].toUpperCase()}
-                                </AvatarFallback>
-                            </Avatar>
-                        </Link>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Avatar className="h-8 w-8 transition-transform hover:scale-105 border-2 border-transparent hover:border-white/20 cursor-pointer">
+                                    <AvatarImage src={avatarUrl || user.user_metadata?.avatar_url || ""} className="object-cover" />
+                                    <AvatarFallback className="bg-gradient-to-br from-indigo-500 to-purple-600 text-white text-xs font-bold">
+                                        {user.email?.[0].toUpperCase()}
+                                    </AvatarFallback>
+                                </Avatar>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-56 bg-neutral-900 border-neutral-800 text-white">
+                                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                                <DropdownMenuSeparator className="bg-neutral-800" />
+                                <DropdownMenuItem onClick={() => router.push('/profile')}>
+                                    <UserSettings className="mr-2 h-4 w-4" />
+                                    Profile
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator className="bg-neutral-800" />
+                                <DropdownMenuItem onClick={handleSignOut} className="text-red-400 focus:text-red-400 focus:bg-red-400/10">
+                                    <LogOut className="mr-2 h-4 w-4" />
+                                    <span>Log out</span>
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
                     </div>
                 ) : (
                     <div className="flex items-center gap-4">

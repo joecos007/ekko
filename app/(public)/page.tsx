@@ -133,6 +133,25 @@ export default function LandingPage() {
                 {/* Image Side - Fixed size/fit */}
                 <div className="relative w-full lg:w-1/2 min-h-[40vh] lg:min-h-full border-b lg:border-b-0 lg:border-r border-white/10 group overflow-hidden order-2 lg:order-1">
                     <Image
+<<<<<<< HEAD
+                        src="/digital-village.png"
+                        alt="Community"
+                        fill
+                        className="object-cover transition-transform duration-700 group-hover:scale-105 opacity-90 group-hover:opacity-100"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+
+                    {/* Overlay Widget */}
+                    <div className="absolute bottom-6 left-6 md:bottom-8 md:left-8 bg-black/90 border border-white/20 p-6 backdrop-blur-md max-w-[280px] shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
+                        <div className="flex items-center gap-3 mb-3">
+                            <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(239,68,68,0.8)]" />
+                            <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-neutral-300">Live Session</span>
+                        </div>
+                        <div className="font-bold text-2xl text-white tracking-tighter">EKKO_LIVE_RADIO</div>
+                        <div className="text-[11px] text-neutral-400 mt-2 font-medium">
+                            <span className="text-white font-bold">1,204 Listeners</span> <span className="mx-1">•</span> Active section
+                        </div>
+=======
                         src="/Community-illustration.png"
                         alt="Community"
                         fill
@@ -148,6 +167,7 @@ export default function LandingPage() {
                         </div>
                         <div className="font-mono text-xl text-white">EKKO_LIVE_RADIO</div>
                         <div className="text-xs text-neutral-400 mt-1">1,204 Listeners • <span className="text-[#14F195]">Active</span></div>
+>>>>>>> origin/main
                     </div>
                 </div>
 

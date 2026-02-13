@@ -8,20 +8,47 @@ import { Play } from "lucide-react"
 import { useEffect, useState } from "react"
 import { MediaItemActionMenu } from "@/components/media/media-item-action-menu"
 import { getCoverArt, PLAYLIST_COVERS } from "@/lib/cover-art"
-import { SongGridSkeleton } from "@/components/ui/skeleton"
+
 import { TurntableLoader } from "@/components/ui/turntable-loader"
 
 function GreetingComponent() {
   const [greeting, setGreeting] = useState("")
+  const [userName, setUserName] = useState<string | null>(null)
 
   useEffect(() => {
-    const hour = new Date().getHours()
-    if (hour < 12) setGreeting("Good morning")
-    else if (hour < 18) setGreeting("Good afternoon")
-    else setGreeting("Good evening")
+    const updateGreeting = async () => {
+      const hour = new Date().getHours()
+      let g = "Welcome"
+      if (hour >= 5 && hour < 12) g = "Good morning"
+      else if (hour >= 12 && hour < 17) g = "Good afternoon"
+      else if (hour >= 17 && hour < 21) g = "Good evening"
+      else g = "Good night"
+      setGreeting(g)
+
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('full_name')
+          .eq('id', user.id)
+          .single()
+
+        const name = profile?.full_name || user.user_metadata?.full_name || user.email?.split('@')[0]
+        if (name) setUserName(name)
+      }
+    }
+
+    updateGreeting()
   }, [])
 
-  return <h1 className="text-3xl font-bold tracking-tight mb-6">{greeting || "Welcome"}</h1>
+  return (
+    <div className="mb-6">
+      <h1 className="text-3xl font-bold tracking-tight">
+        {greeting}{userName ? `, ${userName}` : ""}
+      </h1>
+      <p className="text-neutral-400 text-sm mt-1 font-geist-mono">Ready for some music?</p>
+    </div>
+  )
 }
 
 export default function Home() {
@@ -40,6 +67,8 @@ export default function Home() {
       if (error) throw error
 
       // Signed URLs batch or local paths & uploaded paths
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
       const fetchedSongs = await Promise.all(data.map(async (song: any) => {
         let audioUrl = ""
         // If it's a full URL (uploaded song), use it directly
@@ -74,37 +103,44 @@ export default function Home() {
           title: "Mga Isla Sa Gitna Natin",
           file: "Mga Isla Sa Gitna Natin.mp3",
           artist: "Team Ekko (Special)",
-          special: true
+          special: true,
+          cover: "/cover-mga-isla.png"
         },
         {
           title: "Poblacion 3 Groove",
           file: "Poblacion 3 Groove.mp3",
           artist: "Team Ekko",
-          special: false
+          special: false,
+          cover: "/cover-pablacion-3-groove.png"
         },
         {
           title: "Si Jai sa Store",
           file: "Si Jai sa Store.mp3",
           artist: "Team Ekko",
-          special: false
+          special: false,
+          cover: "/cover-si-jai.png"
         },
         {
           title: "Sumasayaw Siya Sa Lahat",
           file: "Sumasayaw Siya Sa Lahat (She Dances Through It All).mp3",
           artist: "Team Ekko",
-          special: false
+          special: false,
+          cover: "/cover-sumasayaw.png"
         },
         {
           title: "Dito sa Tiaong",
           file: "Dito sa Tiaong.mp3",
           artist: "Team Ekko",
-          special: false
+          special: false,
+          cover: "/cover-dito-sa-tiaong.png"
         },
         {
           title: "Groove ni Chele",
           file: "Groove ni Chele.mp3",
           artist: "Team Ekko",
-          special: false
+          special: false,
+          cover: "/cover-groove-ni-chele.png"
+
         },
         {
           title: "Kapag Muli Kang Nahanap ng Araw",
@@ -270,6 +306,59 @@ export default function Home() {
       </section >
 
       <section className="mb-8">
+        <div className="relative overflow-hidden glass-card rounded-xl h-48 md:h-64 flex items-center group cursor-pointer hover:scale-[1.01] transition-all border-none bg-neutral-900">
+          {/* Illustration Background */}
+          <div className="absolute inset-0 z-0">
+            <img
+              src="/digital-village.png"
+              alt="Community"
+              className="w-full h-full object-cover opacity-30 group-hover:opacity-40 transition-opacity"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-black via-black/60 to-transparent" />
+          </div>
+
+          <div className="relative z-10 p-8 flex flex-col md:flex-row items-center justify-between w-full">
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+                <span className="text-xs font-bold uppercase tracking-widest text-neutral-400">Live Now</span>
+              </div>
+              <h3 className="text-4xl font-extrabold tracking-tighter text-white glow-text text-shadow-glow">EKKO_LIVE_RADIO</h3>
+              <div className="flex items-center gap-4 text-neutral-400 text-sm">
+                <div className="flex items-center gap-1">
+                  <div className="flex -space-x-2 mr-2">
+                    {[1, 2, 3].map((i) => (
+                      <div key={i} className="w-6 h-6 rounded-full border-2 border-neutral-900 bg-neutral-800 flex items-center justify-center overflow-hidden">
+                        <img src={`https://i.pravatar.cc/100?u=${i}`} alt="User" className="w-full h-full object-cover" />
+                      </div>
+                    ))}
+                  </div>
+                  <span className="font-bold text-white">1,204 Listeners</span>
+                  <span className="mx-1">•</span>
+                  <span>Active section</span>
+                </div>
+              </div>
+            </div>
+
+            <Button
+              size="lg"
+              className="mt-6 md:mt-0 rounded-full bg-white text-black hover:bg-neutral-200 px-8 font-bold h-12 shadow-[0_0_20px_rgba(255,255,255,0.2)] group-hover:scale-105 transition-transform"
+              onClick={(e) => {
+                e.stopPropagation()
+                const { isRadio, toggleRadio } = usePlayer.getState()
+                if (!isRadio) toggleRadio()
+              }}
+            >
+              Join Session
+            </Button>
+          </div>
+
+          {/* Decorative element */}
+          <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-white/5 rounded-full blur-3xl group-hover:bg-white/10 transition-colors" />
+        </div>
+      </section>
+
+      <section className="mb-8">
         <h2 className="text-xl font-bold mb-4">Browse Genres</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
           {[
@@ -305,6 +394,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-    </div >
+    </div>
   )
 }
