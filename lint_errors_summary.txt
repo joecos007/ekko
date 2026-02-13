@@ -1,0 +1,59 @@
+﻿File: C:\ai-music\app\(dashboard)\search\page.tsx
+  Line 104: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`. (react/no-unescaped-entities)
+  Line 104: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`. (react/no-unescaped-entities)
+File: C:\ai-music\app\(public)\page.tsx
+  Line 207: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`. (react/no-unescaped-entities)
+  Line 207: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`. (react/no-unescaped-entities)
+File: C:\ai-music\components\player\now-playing-view.tsx
+  Line 50: Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\ai-music\components\player\now-playing-view.tsx:50:13
+  48 |     useEffect(() => {
+  49 |         if (!isDragging) {
+> 50 |             setSliderValue([currentTime])
+     |             ^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  51 |         }
+  52 |     }, [currentTime, isDragging])
+  53 | (react-hooks/set-state-in-effect)
+File: C:\ai-music\components\player\progress-bar.tsx
+  Line 16: Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\ai-music\components\player\progress-bar.tsx:16:13
+  14 |     useEffect(() => {
+  15 |         if (!isDragging) {
+> 16 |             setLocalValue([currentTime])
+     |             ^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  17 |         }
+  18 |     }, [currentTime, isDragging])
+  19 | (react-hooks/set-state-in-effect)
+File: C:\ai-music\components\ui\floating-particles.tsx
+  Line 26: Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\ai-music\components\ui\floating-particles.tsx:26:9
+  24 |             type: Math.random() > 0.5 ? "note" : "orb",
+  25 |         }))
+> 26 |         setParticles(newParticles)
+     |         ^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  27 |     }, [count])
+  28 |
+  29 |     return ( (react-hooks/set-state-in-effect)
+File: C:\ai-music\tailwind.config.ts
+  Line 80: A `require()` style import is forbidden. (@typescript-eslint/no-require-imports)

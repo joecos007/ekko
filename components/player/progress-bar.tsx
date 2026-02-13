@@ -13,6 +13,7 @@ export function ProgressBar() {
     // Sync local value with global state only if not dragging
     useEffect(() => {
         if (!isDragging) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setLocalValue([currentTime])
         }
     }, [currentTime, isDragging])

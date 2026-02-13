@@ -47,6 +47,7 @@ export function NowPlayingView() {
 
     useEffect(() => {
         if (!isDragging) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setSliderValue([currentTime])
         }
     }, [currentTime, isDragging])
