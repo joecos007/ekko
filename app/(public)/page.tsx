@@ -133,6 +133,7 @@ export default function LandingPage() {
                 {/* Image Side - Fixed size/fit */}
                 <div className="relative w-full lg:w-1/2 min-h-[40vh] lg:min-h-full border-b lg:border-b-0 lg:border-r border-white/10 group overflow-hidden order-2 lg:order-1">
                     <Image
+<<<<<<< HEAD
                         src="/digital-village.png"
                         alt="Community"
                         fill
@@ -150,6 +151,23 @@ export default function LandingPage() {
                         <div className="text-[11px] text-neutral-400 mt-2 font-medium">
                             <span className="text-white font-bold">1,204 Listeners</span> <span className="mx-1">•</span> Active section
                         </div>
+=======
+                        src="/Community-illustration.png"
+                        alt="Community"
+                        fill
+                        className="object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-[#050505]/20 group-hover:bg-transparent transition-colors" />
+
+                    {/* Overlay Widget */}
+                    <div className="absolute bottom-6 left-6 md:bottom-8 md:left-8 bg-black/90 border border-white/20 p-4 backdrop-blur-md max-w-[250px]">
+                        <div className="flex items-center gap-3 mb-2">
+                            <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+                            <span className="text-[10px] uppercase tracking-widest font-bold">Live Session</span>
+                        </div>
+                        <div className="font-mono text-xl text-white">EKKO_LIVE_RADIO</div>
+                        <div className="text-xs text-neutral-400 mt-1">1,204 Listeners • <span className="text-[#14F195]">Active</span></div>
+>>>>>>> origin/main
                     </div>
                 </div>
 

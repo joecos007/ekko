@@ -68,6 +68,7 @@ export default function Home() {
 
       // Signed URLs batch or local paths & uploaded paths
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
       const fetchedSongs = await Promise.all(data.map(async (song: any) => {
         let audioUrl = ""
         // If it's a full URL (uploaded song), use it directly
@@ -139,6 +140,7 @@ export default function Home() {
           artist: "Team Ekko",
           special: false,
           cover: "/cover-groove-ni-chele.png"
+
         },
         {
           title: "Kapag Muli Kang Nahanap ng Araw",

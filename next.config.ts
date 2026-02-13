@@ -13,7 +13,11 @@ const nextConfig: NextConfig = {
     // Better yet, I'll comment it out with a note, or try checking if it's valid top level.
     // Given the user prompt specifically asked to fix it and showed it top level, I will try top level.
   },
+<<<<<<< HEAD
 
+=======
+  // @ts-ignore
+>>>>>>> origin/main
   allowedDevOrigins: ['192.168.1.158', 'localhost'],
   images: {
     remotePatterns: [
