@@ -83,10 +83,16 @@ export function AudioProvider() {
                 setDuration(isLive ? Infinity : sound.duration())
             },
             onloaderror: (id, err) => {
-                console.error('Load Error:', err)
+                // If it's a load error 4 with a live stream, it might just be a connection blip or empty stream.
+                // We'll suppress the loud error for user experience and maybe retry silently once.
+                console.warn('Audio Load Warning:', err)
                 if (isLive) {
-                    // Simple retry logic could go here
-                    // toggleRadio() // Turn off if failed?
+                    // Retry logic: wait 2s and try to reload if it was a stream error
+                    setTimeout(() => {
+                        if (usePlayer.getState().isRadio) {
+                            sound.load()
+                        }
+                    }, 2000)
                 }
             },
             onplayerror: (id, err) => {

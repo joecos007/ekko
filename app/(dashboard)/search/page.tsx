@@ -101,7 +101,7 @@ function SearchContent() {
                             ))}
                         </div>
                     ) : (
-                        <div className="text-neutral-500">No results found for "{query}"</div>
+                        <div className="text-neutral-500">No results found for &quot;{query}&quot;</div>
                     )}
                 </div>
             )}

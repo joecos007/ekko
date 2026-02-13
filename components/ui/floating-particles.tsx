@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useMemo } from "react"
 
 interface Particle {
     id: number
@@ -12,19 +12,15 @@ interface Particle {
 }
 
 export function FloatingParticles({ count = 15 }: { count?: number }) {
-    const [particles, setParticles] = useState<Particle[]>([])
-
-    useEffect(() => {
-        const newParticles: Particle[] = Array.from({ length: count }, (_, i) => ({
+    const particles = useMemo<Particle[]>(() =>
+        Array.from({ length: count }, (_, i) => ({
             id: i,
             x: Math.random() * 100,
             size: Math.random() * 20 + 10,
             duration: Math.random() * 15 + 15,
             delay: Math.random() * 10,
             type: Math.random() > 0.5 ? "note" : "orb",
-        }))
-        setParticles(newParticles)
-    }, [count])
+        })), [count])
 
     return (
         <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">

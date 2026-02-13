@@ -67,7 +67,7 @@ export default function Home() {
       if (error) throw error
 
       // Signed URLs batch or local paths & uploaded paths
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+       
 
       const fetchedSongs = await Promise.all(data.map(async (song: any) => {
         let audioUrl = ""

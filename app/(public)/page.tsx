@@ -204,7 +204,7 @@ export default function LandingPage() {
                                     <span>ROLE: {log.role}</span>
                                 </div>
                                 <p className="text-neutral-300 font-mono text-sm leading-relaxed mb-4">
-                                    &gt; "{log.text}"
+                                    &gt; &quot;{log.text}&quot;
                                 </p>
                                 <div className="flex gap-1">
                                     {Array.from({ length: 5 }).map((_, j) => (
