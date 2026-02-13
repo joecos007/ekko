@@ -6,49 +6,61 @@ import { Play, Pause, SkipBack, SkipForward, Shuffle, Repeat } from 'lucide-reac
 import { cn } from '@/lib/utils'
 
 export function Controls() {
-    const { isPlaying, play, pause, next, prev, shuffle, toggleShuffle, repeat, cycleRepeat } = usePlayer()
+    const { isPlaying, play, pause, next, prev, shuffle, toggleShuffle, repeat, cycleRepeat, isRadio, toggleRadio } = usePlayer()
 
     return (
         <div className="flex items-center gap-4">
             <Button
                 variant="ghost"
                 size="icon"
-                className={cn("h-8 w-8 hidden md:inline-flex", shuffle ? "text-primary" : "text-muted-foreground")}
-                onClick={toggleShuffle}
+                className={cn("h-8 w-8 hidden md:inline-flex", isRadio ? "opacity-50 cursor-not-allowed" : (shuffle ? "text-primary" : "text-muted-foreground"))}
+                onClick={isRadio ? undefined : toggleShuffle}
+                disabled={isRadio}
             >
                 <Shuffle className="h-4 w-4" />
             </Button>
 
-            <Button variant="ghost" size="icon" onClick={prev} className="rounded-full h-10 w-10 hover:bg-neutral-800">
+            <Button
+                variant="ghost"
+                size="icon"
+                onClick={prev}
+                className="rounded-full h-10 w-10 hover:bg-neutral-800 disabled:opacity-30"
+                disabled={isRadio}
+            >
                 <SkipBack className="h-5 w-5 fill-current" />
             </Button>
 
             <Button
                 size="icon"
-                className="h-10 w-10 rounded-full"
+                className={cn("h-12 w-12 rounded-full shadow-lg hover:scale-105 transition-all", isRadio ? "bg-red-500 hover:bg-red-600 shadow-red-500/20" : "")}
                 onClick={isPlaying ? pause : play}
             >
                 {isPlaying ? (
-                    <Pause className="h-5 w-5 fill-current" />
+                    <Pause className="h-6 w-6 fill-current" />
                 ) : (
-                    <Play className="h-5 w-5 fill-current ml-0.5" />
+                    <Play className="h-6 w-6 fill-current ml-1" />
                 )}
             </Button>
 
-            <Button variant="ghost" size="icon" onClick={next} className="rounded-full h-10 w-10 hover:bg-neutral-800">
+            <Button
+                variant="ghost"
+                size="icon"
+                onClick={next}
+                className="rounded-full h-10 w-10 hover:bg-neutral-800 disabled:opacity-30"
+                disabled={isRadio}
+            >
                 <SkipForward className="h-5 w-5 fill-current" />
             </Button>
 
             <Button
                 variant="ghost"
                 size="icon"
-                className={cn("h-8 w-8 relative hidden md:inline-flex", repeat !== 'off' ? "text-primary" : "text-muted-foreground")}
-                onClick={cycleRepeat}
+                className={cn("h-8 w-8 relative hidden md:inline-flex", isRadio ? "text-red-500 bg-red-500/10" : "text-muted-foreground hover:text-white")}
+                onClick={toggleRadio}
+                title="Toggle Live Radio"
             >
-                <Repeat className="h-4 w-4" />
-                {repeat === 'one' && (
-                    <span className="absolute text-[10px] top-1.5 font-bold">1</span>
-                )}
+                <div className={cn("absolute inset-0 rounded-full border border-current opacity-20", isRadio && "animate-ping")} />
+                <span className={cn("text-[10px] font-bold", isRadio ? "text-red-500" : "text-neutral-500")}>LIVE</span>
             </Button>
         </div>
     )

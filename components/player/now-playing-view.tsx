@@ -28,13 +28,22 @@ export function NowPlayingView() {
         currentTime,
         duration,
         setCurrentTime,
-        setDuration
+        setDuration,
+        isRadio,
+        radioMetadata
     } = usePlayer()
 
     const [sliderValue, setSliderValue] = useState([0])
     const [isDragging, setIsDragging] = useState(false)
 
     const song = queue[currentIndex]
+
+    const display = isRadio ? {
+        id: "radio",
+        title: radioMetadata.title,
+        artist: radioMetadata.artist,
+        coverUrl: radioMetadata.coverUrl
+    } : song
 
     useEffect(() => {
         if (!isDragging) {
@@ -43,6 +52,7 @@ export function NowPlayingView() {
     }, [currentTime, isDragging])
 
     const formatTime = (seconds: number) => {
+        if (seconds === Infinity) return "LIVE"
         const mins = Math.floor(seconds / 60)
         const secs = Math.floor(seconds % 60)
         return `${mins}:${secs.toString().padStart(2, '0')}`
@@ -54,7 +64,7 @@ export function NowPlayingView() {
         threshold: 50
     })
 
-    if (!isExpanded || !song) return null
+    if (!isExpanded || !display) return null
 
     return (
         <div
@@ -63,9 +73,9 @@ export function NowPlayingView() {
         >
             {/* Background Blur */}
             <div className="absolute inset-0 z-0 overflow-hidden">
-                {song.coverUrl && (
+                {display.coverUrl && (
                     <Image
-                        src={song.coverUrl}
+                        src={display.coverUrl}
                         alt="Background"
                         fill
                         className="object-cover blur-3xl opacity-40 scale-110"
@@ -85,7 +95,9 @@ export function NowPlayingView() {
                 >
                     <ChevronDown className="w-6 h-6" />
                 </Button>
-                <span className="text-xs font-bold tracking-widest uppercase text-white/70">Now Playing</span>
+                <span className="text-xs font-bold tracking-widest uppercase text-white/70">
+                    {isRadio ? <span className="text-red-500 animate-pulse">● LIVE RADIO</span> : "NOW PLAYING"}
+                </span>
                 <Button
                     variant="ghost"
                     size="icon"
@@ -98,11 +110,11 @@ export function NowPlayingView() {
             {/* Main Content */}
             <div className="relative z-10 flex-1 flex flex-col items-center justify-center p-8 max-w-2xl mx-auto w-full">
                 {/* Album Art */}
-                <div className="w-full aspect-square relative mb-12 shadow-2xl rounded-lg overflow-hidden ring-1 ring-white/10">
-                    {song.coverUrl ? (
+                <div className={cn("w-full aspect-square relative mb-12 shadow-2xl rounded-lg overflow-hidden ring-1 ring-white/10", isRadio && "shadow-red-900/40 ring-red-500/20")}>
+                    {display.coverUrl ? (
                         <Image
-                            src={song.coverUrl}
-                            alt={song.title}
+                            src={display.coverUrl}
+                            alt={display.title}
                             fill
                             className="object-cover"
                         />
@@ -116,17 +128,19 @@ export function NowPlayingView() {
                 {/* Track Info */}
                 <div className="w-full flex items-end justify-between mb-8">
                     <div className="flex flex-col">
-                        <h1 className="text-3xl md:text-4xl font-bold text-white mb-2 leading-tight tracking-tight">{song.title}</h1>
-                        <p className="text-xl text-neutral-400 font-medium">{song.artist}</p>
+                        <h1 className="text-3xl md:text-4xl font-bold text-white mb-2 leading-tight tracking-tight">{display.title}</h1>
+                        <p className={cn("text-xl text-neutral-400 font-medium", isRadio && "text-red-400")}>{display.artist}</p>
                     </div>
 
                     <div className="flex items-center gap-4 mb-2">
-                        {/* Action Menu integration */}
-                        <MediaItemActionMenu songId={song.id} songTitle={song.title} artistName={song.artist}>
-                            <Button size="icon" variant="ghost" className="text-neutral-400 hover:text-white hover:scale-110 transition-transform">
-                                <Heart className="w-8 h-8" />
-                            </Button>
-                        </MediaItemActionMenu>
+                        {/* Action Menu integration - Only for songs */}
+                        {!isRadio && (
+                            <MediaItemActionMenu songId={display.id} songTitle={display.title} artistName={display.artist}>
+                                <Button size="icon" variant="ghost" className="text-neutral-400 hover:text-white hover:scale-110 transition-transform">
+                                    <Heart className="w-8 h-8" />
+                                </Button>
+                            </MediaItemActionMenu>
+                        )}
                     </div>
                 </div>
 
@@ -137,10 +151,12 @@ export function NowPlayingView() {
                         max={duration || 100}
                         step={1}
                         onValueChange={(val) => {
+                            if (isRadio) return
                             setIsDragging(true)
                             setSliderValue(val)
                         }}
                         onValueCommit={(val) => {
+                            if (isRadio) return
                             setIsDragging(false)
                             const player = document.querySelector('audio')
                             if (player) {
@@ -148,7 +164,8 @@ export function NowPlayingView() {
                                 setCurrentTime(val[0])
                             }
                         }}
-                        className="w-full hover:cursor-pointer py-4"
+                        className={cn("w-full py-4", isRadio ? "cursor-default opacity-50" : "hover:cursor-pointer")}
+                        disabled={isRadio}
                     />
                     <div className="flex justify-between text-xs font-medium text-neutral-500 font-mono mt-2 group-hover:text-neutral-400 transition-colors">
                         <span>{formatTime(sliderValue[0])}</span>
@@ -162,19 +179,26 @@ export function NowPlayingView() {
                         variant="ghost"
                         size="icon"
                         onClick={toggleShuffle}
-                        className={cn("text-neutral-400 hover:text-white transition-colors", shuffle && "text-green-400 hover:text-green-300")}
+                        className={cn("text-neutral-400 hover:text-white transition-colors", shuffle && "text-green-400 hover:text-green-300", isRadio && "opacity-0 pointer-events-none")}
+                        disabled={isRadio}
                     >
                         <Shuffle className="w-5 h-5" />
                     </Button>
 
-                    <Button variant="ghost" size="icon" onClick={prev} className="scale-125 text-white hover:text-neutral-300">
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={prev}
+                        className={cn("scale-125 text-white hover:text-neutral-300", isRadio && "opacity-30 cursor-not-allowed")}
+                        disabled={isRadio}
+                    >
                         <SkipBack className="w-8 h-8 fill-current" />
                     </Button>
 
                     <Button
                         size="icon"
                         onClick={isPlaying ? pause : play}
-                        className="h-20 w-20 rounded-full bg-white text-black hover:scale-105 transition-transform shadow-xl hover:bg-neutral-200"
+                        className={cn("h-20 w-20 rounded-full bg-white text-black hover:scale-105 transition-transform shadow-xl hover:bg-neutral-200", isRadio && "bg-red-500 hover:bg-red-600 text-white")}
                     >
                         {isPlaying ? (
                             <Pause className="h-8 w-8 fill-current" />
@@ -183,7 +207,13 @@ export function NowPlayingView() {
                         )}
                     </Button>
 
-                    <Button variant="ghost" size="icon" onClick={next} className="scale-125 text-white hover:text-neutral-300">
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={next}
+                        className={cn("scale-125 text-white hover:text-neutral-300", isRadio && "opacity-30 cursor-not-allowed")}
+                        disabled={isRadio}
+                    >
                         <SkipForward className="w-8 h-8 fill-current" />
                     </Button>
 
@@ -191,7 +221,8 @@ export function NowPlayingView() {
                         variant="ghost"
                         size="icon"
                         onClick={cycleRepeat}
-                        className={cn("text-neutral-400 hover:text-white transition-colors relative", repeat !== 'off' && "text-green-400 hover:text-green-300")}
+                        className={cn("text-neutral-400 hover:text-white transition-colors relative", repeat !== 'off' && "text-green-400 hover:text-green-300", isRadio && "opacity-0 pointer-events-none")}
+                        disabled={isRadio}
                     >
                         <Repeat className="w-5 h-5" />
                         {repeat === 'one' && <span className="absolute top-2 right-2 text-[8px] font-bold">1</span>}

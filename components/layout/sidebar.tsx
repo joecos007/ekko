@@ -11,12 +11,17 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { supabase } from "@/lib/supabase"
 import { useEffect, useState } from "react"
 
+
 const CreatePlaylistDialog = dynamic(
     () => import("@/components/playlists/create-playlist-dialog").then((mod) => mod.CreatePlaylistDialog),
     { ssr: false }
 )
 
-import { UploadSongDialog } from "@/components/upload/upload-song-dialog"
+const UploadSongDialog = dynamic(
+    () => import("@/components/upload/upload-song-dialog").then((mod) => mod.UploadSongDialog),
+    { ssr: false }
+)
+
 import { PlusCircle } from "lucide-react"
 
 export function Sidebar() {

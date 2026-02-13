@@ -39,6 +39,16 @@ type PlayerState = {
 
     previousVolume: number
     setPreviousVolume: (v: number) => void
+
+    isRadio: boolean
+    radioMetadata: {
+        title: string
+        artist: string
+        coverUrl: string
+        listeners: number
+    }
+    toggleRadio: () => void
+    setRadioMetadata: (metadata: Partial<{ title: string; artist: string; coverUrl: string; listeners: number }>) => void
 }
 
 export const usePlayer = create<PlayerState>((set, get) => ({
@@ -52,7 +62,7 @@ export const usePlayer = create<PlayerState>((set, get) => ({
     repeat: 'off',
 
     setQueue: (songs, startIndex = 0) =>
-        set({ queue: songs, currentIndex: startIndex, isPlaying: true }),
+        set({ queue: songs, currentIndex: startIndex, isPlaying: true, isRadio: false }),
 
     play: () => set({ isPlaying: true }),
     pause: () => set({ isPlaying: false }),
@@ -119,5 +129,28 @@ export const usePlayer = create<PlayerState>((set, get) => ({
     },
 
     previousVolume: 1,
-    setPreviousVolume: (v: number) => set({ previousVolume: v })
+    setPreviousVolume: (v: number) => set({ previousVolume: v }),
+
+    // Live Radio State
+    isRadio: false,
+    radioMetadata: {
+        title: "EKKO LIVE RADIO",
+        artist: "Live Stream",
+        coverUrl: "/digital-village.png",
+        listeners: 0
+    },
+    toggleRadio: () => set((state) => {
+        const willBeRadio = !state.isRadio
+        return {
+            isRadio: willBeRadio,
+            isPlaying: willBeRadio, // Auto-play if switching to radio
+            // If turning radio ON, we don't care about queue. 
+            // If turning radio OFF, we assume user wants to stop or go back to queue.
+            // Let's set isPlaying to false when turning off radio so they can resume queue manually.
+            ...(willBeRadio ? {} : { isPlaying: false })
+        }
+    }),
+    setRadioMetadata: (metadata) => set((state) => ({
+        radioMetadata: { ...state.radioMetadata, ...metadata }
+    }))
 }))
