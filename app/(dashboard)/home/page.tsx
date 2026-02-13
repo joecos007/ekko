@@ -8,7 +8,7 @@ import { Play } from "lucide-react"
 import { useEffect, useState } from "react"
 import { MediaItemActionMenu } from "@/components/media/media-item-action-menu"
 import { getCoverArt, PLAYLIST_COVERS } from "@/lib/cover-art"
-import { SongGridSkeleton } from "@/components/ui/skeleton"
+
 import { TurntableLoader } from "@/components/ui/turntable-loader"
 
 function GreetingComponent() {
@@ -67,6 +67,7 @@ export default function Home() {
       if (error) throw error
 
       // Signed URLs batch or local paths & uploaded paths
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const fetchedSongs = await Promise.all(data.map(async (song: any) => {
         let audioUrl = ""
         // If it's a full URL (uploaded song), use it directly
