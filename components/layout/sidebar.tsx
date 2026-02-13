@@ -17,15 +17,11 @@ const CreatePlaylistDialog = dynamic(
     { ssr: false }
 )
 
-<<<<<<< HEAD
 const UploadSongDialog = dynamic(
     () => import("@/components/upload/upload-song-dialog").then((mod) => mod.UploadSongDialog),
     { ssr: false }
 )
 
-=======
-import { UploadSongDialog } from "@/components/upload/upload-song-dialog"
->>>>>>> origin/main
 import { PlusCircle } from "lucide-react"
 
 export function Sidebar() {
