@@ -16,7 +16,7 @@ EKKO is a next-generation social audio streaming platform built with modern web 
 
 ### 1. Authentication
 - Implemented via Supabase Auth.
-- Protected routes handling in `middleware.ts`.
+- Protected routes handling (Planned: `middleware.ts`).
 - Custom Login/Signup pages in `app/(auth)`.
 
 ### 2. Player System
@@ -29,7 +29,7 @@ EKKO is a next-generation social audio streaming platform built with modern web 
 - **Implementation**: Supabase Realtime channels.
 - **Components**: `components/vibes/*` handles the heatmap and interactive elements.
 
-### 4. Admin Dashboard
+### 4. Admin Dashboard (In Development)
 - Dedicated section for platform management.
 - Features: User management, song upload/management, system stats.
 - Located in `app/admin`.
@@ -42,7 +42,7 @@ EKKO is a next-generation social audio streaming platform built with modern web 
 - `components/`: Reusable UI components.
   - `ui/`: Primitives (Buttons, Inputs, etc.) mostly compatible with shadcn/ui.
   - `player/`: Audio player specific components.
-  - `visualizations/`: Canvas/WebGL based audio visualizers.
+  - `visualizations/`: Canvas/WebGL based audio visualizers (Planned).
 - `lib/`: Utilities and configuration.
   - `supabase.ts`: Supabase client initialization.
   - `utils.ts`: Helper functions.
@@ -57,5 +57,5 @@ EKKO is a next-generation social audio streaming platform built with modern web 
 
 ## Contribution Guidelines
 - Ensure all new components use `geist-sans` or `geist-mono` fonts.
-- maintain the comprehensive color system defined in `globals.css`.
+- Maintain the comprehensive color system defined in `app/globals.css`.
 - Run linting before committing.
