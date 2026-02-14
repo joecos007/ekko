@@ -9,6 +9,14 @@ export type Song = {
     coverUrl: string
 }
 
+export type RadioStation = {
+    id: string
+    name: string
+    url: string
+    style: string
+    cover?: string
+}
+
 type PlayerState = {
     queue: Song[]
     currentIndex: number
@@ -22,6 +30,7 @@ type PlayerState = {
     setQueue: (songs: Song[], startIndex?: number) => void
     play: () => void
     pause: () => void
+    togglePlay: () => void
     next: () => void
     prev: () => void
     setVolume: (v: number) => void
@@ -47,8 +56,11 @@ type PlayerState = {
         coverUrl: string
         listeners: number
     }
+    stations: RadioStation[]
+    currentStation: RadioStation
     toggleRadio: () => void
     setRadioMetadata: (metadata: Partial<{ title: string; artist: string; coverUrl: string; listeners: number }>) => void
+    setStation: (station: RadioStation) => void
 }
 
 export const usePlayer = create<PlayerState>((set, get) => ({
@@ -66,9 +78,18 @@ export const usePlayer = create<PlayerState>((set, get) => ({
 
     play: () => set({ isPlaying: true }),
     pause: () => set({ isPlaying: false }),
+    togglePlay: () => set((state) => ({ isPlaying: !state.isPlaying })),
 
     next: () => {
-        const { queue, currentIndex, shuffle, repeat } = get()
+        const { queue, currentIndex, shuffle, repeat, isRadio, stations, currentStation, setStation } = get()
+
+        if (isRadio) {
+            const currentStationIndex = stations.findIndex(s => s.id === currentStation.id)
+            const nextStationIndex = (currentStationIndex + 1) % stations.length
+            setStation(stations[nextStationIndex])
+            return
+        }
+
         if (queue.length === 0) return
 
         let nextIndex = currentIndex + 1
@@ -90,7 +111,15 @@ export const usePlayer = create<PlayerState>((set, get) => ({
     },
 
     prev: () => {
-        const { currentIndex, currentTime } = get()
+        const { currentIndex, currentTime, isRadio, stations, currentStation, setStation } = get()
+
+        if (isRadio) {
+            const currentStationIndex = stations.findIndex(s => s.id === currentStation.id)
+            const prevStationIndex = (currentStationIndex - 1 + stations.length) % stations.length
+            setStation(stations[prevStationIndex])
+            return
+        }
+
         if (currentTime > 3) {
             // Logic to replay song will be handled by UI consuming this state
             // For now, we update state, but usually we need a way to signal "seek to 0" 
@@ -134,23 +163,73 @@ export const usePlayer = create<PlayerState>((set, get) => ({
     // Live Radio State
     isRadio: false,
     radioMetadata: {
-        title: "EKKO LIVE RADIO",
-        artist: "Live Stream",
+        title: "SMOOTH JAZZ & POP",
+        artist: "Global Radio",
         coverUrl: "/digital-village.png",
         listeners: 0
     },
+
+    // Station Logic
+    stations: [
+        {
+            id: 'smooth-jazz',
+            name: 'Smooth Jazz & Pop',
+            url: 'https://smoothjazz.cdnstream1.com/2585_128.mp3',
+            style: 'Jazz / Pop',
+            cover: '/images/stations/jazz.jpg' // Placeholder, will fallback
+        },
+        {
+            id: 'lofi-beats',
+            name: 'Lofi Hip Hop',
+            url: 'https://stream.zeno.fm/0r0xa792kwzuv',
+            style: 'Chill / Study',
+            cover: '/images/stations/lofi.jpg'
+        },
+        {
+            id: 'classical',
+            name: 'Classical Flow',
+            url: 'https://icecast.radiofrance.fr/francemusiqueeasyclassique-midfi.mp3',
+            style: 'Classical / Focus',
+            cover: '/images/stations/classical.jpg'
+        },
+        {
+            id: 'ambient',
+            name: 'Deep Ambient',
+            url: 'https://stream.zeno.fm/f3wvbbqmdg8uv',
+            style: 'Sleep / Meditate',
+            cover: '/images/stations/ambient.jpg'
+        }
+    ],
+    currentStation: {
+        id: 'smooth-jazz',
+        name: 'Smooth Jazz & Pop',
+        url: 'https://smoothjazz.cdnstream1.com/2585_128.mp3',
+        style: 'Jazz / Pop',
+        cover: '/images/stations/jazz.jpg'
+    },
+
     toggleRadio: () => set((state) => {
         const willBeRadio = !state.isRadio
         return {
             isRadio: willBeRadio,
-            isPlaying: willBeRadio, // Auto-play if switching to radio
-            // If turning radio ON, we don't care about queue. 
-            // If turning radio OFF, we assume user wants to stop or go back to queue.
-            // Let's set isPlaying to false when turning off radio so they can resume queue manually.
+            isPlaying: willBeRadio,
             ...(willBeRadio ? {} : { isPlaying: false })
         }
     }),
+
     setRadioMetadata: (metadata) => set((state) => ({
         radioMetadata: { ...state.radioMetadata, ...metadata }
+    })),
+
+    setStation: (station) => set((state) => ({
+        currentStation: station,
+        isRadio: true, // Auto switch to radio mode
+        isPlaying: true, // Auto play
+        radioMetadata: {
+            title: station.name,
+            artist: station.style,
+            coverUrl: "/digital-village.png", // Keep generic or use station specific
+            listeners: 0
+        }
     }))
 }))

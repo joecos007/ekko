@@ -25,14 +25,18 @@ export function Controls() {
                 size="icon"
                 onClick={prev}
                 className="rounded-full h-10 w-10 hover:bg-neutral-800 disabled:opacity-30"
-                disabled={isRadio}
             >
                 <SkipBack className="h-5 w-5 fill-current" />
             </Button>
 
             <Button
                 size="icon"
-                className={cn("h-12 w-12 rounded-full shadow-lg hover:scale-105 transition-all", isRadio ? "bg-red-500 hover:bg-red-600 shadow-red-500/20" : "")}
+                className={cn(
+                    "h-12 w-12 rounded-full shadow-lg transition-all duration-300 hover:scale-110",
+                    isRadio
+                        ? "bg-red-500 hover:bg-red-600 shadow-red-500/20"
+                        : "bg-blue-600 hover:bg-blue-500 shadow-blue-500/40"
+                )}
                 onClick={isPlaying ? pause : play}
             >
                 {isPlaying ? (
@@ -47,7 +51,6 @@ export function Controls() {
                 size="icon"
                 onClick={next}
                 className="rounded-full h-10 w-10 hover:bg-neutral-800 disabled:opacity-30"
-                disabled={isRadio}
             >
                 <SkipForward className="h-5 w-5 fill-current" />
             </Button>

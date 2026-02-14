@@ -2,80 +2,73 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Home, Search, Library, User } from "lucide-react"
+import { Home, Compass, Radio, MoreHorizontal, PlusCircle } from "lucide-react"
 import { cn } from "@/lib/utils"
-
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { supabase } from "@/lib/supabase"
-import { useEffect, useState } from "react"
-import dynamic from "next/dynamic"
-import { Plus } from "lucide-react"
-
-const UploadSongDialog = dynamic(
-    () => import("@/components/upload/upload-song-dialog").then((mod) => mod.UploadSongDialog),
-    { ssr: false }
-)
+import { UploadSongDialog } from "@/components/upload/upload-song-dialog"
+import { MenuDrawer } from "@/components/layout/menu-drawer"
+import { usePlayer } from "@/store/player-store"
 
 export function MobileNav() {
     const pathname = usePathname()
-    const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
-
-    useEffect(() => {
-        const getProfile = async () => {
-            const { data: { user } } = await supabase.auth.getUser()
-            if (user) {
-                const { data } = await supabase.from('profiles').select('avatar_url').eq('id', user.id).single()
-                if (data) setAvatarUrl(data.avatar_url)
-            }
-        }
-        getProfile()
-    }, [])
+    const { isRadio, toggleRadio } = usePlayer()
 
     return (
-        <div className="md:hidden fixed bottom-0 left-0 right-0 h-[5.5rem] bg-black/95 backdrop-blur-xl border-t border-white/10 z-50 grid grid-cols-5 items-end pb-safe">
+        <>
+            <div className="md:hidden fixed bottom-0 left-0 right-0 h-20 bg-neutral-950/80 backdrop-blur-2xl border-t border-white/5 z-50 grid grid-cols-5 items-center pb-2 px-2 shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
 
-            {/* Home */}
-            <Link href="/" className="flex flex-col items-center justify-center gap-1 h-full pb-2 active:scale-95 transition-transform">
-                <Home className={cn("w-6 h-6", pathname === "/" ? "fill-white text-white" : "text-neutral-500")} />
-                <span className={cn("text-[10px] font-medium tracking-wide", pathname === "/" ? "text-white" : "text-neutral-500")}>Home</span>
-            </Link>
-
-            {/* Search */}
-            <Link href="/search" className="flex flex-col items-center justify-center gap-1 h-full pb-2 active:scale-95 transition-transform">
-                <Search className={cn("w-6 h-6", pathname === "/search" ? "text-white stroke-[3px]" : "text-neutral-500")} />
-                <span className={cn("text-[10px] font-medium tracking-wide", pathname === "/search" ? "text-white" : "text-neutral-500")}>Search</span>
-            </Link>
-
-            {/* Upload - Docked FAB */}
-            <div className="relative flex flex-col items-center justify-end h-full -top-5">
-                <UploadSongDialog>
-                    <div className="group flex flex-col items-center justify-center gap-1 cursor-pointer active:scale-95 transition-transform">
-                        <div className="h-14 w-14 rounded-full bg-[#14F195] flex items-center justify-center shadow-[0_4px_20px_rgba(20,241,149,0.3)] border-4 border-black group-hover:bg-[#10c479] transition-colors">
-                            <Plus className="w-7 h-7 text-black stroke-[3px]" />
-                        </div>
-                        <span className="text-[10px] font-bold text-[#14F195] tracking-wide">Upload</span>
+                {/* Home */}
+                <Link href="/" className="flex flex-col items-center justify-center gap-1 h-full active:scale-90 transition-transform duration-300 group">
+                    <div className={cn("p-1 rounded-full transition-colors duration-300 group-active:bg-white/10", pathname === "/" && !isRadio ? "bg-white/5" : "")}>
+                        <Home className={cn("w-6 h-6 transition-colors duration-300", pathname === "/" && !isRadio ? "fill-white text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]" : "text-neutral-500 group-hover:text-neutral-300")} />
                     </div>
-                </UploadSongDialog>
+                    <span className={cn("text-[10px] font-bold tracking-wider uppercase transition-colors duration-300", pathname === "/" && !isRadio ? "text-white" : "text-neutral-600 group-hover:text-neutral-500")}>Home</span>
+                </Link>
+
+                {/* Explore */}
+                <Link href="/search" className="flex flex-col items-center justify-center gap-1 h-full active:scale-90 transition-transform duration-300 group">
+                    <div className={cn("p-1 rounded-full transition-colors duration-300 group-active:bg-white/10", pathname === "/search" ? "bg-white/5" : "")}>
+                        <Compass className={cn("w-6 h-6 transition-colors duration-300", pathname === "/search" ? "text-white fill-white/20 drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]" : "text-neutral-500 group-hover:text-neutral-300")} />
+                    </div>
+                    <span className={cn("text-[10px] font-bold tracking-wider uppercase transition-colors duration-300", pathname === "/search" ? "text-white" : "text-neutral-600 group-hover:text-neutral-500")}>Explore</span>
+                </Link>
+
+                {/* Upload - Docked FAB */}
+                <div className="relative flex flex-col items-center justify-start h-full -top-6">
+                    <UploadSongDialog>
+                        <div className="group flex flex-col items-center justify-center gap-1 cursor-pointer active:scale-90 transition-transform duration-500 ease-out-back">
+                            <div className="h-16 w-16 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center shadow-[0_8px_30px_rgba(16,185,129,0.4)] border-[4px] border-black group-hover:scale-110 transition-transform duration-300 relative overflow-hidden">
+                                <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                                <PlusCircle className="w-8 h-8 text-white fill-white/20" />
+                            </div>
+                            <span className="text-[10px] font-black text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-400 tracking-widest uppercase mt-1 drop-shadow-sm">Upload</span>
+                        </div>
+                    </UploadSongDialog>
+                </div>
+
+                {/* Radio (Replaces Library) */}
+                <div
+                    onClick={toggleRadio}
+                    className="flex flex-col items-center justify-center gap-1 h-full active:scale-90 transition-transform duration-300 group cursor-pointer"
+                >
+                    <div className={cn("p-1 rounded-full transition-colors duration-300 group-active:bg-white/10", isRadio ? "bg-white/5" : "")}>
+                        <Radio className={cn("w-6 h-6 transition-colors duration-300", isRadio ? "text-red-500 fill-red-500/20 drop-shadow-[0_0_8px_rgba(239,68,68,0.5)] animate-pulse" : "text-neutral-500 group-hover:text-neutral-300")} />
+                    </div>
+                    <span className={cn("text-[10px] font-bold tracking-wider uppercase transition-colors duration-300", isRadio ? "text-red-500" : "text-neutral-600 group-hover:text-neutral-500")}>Radio</span>
+                </div>
+
+                {/* Menu / Profile */}
+                <div className="flex flex-col items-center justify-center gap-1 h-full active:scale-90 transition-transform duration-300 group">
+                    <MenuDrawer>
+                        <div className="flex flex-col items-center justify-center gap-1 cursor-pointer">
+                            <div className={cn("p-1 rounded-full transition-colors duration-300 group-active:bg-white/10", pathname === "/profile" ? "bg-white/5" : "")}>
+                                <MoreHorizontal className={cn("w-6 h-6 transition-colors duration-300", pathname === "/profile" ? "text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]" : "text-neutral-500 group-hover:text-neutral-300")} />
+                            </div>
+                            <span className={cn("text-[10px] font-bold tracking-wider uppercase transition-colors duration-300", pathname === "/profile" ? "text-white" : "text-neutral-600 group-hover:text-neutral-500")}>Menu</span>
+                        </div>
+                    </MenuDrawer>
+                </div>
             </div>
 
-            {/* Library */}
-            <Link href="/library" className="flex flex-col items-center justify-center gap-1 h-full pb-2 active:scale-95 transition-transform">
-                <Library className={cn("w-6 h-6", pathname === "/library" ? "fill-white text-white" : "text-neutral-500")} />
-                <span className={cn("text-[10px] font-medium tracking-wide", pathname === "/library" ? "text-white" : "text-neutral-500")}>Library</span>
-            </Link>
-
-            {/* Profile */}
-            <Link href="/profile" className="flex flex-col items-center justify-center gap-1 h-full pb-2 active:scale-95 transition-transform">
-                <div className={cn("rounded-full border-2 transition-all p-[1px]", pathname === "/profile" ? "border-white" : "border-transparent text-neutral-500")}>
-                    <Avatar className="h-6 w-6">
-                        <AvatarImage src={avatarUrl || ""} className="object-cover" />
-                        <AvatarFallback className="bg-neutral-800 text-[9px] text-white">
-                            <User className="h-3 w-3" />
-                        </AvatarFallback>
-                    </Avatar>
-                </div>
-                <span className={cn("text-[10px] font-medium tracking-wide", pathname === "/profile" ? "text-white" : "text-neutral-500")}>Profile</span>
-            </Link>
-        </div>
+        </>
     )
 }

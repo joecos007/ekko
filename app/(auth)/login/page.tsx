@@ -5,7 +5,7 @@ import { supabase } from '@/lib/supabase';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Loader2, Mail, Lock, Eye, EyeOff, Shield, Clock, LayoutTemplate, MessageSquare, Disc } from 'lucide-react';
+import { Loader2, Mail, Lock, Eye, EyeOff, Shield, Clock, LayoutTemplate, MessageSquare, Disc, ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function LoginPage() {
@@ -40,6 +40,16 @@ export default function LoginPage() {
             <div className="fixed inset-0 -z-10">
                 <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-[150px]" />
                 <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-[150px]" />
+            </div>
+
+            {/* Back to Home Button */}
+            <div className="absolute top-4 left-4 z-50">
+                <Link href="/">
+                    <Button variant="ghost" className="text-white/50 hover:text-white hover:bg-white/10 gap-2 pl-2 pr-4">
+                        <ArrowLeft className="w-4 h-4" />
+                        <span className="text-xs font-bold tracking-widest uppercase">Back to Home</span>
+                    </Button>
+                </Link>
             </div>
 
             {/* Main Card */}

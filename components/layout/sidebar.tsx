@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Home, Search, Library, Heart, Disc, User as UserIcon } from "lucide-react"
+import { Home, Search, Library, Heart, Disc, User as UserIcon, Sparkles } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import dynamic from "next/dynamic"
@@ -19,6 +19,11 @@ const CreatePlaylistDialog = dynamic(
 
 const UploadSongDialog = dynamic(
     () => import("@/components/upload/upload-song-dialog").then((mod) => mod.UploadSongDialog),
+    { ssr: false }
+)
+
+const TeamStoryDialog = dynamic(
+    () => import("@/components/layout/team-story-dialog").then((mod) => mod.TeamStoryDialog),
     { ssr: false }
 )
 
@@ -41,26 +46,28 @@ export function Sidebar() {
     }, [])
 
     return (
-        <div className="hidden md:flex w-64 flex-col gap-2 bg-black h-[calc(100vh-6rem)] p-4 border-r border-neutral-900 sticky top-0 font-geist-mono">
-            <div className="flex flex-col gap-4 px-2 py-4">
-                <div className="flex items-center gap-2 group px-2 mb-2">
+        <div className="hidden md:flex w-72 flex-col gap-2 glass-sidebar h-screen p-4 sticky top-0 font-geist-sans z-20">
+            <div className="flex flex-col gap-6 px-3 py-6">
+                <Link href="/" className="flex items-center gap-2 group px-2 mb-2 cursor-pointer">
                     <div className="relative">
                         <div className="absolute inset-0 bg-primary/20 blur-md rounded-full group-hover:bg-primary/40 transition-all" />
                         <Disc className="w-6 h-6 text-primary relative z-10 animate-spin-slow" />
                     </div>
-                    <span className="text-xl font-bold tracking-tighter bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">EKKO</span>
-                </div>
+                    <span className="text-3xl font-black tracking-tighter bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent glow-text-purple">EKKO</span>
+                </Link>
 
-                <nav className="flex flex-col gap-2">
+                <nav className="flex flex-col gap-1.5">
                     <Link href="/">
                         <Button
                             variant="ghost"
                             className={cn(
-                                "w-full justify-start gap-4 text-base font-normal",
-                                pathname === "/" ? "bg-white text-black hover:bg-white/90 font-bold" : "text-neutral-400 hover:text-white"
+                                "w-full justify-start gap-4 text-sm font-medium transition-all duration-300",
+                                pathname === "/"
+                                    ? "bg-white/10 text-white shadow-glow-white border border-white/10"
+                                    : "text-neutral-400 hover:text-white hover:bg-white/5"
                             )}
                         >
-                            <Home className={cn("w-6 h-6", pathname === "/" ? "fill-black" : "")} />
+                            <Home className={cn("w-5 h-5", pathname === "/" ? "text-blue-400" : "")} />
                             Home
                         </Button>
                     </Link>
@@ -68,23 +75,41 @@ export function Sidebar() {
                         <Button
                             variant="ghost"
                             className={cn(
-                                "w-full justify-start gap-4 text-base font-normal",
-                                pathname === "/search" ? "bg-white text-black hover:bg-white/90 font-bold" : "text-neutral-400 hover:text-white"
+                                "w-full justify-start gap-4 text-sm font-medium transition-all duration-300",
+                                pathname === "/search"
+                                    ? "bg-white/10 text-white shadow-glow-white border border-white/10"
+                                    : "text-neutral-400 hover:text-white hover:bg-white/5"
                             )}
                         >
-                            <Search className={cn("w-6 h-6", pathname === "/search" ? "stroke-[3px]" : "")} />
+                            <Search className={cn("w-5 h-5", pathname === "/search" ? "text-blue-400" : "")} />
                             Search
+                        </Button>
+                    </Link>
+                    <Link href="/vibes">
+                        <Button
+                            variant="ghost"
+                            className={cn(
+                                "w-full justify-start gap-4 text-sm font-medium transition-all duration-300",
+                                pathname === "/vibes"
+                                    ? "bg-white/10 text-white shadow-glow-white border border-white/10"
+                                    : "text-neutral-400 hover:text-white hover:bg-white/5"
+                            )}
+                        >
+                            <Sparkles className={cn("w-5 h-5", pathname === "/vibes" ? "text-blue-400" : "")} />
+                            Community Vibes
                         </Button>
                     </Link>
                     <Link href="/library">
                         <Button
                             variant="ghost"
                             className={cn(
-                                "w-full justify-start gap-4 text-base font-normal",
-                                pathname === "/library" ? "bg-white text-black hover:bg-white/90 font-bold" : "text-neutral-400 hover:text-white"
+                                "w-full justify-start gap-4 text-sm font-medium transition-all duration-300",
+                                pathname === "/library"
+                                    ? "bg-white/10 text-white shadow-glow-white border border-white/10"
+                                    : "text-neutral-400 hover:text-white hover:bg-white/5"
                             )}
                         >
-                            <Library className={cn("w-6 h-6", pathname === "/library" ? "fill-black" : "")} />
+                            <Library className={cn("w-5 h-5", pathname === "/library" ? "text-blue-400" : "")} />
                             Your Library
                         </Button>
                     </Link>
@@ -92,36 +117,52 @@ export function Sidebar() {
                         <Button
                             variant="ghost"
                             className={cn(
-                                "w-full justify-start gap-4 text-base font-normal",
-                                pathname === "/profile" ? "bg-white text-black hover:bg-white/90 font-bold" : "text-neutral-400 hover:text-white"
+                                "w-full justify-start gap-4 text-sm font-medium transition-all duration-300",
+                                pathname === "/profile"
+                                    ? "bg-white/10 text-white shadow-glow-white border border-white/10"
+                                    : "text-neutral-400 hover:text-white hover:bg-white/5"
                             )}
                         >
-                            <Avatar className="w-6 h-6 mr-1">
+                            <Avatar className="w-5 h-5 border border-white/10 shadow-sm">
                                 <AvatarImage src={avatarUrl || ""} className="object-cover" />
                                 <AvatarFallback className="bg-transparent">
-                                    <UserIcon className={cn("w-5 h-5", pathname === "/profile" ? "fill-black" : "")} />
+                                    <UserIcon className={cn("w-4 h-4", pathname === "/profile" ? "text-blue-400" : "")} />
                                 </AvatarFallback>
                             </Avatar>
                             Profile
                         </Button>
                     </Link>
+                    <TeamStoryDialog>
+                        <Button
+                            variant="ghost"
+                            className={cn(
+                                "w-full justify-start gap-4 text-sm font-medium transition-all duration-300",
+                                "text-neutral-400 hover:text-white hover:bg-white/5"
+                            )}
+                        >
+                            <div className="w-5 h-5 flex items-center justify-center">
+                                <span className="text-xs font-bold border border-current rounded-full w-4 h-4 flex items-center justify-center text-neutral-400">?</span>
+                            </div>
+                            Team Story
+                        </Button>
+                    </TeamStoryDialog>
                 </nav>
             </div>
 
-            <div className="flex flex-col gap-2 px-2 mt-4">
-                <div className="px-2 text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-2">
-                    Playlists
+            <div className="flex flex-col gap-1.5 px-2 mt-6">
+                <div className="px-2 text-[10px] font-black text-blue-400/50 uppercase tracking-[0.2em] mb-3">
+                    Your Music
                 </div>
                 <CreatePlaylistDialog />
                 <UploadSongDialog>
-                    <Button variant="ghost" className="w-full justify-start gap-4 text-base font-normal hover:text-white group px-2">
-                        <PlusCircle className="w-6 h-6" />
+                    <Button variant="ghost" className="w-full justify-start gap-4 text-sm font-medium transition-all duration-300 text-neutral-400 hover:text-white hover:bg-white/5 group px-3">
+                        <PlusCircle className="w-5 h-5" />
                         Upload Song
                     </Button>
                 </UploadSongDialog>
                 <Link href="/liked">
-                    <Button variant="ghost" className="w-full justify-start gap-4 text-base font-normal hover:text-white group px-2">
-                        <div className="w-6 h-6 flex items-center justify-center bg-gradient-to-br from-indigo-500 to-purple-500 rounded-[2px] mr-4">
+                    <Button variant="ghost" className="w-full justify-start gap-4 text-sm font-medium transition-all duration-300 text-neutral-400 hover:text-white hover:bg-white/5 group px-3">
+                        <div className="w-5 h-5 flex items-center justify-center bg-gradient-to-br from-blue-600 to-indigo-600 rounded-[4px] shadow-lg shadow-blue-600/20">
                             <Heart className="w-3 h-3 text-white fill-white" />
                         </div>
                         Liked Songs
@@ -129,19 +170,21 @@ export function Sidebar() {
                 </Link>
             </div>
 
-            <div className="flex-1 overflow-y-auto px-2 py-4 border-t border-neutral-900 mt-2">
-                {/* Playlist list */}
+            <div className="flex-1 overflow-y-auto px-2 py-4 border-t border-white/5 mt-4">
+                <div className="px-3 text-[10px] font-black text-blue-400/50 uppercase tracking-[0.2em] mb-3">
+                    Playlists
+                </div>
                 {playlists?.map(playlist => (
                     <Link key={playlist.id} href={`/playlist/${playlist.id}`}>
-                        <div className="text-sm text-neutral-400 hover:text-white cursor-pointer py-1 truncate">
+                        <div className="text-sm text-neutral-400 hover:text-white hover:bg-white/5 cursor-pointer px-3 py-2 rounded-md transition-all truncate font-medium">
                             {playlist.title}
                         </div>
                     </Link>
                 ))}
                 {!playlists?.length && (
-                    <div className="text-sm text-neutral-600 italic py-2">No playlists yet</div>
+                    <div className="text-xs text-neutral-600 italic px-3 py-2">No playlists yet</div>
                 )}
             </div>
-        </div>
+        </div >
     )
 }
