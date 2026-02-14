@@ -3,6 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Providers from "./providers";
 import { Toaster } from "@/components/ui/sonner";
+import { AudioProvider } from "@/components/player/audio-provider";
+import { PlayerBar } from "@/components/player/player-bar";
 
 
 const geistSans = Geist({
@@ -18,6 +20,12 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "EKKO",
   description: "Social & audio-first music streaming",
+  icons: {
+    icon: "/globe.svg",
+    shortcut: "/globe.svg",
+    apple: "/globe.svg",
+  },
+  manifest: "/manifest.json",
 };
 
 export default function RootLayout({
@@ -32,6 +40,8 @@ export default function RootLayout({
       >
         <Providers>
           {children}
+          <AudioProvider />
+          <PlayerBar />
           <Toaster />
         </Providers>
       </body>

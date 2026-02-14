@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { CloudUpload, Music, Image as ImageIcon, X, Loader2 } from "lucide-react"
+import { CloudUpload, Music, Image as ImageIcon, X, Loader2, AlertCircle, CheckCircle2 } from "lucide-react"
 
 import { createBrowserClient } from '@supabase/ssr'
 
@@ -47,6 +47,9 @@ export function UploadSongDialog({ children }: UploadSongDialogProps) {
     const [isLoading, setIsLoading] = useState(false)
     const [uploadProgress, setUploadProgress] = useState(0)
     const [uploadStatus, setUploadStatus] = useState("") // Granular status text
+    const [duplicateWarning, setDuplicateWarning] = useState<string | null>(null)
+    const [isCheckingDuplicate, setIsCheckingDuplicate] = useState(false)
+
     const { user } = useUser()
     const router = useRouter()
     const supabase = createClient()
@@ -70,6 +73,7 @@ export function UploadSongDialog({ children }: UploadSongDialogProps) {
 
     const songFile = watch('song')
     const imageFile = watch('image')
+    const title = watch('title')
 
     // Memoize and Revoke image preview URL to avoid memory leaks
     const imagePreviewUrl = useMemo(() => {
@@ -85,11 +89,51 @@ export function UploadSongDialog({ children }: UploadSongDialogProps) {
         };
     }, [imagePreviewUrl]);
 
+    // Real-time Duplicate Check
+    useEffect(() => {
+        if (!title || title.length < 2 || !user) {
+            setDuplicateWarning(null)
+            setIsCheckingDuplicate(false)
+            return
+        }
+
+        const timer = setTimeout(async () => {
+            setIsCheckingDuplicate(true)
+            try {
+                const { data } = await supabase
+                    .from('songs')
+                    .select('id')
+                    .eq('user_id', user.id)
+                    .ilike('title', title.trim())
+                    .maybeSingle()
+
+                if (data) {
+                    setDuplicateWarning("You already have a song with this exact title.")
+                } else {
+                    setDuplicateWarning(null)
+                }
+            } catch (error) {
+                console.error("Duplicate check error:", error)
+            } finally {
+                setIsCheckingDuplicate(false)
+            }
+        }, 500) // 500ms debounce
+
+        return () => clearTimeout(timer)
+    }, [title, user, supabase])
+
+
     // Handle file drop for song
     const onDropSong = useCallback((acceptedFiles: File[]) => {
         const fileToUpload = acceptedFiles[0]
         if (fileToUpload) {
             setValue('song', fileToUpload)
+
+            // Auto-fill title if empty
+            if (!title) {
+                const fileName = fileToUpload.name.replace(/\.[^/.]+$/, "")
+                setValue('title', fileName)
+            }
 
             // Calculate duration
             const blobUrl = URL.createObjectURL(fileToUpload)
@@ -106,7 +150,7 @@ export function UploadSongDialog({ children }: UploadSongDialogProps) {
                 URL.revokeObjectURL(blobUrl)
             }
         }
-    }, [setValue])
+    }, [setValue, title])
 
     const { getRootProps: getSongRootProps, getInputProps: getSongInputProps, isDragActive: isSongDragActive } = useDropzone({
         onDrop: onDropSong,
@@ -130,9 +174,13 @@ export function UploadSongDialog({ children }: UploadSongDialogProps) {
 
     const onSubmit = async (values: UploadFormValues) => {
         try {
+            if (duplicateWarning) {
+                return toast.error("Please fix the duplicate title error.")
+            }
+
             setIsLoading(true)
             setUploadProgress(0)
-            setUploadStatus("Validating inputs...")
+            setUploadStatus("Initializing upload...")
 
             const imageFile = values.image
             const songFile = values.song
@@ -144,8 +192,7 @@ export function UploadSongDialog({ children }: UploadSongDialogProps) {
             }
 
             if (!values.duration) {
-                setUploadStatus("Waiting for audio processing...")
-                // Give it a moment? Or just fail. Usually fast.
+                setUploadStatus("Processing audio...")
                 await new Promise(resolve => setTimeout(resolve, 1000));
                 if (!values.duration) {
                     setIsLoading(false)
@@ -154,23 +201,7 @@ export function UploadSongDialog({ children }: UploadSongDialogProps) {
                 }
             }
 
-            // Check if song already exists
-            setUploadStatus("Checking for duplicates...")
-            const { data: existingSong } = await supabase
-                .from('songs')
-                .select('id')
-                .eq('user_id', user.id)
-                .ilike('title', values.title)
-                .single()
-
-            if (existingSong) {
-                setIsLoading(false)
-                setUploadProgress(0)
-                setUploadStatus("")
-                return toast.error("You have already uploaded this song.")
-            }
-
-            // Generate a simple unique ID without external deps
+            // Generate IDs
             const uniqueID = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
             const sanitizedTitle = values.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()
 
@@ -192,7 +223,7 @@ export function UploadSongDialog({ children }: UploadSongDialogProps) {
             }
 
             // 2. Upload Song (TUS Resumable)
-            setUploadStatus("Uploading song... 0%")
+            setUploadStatus("Starting song upload...")
             const songPath = `song-${sanitizedTitle}-${uniqueID}.mp3`
 
             const { data: { session } } = await supabase.auth.getSession()
@@ -208,17 +239,17 @@ export function UploadSongDialog({ children }: UploadSongDialogProps) {
                     retryDelays: [0, 3000, 5000, 10000, 20000],
                     headers: {
                         authorization: `Bearer ${session.access_token}`,
-                        'x-upsert': 'true', // optional
+                        'x-upsert': 'true',
                     },
                     uploadDataDuringCreation: true,
-                    removeFingerprintOnSuccess: true, // Important for re-uploads of same file if failed
+                    removeFingerprintOnSuccess: true,
                     metadata: {
                         bucketName: 'songs',
                         objectName: songPath,
                         contentType: songFile.type || 'audio/mpeg',
                         cacheControl: '3600',
                     },
-                    chunkSize: 6 * 1024 * 1024, // 6MB chunk size (Supabase recommendation is 6MB)
+                    chunkSize: 6 * 1024 * 1024,
                     onError: function (error) {
                         console.error("TUS Upload Failed:", error)
                         setIsLoading(false)
@@ -233,6 +264,7 @@ export function UploadSongDialog({ children }: UploadSongDialogProps) {
                     },
                     onSuccess: async function () {
                         setUploadStatus("Finalizing...")
+
                         // 3. Get Full Public URLs
                         const { data: songUrlData } = supabase.storage.from('songs').getPublicUrl(songPath)
                         const { data: imageUrlData } = supabase.storage.from('covers').getPublicUrl(imagePath)
@@ -261,17 +293,20 @@ export function UploadSongDialog({ children }: UploadSongDialogProps) {
                         setUploadStatus("Success!")
                         router.refresh()
                         toast.success('Song added to library!')
-                        reset()
-                        setIsOpen(false)
-                        setIsLoading(false)
-                        setUploadProgress(0)
-                        resolve()
+
+                        // Small delay to show 100% state
+                        setTimeout(() => {
+                            reset()
+                            setIsOpen(false)
+                            setIsLoading(false)
+                            setUploadProgress(0)
+                            setUploadStatus("")
+                            resolve()
+                        }, 1000)
                     },
                 })
 
-                // Start the upload
                 upload.findPreviousUploads().then(function (previousUploads) {
-                    // Found previous uploads so we select the first one. 
                     if (previousUploads.length) {
                         upload.resumeFromPreviousUpload(previousUploads[0])
                     }
@@ -291,7 +326,8 @@ export function UploadSongDialog({ children }: UploadSongDialogProps) {
         if (!open) {
             reset()
             setIsOpen(false)
-            setIsLoading(false) // Reset loading state on close
+            setIsLoading(false)
+            setDuplicateWarning(null)
         } else {
             setIsOpen(true)
         }
@@ -341,13 +377,29 @@ export function UploadSongDialog({ children }: UploadSongDialogProps) {
 
                     {/* Inputs */}
                     <div className="flex flex-col gap-y-2">
-                        <Input
-                            id="title"
-                            disabled={isLoading}
-                            {...register('title', { required: true })}
-                            placeholder="Song Title"
-                            className="bg-neutral-800/50 border-neutral-700 focus:border-green-500 focus:ring-green-500/20 text-white placeholder:text-neutral-500"
-                        />
+                        <div className="relative">
+                            <Input
+                                id="title"
+                                disabled={isLoading}
+                                {...register('title', { required: true })}
+                                placeholder="Song Title"
+                                className={`bg-neutral-800/50 border-neutral-700 focus:border-green-500 focus:ring-green-500/20 text-white placeholder:text-neutral-500 pr-10 ${duplicateWarning ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20' : ''}`}
+                            />
+                            <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                                {isCheckingDuplicate ? (
+                                    <Loader2 className="w-4 h-4 animate-spin text-neutral-400" />
+                                ) : duplicateWarning ? (
+                                    <AlertCircle className="w-4 h-4 text-red-500" />
+                                ) : title && title.length > 2 ? (
+                                    <CheckCircle2 className="w-4 h-4 text-green-500" />
+                                ) : null}
+                            </div>
+                        </div>
+                        {duplicateWarning && (
+                            <p className="text-xs text-red-500 flex items-center gap-1 animate-in slide-in-from-top-1">
+                                {duplicateWarning}
+                            </p>
+                        )}
                     </div>
                     <div className="flex flex-col gap-y-2">
                         <Input
@@ -387,22 +439,32 @@ export function UploadSongDialog({ children }: UploadSongDialogProps) {
                         </div>
                     </div>
 
-                    <Button disabled={isLoading || !songFile || !imageFile} type="submit" className="w-full bg-green-500 hover:bg-green-400 text-black font-bold h-11 relative overflow-hidden">
-                        {isLoading ? (
-                            <div className="flex items-center gap-2 relative z-10 w-full justify-center">
-                                <Loader2 className="w-4 h-4 animate-spin" />
-                                <span>{uploadStatus || `Uploading... ${uploadProgress}%`}</span>
-                            </div>
-                        ) : (
-                            "Upload Song"
-                        )}
+                    {/* Enhanced Upload Button / Progress Bar */}
+                    <div className="space-y-2">
                         {isLoading && (
-                            <div
-                                className="absolute bottom-0 left-0 h-1 bg-black/20 transition-all duration-300 z-0"
-                                style={{ width: `${uploadProgress}%` }}
-                            />
+                            <div className="w-full bg-neutral-800 rounded-full h-2 overflow-hidden">
+                                <div
+                                    className="bg-green-500 h-full transition-all duration-300 ease-out"
+                                    style={{ width: `${uploadProgress}%` }}
+                                />
+                            </div>
                         )}
-                    </Button>
+
+                        <Button
+                            disabled={isLoading || !songFile || !imageFile || !!duplicateWarning || isCheckingDuplicate}
+                            type="submit"
+                            className="w-full bg-green-500 hover:bg-green-400 text-black font-bold h-11 relative overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            {isLoading ? (
+                                <div className="flex items-center gap-2">
+                                    <Loader2 className="w-4 h-4 animate-spin" />
+                                    <span>{uploadStatus}</span>
+                                </div>
+                            ) : (
+                                "Upload Song"
+                            )}
+                        </Button>
+                    </div>
                 </form>
             </DialogContent>
         </Dialog>

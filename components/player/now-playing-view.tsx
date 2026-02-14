@@ -10,6 +10,10 @@ import { useEffect, useState } from 'react'
 import { MediaItemActionMenu } from '@/components/media/media-item-action-menu'
 import { useSwipeGesture } from '@/hooks/use-swipe-gesture'
 
+import { VibeOverlay } from '@/components/vibes/vibe-overlay'
+import { VibeHeatmap } from '@/components/vibes/vibe-heatmap'
+import { VibeInput } from '@/components/vibes/vibe-input'
+
 export function NowPlayingView() {
     const {
         queue,
@@ -72,6 +76,8 @@ export function NowPlayingView() {
             className="fixed inset-0 z-[100] bg-black flex flex-col font-geist-sans"
             {...swipeHandlers}
         >
+            <VibeOverlay />
+
             {/* Background Blur */}
             <div className="absolute inset-0 z-0 overflow-hidden">
                 {display.coverUrl && (
@@ -146,7 +152,8 @@ export function NowPlayingView() {
                 </div>
 
                 {/* Progress Bar */}
-                <div className="w-full mb-8 group">
+                <div className="w-full mb-8 group relative">
+                    <VibeHeatmap />
                     <Slider
                         value={sliderValue}
                         max={duration || 100}
@@ -190,8 +197,7 @@ export function NowPlayingView() {
                         variant="ghost"
                         size="icon"
                         onClick={prev}
-                        className={cn("scale-125 text-white hover:text-neutral-300", isRadio && "opacity-30 cursor-not-allowed")}
-                        disabled={isRadio}
+                        className={cn("scale-125 text-white hover:text-neutral-300")}
                     >
                         <SkipBack className="w-8 h-8 fill-current" />
                     </Button>
@@ -212,8 +218,7 @@ export function NowPlayingView() {
                         variant="ghost"
                         size="icon"
                         onClick={next}
-                        className={cn("scale-125 text-white hover:text-neutral-300", isRadio && "opacity-30 cursor-not-allowed")}
-                        disabled={isRadio}
+                        className={cn("scale-125 text-white hover:text-neutral-300")}
                     >
                         <SkipForward className="w-8 h-8 fill-current" />
                     </Button>
@@ -233,6 +238,7 @@ export function NowPlayingView() {
 
             {/* Footer Actions */}
             <div className="relative z-10 w-full p-8 flex justify-between items-center max-w-2xl mx-auto">
+                <VibeInput />
                 <Button variant="ghost" size="icon" className="text-neutral-400 hover:text-white">
                     <ListMusic className="w-5 h-5" />
                 </Button>

@@ -59,19 +59,19 @@ export function Header() {
     }
 
     return (
-        <div className="h-16 flex items-center justify-between px-6 sticky top-0 bg-background/95 backdrop-blur z-40">
+        <div className="h-16 flex items-center justify-between px-6 sticky top-0 bg-transparent border-b border-white/5 z-40">
             <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2 group md:hidden">
                     <div className="relative">
-                        <div className="absolute inset-0 bg-primary/20 blur-md rounded-full group-hover:bg-primary/40 transition-all" />
-                        <Disc className="w-7 h-7 text-primary relative z-10 animate-spin-slow" />
+                        <div className="absolute inset-0 bg-blue-500/20 blur-md rounded-full group-hover:bg-blue-500/40 transition-all" />
+                        <Disc className="w-7 h-7 text-blue-400 relative z-10 animate-spin-slow" />
                     </div>
-                    <span className="text-2xl font-black tracking-tighter bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent drop-shadow-sm">EKKO</span>
+                    <span className="text-2xl font-black tracking-tighter bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 bg-clip-text text-transparent drop-shadow-[0_0_15px_rgba(59,130,246,0.3)]">EKKO</span>
                 </div>
-                <Button variant="ghost" size="icon" onClick={() => router.back()} className="rounded-full bg-black/50 hover:bg-black/70 disabled:opacity-50 hidden md:flex">
+                <Button variant="ghost" size="icon" onClick={() => router.back()} className="rounded-full hover:bg-white/5 disabled:opacity-50 hidden md:flex transition-all">
                     <ChevronLeft className="w-5 h-5" />
                 </Button>
-                <Button variant="ghost" size="icon" onClick={() => router.forward()} className="rounded-full bg-black/50 hover:bg-black/70 disabled:opacity-50 hidden md:flex">
+                <Button variant="ghost" size="icon" onClick={() => router.forward()} className="rounded-full hover:bg-white/5 disabled:opacity-50 hidden md:flex transition-all">
                     <ChevronRight className="w-5 h-5" />
                 </Button>
             </div>
