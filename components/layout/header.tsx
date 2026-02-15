@@ -1,9 +1,9 @@
 'use client'
 
 import { Button } from "@/components/ui/button"
-import { supabase } from "@/lib/supabase"
-import { User } from "@supabase/supabase-js"
-import { ChevronLeft, ChevronRight, Disc, User as UserIcon } from "lucide-react"
+import { createClient } from "@/utils/supabase/client"
+import { useUser } from "@/hooks/use-user"
+import { ChevronLeft, ChevronRight, Disc } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
@@ -21,32 +21,22 @@ import { LogOut, User as UserSettings } from "lucide-react"
 import { toast } from "sonner"
 
 export function Header() {
-    const [user, setUser] = useState<User | null>(null)
+    const supabase = createClient()
+    const { user } = useUser()
     const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
     const router = useRouter()
 
     useEffect(() => {
-        const getUser = async () => {
-            const { data: { user } } = await supabase.auth.getUser()
-            setUser(user)
+        const getProfile = async () => {
             if (user) {
                 const { data } = await supabase.from('profiles').select('avatar_url').eq('id', user.id).single()
-                if (data) setAvatarUrl(data.avatar_url)
-            }
-        }
-        getUser()
-
-        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
-            setUser(session?.user ?? null)
-            if (session?.user) {
-                const { data } = await supabase.from('profiles').select('avatar_url').eq('id', session.user.id).single()
                 if (data) setAvatarUrl(data.avatar_url)
             } else {
                 setAvatarUrl(null)
             }
-        })
-        return () => subscription.unsubscribe()
-    }, [])
+        }
+        getProfile()
+    }, [user, supabase])
 
     const handleSignOut = async () => {
         try {

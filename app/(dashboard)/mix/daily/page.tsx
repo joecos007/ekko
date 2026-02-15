@@ -1,14 +1,16 @@
 'use client'
 
 import { useQuery } from "@tanstack/react-query"
-import { supabase } from "@/lib/supabase"
+import { createClient } from "@/utils/supabase/client"
 import { usePlayer } from "@/store/player-store"
 import { Button } from "@/components/ui/button"
-import { Clock, Play, Sparkles } from "lucide-react"
+import { Clock, Play } from "lucide-react"
 import { MediaItemActionMenu } from "@/components/media/media-item-action-menu"
 import { getCoverArt, PLAYLIST_COVERS } from "@/lib/cover-art"
+import Image from 'next/image'
 
 export default function DailyMixPage() {
+    const supabase = createClient()
     const { setQueue } = usePlayer()
 
     // Fetch mix songs (simulated as latest 20 songs shuffled)
@@ -73,10 +75,12 @@ export default function DailyMixPage() {
             {/* Header */}
             <div className="flex items-end gap-6 mb-8 mt-4">
                 <div className="w-52 h-52 relative shadow-xl rounded-sm overflow-hidden group">
-                    <img
+                    <Image
                         src={PLAYLIST_COVERS.dailyMix}
                         alt="Daily Mix 1"
-                        className="object-cover w-full h-full transition-transform duration-700 group-hover:scale-105"
+                        fill
+                        className="object-cover transition-transform duration-700 group-hover:scale-105"
+                        unoptimized
                     />
                     <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors" />
                 </div>
@@ -129,7 +133,7 @@ export default function DailyMixPage() {
                             </span>
 
                             <div className="relative w-10 h-10 overflow-hidden rounded-sm bg-neutral-800">
-                                <img src={song.coverUrl} alt={song.title} className="object-cover w-full h-full" />
+                                <Image src={song.coverUrl} alt={song.title} fill className="object-cover" unoptimized />
                             </div>
 
                             <div className="flex flex-col min-w-0">

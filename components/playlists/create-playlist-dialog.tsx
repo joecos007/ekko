@@ -14,11 +14,14 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+
+import { RichTextEditor } from "@/components/ui/rich-text-editor"
 import { PlusSquare } from "lucide-react"
 
 export function CreatePlaylistDialog() {
     const [open, setOpen] = useState(false)
     const [title, setTitle] = useState("")
+    const [description, setDescription] = useState("")
     const { createPlaylist } = usePlaylists()
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -26,9 +29,10 @@ export function CreatePlaylistDialog() {
         if (!title.trim()) return
 
         try {
-            await createPlaylist.mutateAsync(title)
+            await createPlaylist.mutateAsync({ title, description })
             setOpen(false)
             setTitle("")
+            setDescription("")
         } catch (error) {
             console.error("Failed to create playlist", error)
             // Improve error handling: toast?
@@ -43,7 +47,7 @@ export function CreatePlaylistDialog() {
                     Create Playlist
                 </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px] bg-neutral-900 border-neutral-800 text-white">
+            <DialogContent className="sm:max-w-[525px] bg-neutral-900 border-neutral-800 text-white">
                 <DialogHeader>
                     <DialogTitle>Create Playlist</DialogTitle>
                     <DialogDescription className="text-neutral-400">
@@ -52,16 +56,28 @@ export function CreatePlaylistDialog() {
                 </DialogHeader>
                 <form onSubmit={handleSubmit}>
                     <div className="grid gap-4 py-4">
-                        <div className="grid grid-cols-4 items-center gap-4">
-                            <Label htmlFor="title" className="text-right">
+                        <div className="grid gap-2">
+                            <Label htmlFor="title" className="text-sm font-medium text-neutral-400">
                                 Name
                             </Label>
                             <Input
                                 id="title"
                                 value={title}
                                 onChange={(e) => setTitle(e.target.value)}
-                                className="col-span-3 bg-neutral-800 border-neutral-700 text-white"
+                                className="bg-neutral-800 border-neutral-700 text-white focus:ring-primary/20"
+                                placeholder="My Awesome Playlist"
                                 autoFocus
+                            />
+                        </div>
+                        <div className="grid gap-2">
+                            <Label htmlFor="description" className="text-sm font-medium text-neutral-400">
+                                Description
+                            </Label>
+                            <RichTextEditor
+                                content={description}
+                                onChange={setDescription}
+                                placeholder="Describe the vibe..."
+                                className="min-h-[150px]"
                             />
                         </div>
                     </div>

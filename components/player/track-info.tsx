@@ -38,6 +38,7 @@ export function TrackInfo() {
                             src={display.coverUrl}
                             alt={display.title}
                             fill
+                            sizes="(max-width: 768px) 100vw, 33vw"
                             className="object-cover"
                         />
                         {isRadio && (

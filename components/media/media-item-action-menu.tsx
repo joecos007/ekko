@@ -12,7 +12,7 @@ import {
     DropdownMenuSubContent,
 } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
-import { supabase } from "@/lib/supabase"
+import { createClient } from "@/utils/supabase/client"
 import { MoreHorizontal, Plus, ListMusic, User, Heart } from "lucide-react"
 import { usePlaylists } from "@/hooks/use-playlists"
 import { toast } from "sonner"
@@ -30,11 +30,11 @@ interface MediaItemActionMenuProps {
 export function MediaItemActionMenu({
     songId,
     songTitle,
-    artistName,
     children,
     className,
     playlistId
 }: MediaItemActionMenuProps) {
+    const supabase = createClient()
     const { playlists, addToPlaylist, removeFromPlaylist } = usePlaylists()
     const [isOpen, setIsOpen] = useState(false)
 

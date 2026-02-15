@@ -2,11 +2,11 @@
 
 import { usePlayer } from '@/store/player-store'
 import { Button } from '@/components/ui/button'
-import { Play, Pause, SkipBack, SkipForward, Shuffle, Repeat } from 'lucide-react'
+import { Play, Pause, SkipBack, SkipForward, Shuffle, Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 export function Controls() {
-    const { isPlaying, play, pause, next, prev, shuffle, toggleShuffle, repeat, cycleRepeat, isRadio, toggleRadio } = usePlayer()
+    const { isPlaying, play, pause, next, prev, toggleShuffle, shuffle, isRadio, toggleRadio, isLoading } = usePlayer()
 
     return (
         <div className="flex items-center gap-4">
@@ -16,6 +16,7 @@ export function Controls() {
                 className={cn("h-8 w-8 hidden md:inline-flex", isRadio ? "opacity-50 cursor-not-allowed" : (shuffle ? "text-primary" : "text-muted-foreground"))}
                 onClick={isRadio ? undefined : toggleShuffle}
                 disabled={isRadio}
+                aria-label="Toggle Shuffle"
             >
                 <Shuffle className="h-4 w-4" />
             </Button>
@@ -25,6 +26,7 @@ export function Controls() {
                 size="icon"
                 onClick={prev}
                 className="rounded-full h-10 w-10 hover:bg-neutral-800 disabled:opacity-30"
+                aria-label="Previous Track"
             >
                 <SkipBack className="h-5 w-5 fill-current" />
             </Button>
@@ -38,8 +40,12 @@ export function Controls() {
                         : "bg-blue-600 hover:bg-blue-500 shadow-blue-500/40"
                 )}
                 onClick={isPlaying ? pause : play}
+                disabled={isLoading}
+                aria-label={isPlaying ? "Pause" : "Play"}
             >
-                {isPlaying ? (
+                {isLoading ? (
+                    <Loader2 className="h-6 w-6 animate-spin text-white" />
+                ) : isPlaying ? (
                     <Pause className="h-6 w-6 fill-current" />
                 ) : (
                     <Play className="h-6 w-6 fill-current ml-1" />
@@ -51,6 +57,7 @@ export function Controls() {
                 size="icon"
                 onClick={next}
                 className="rounded-full h-10 w-10 hover:bg-neutral-800 disabled:opacity-30"
+                aria-label="Next Track"
             >
                 <SkipForward className="h-5 w-5 fill-current" />
             </Button>
@@ -61,6 +68,7 @@ export function Controls() {
                 className={cn("h-8 w-8 relative hidden md:inline-flex", isRadio ? "text-red-500 bg-red-500/10" : "text-muted-foreground hover:text-white")}
                 onClick={toggleRadio}
                 title="Toggle Live Radio"
+                aria-label="Toggle Live Radio"
             >
                 <div className={cn("absolute inset-0 rounded-full border border-current opacity-20", isRadio && "animate-ping")} />
                 <span className={cn("text-[10px] font-bold", isRadio ? "text-red-500" : "text-neutral-500")}>LIVE</span>

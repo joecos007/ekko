@@ -5,7 +5,7 @@ import { useVibeStore } from "@/store/vibe-store"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Send, Smile, Sparkles } from "lucide-react"
+import { Send, Sparkles } from "lucide-react"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { createClient } from "@/utils/supabase/client"
 
@@ -138,7 +138,7 @@ export function VibeInput() {
                         </Button>
                     </div>
 
-                    {isRadio && <p className="text-[10px] text-neutral-500 text-center">Radio mode runs in Demo. Vibes won't save.</p>}
+                    {isRadio && <p className="text-[10px] text-neutral-500 text-center">Radio mode runs in Demo. Vibes won&apos;t save.</p>}
                 </div>
             </PopoverContent>
         </Popover>

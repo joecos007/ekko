@@ -6,12 +6,18 @@ import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { toast } from "sonner"
-import { supabase } from "@/lib/supabase"
+import { createClient } from "@/utils/supabase/client"
 import { useEffect, useRef, useState } from "react"
-import { Camera, Loader2, LogOut, User, Mail, Lock, Music } from "lucide-react"
+import { Camera, Loader2, LogOut, User, Lock, Music } from "lucide-react"
 import { useRouter } from "next/navigation"
 
+// Magic UI Components
+import { SparklesText } from "@/components/ui/sparkles-text"
+import { ShineBorder } from "@/components/ui/shine-border"
+import { MagicCard } from "@/components/ui/magic-card"
+
 export default function ProfilePage() {
+    const supabase = createClient()
     const router = useRouter()
     const [loading, setLoading] = useState(true)
     const [uploading, setUploading] = useState(false)
@@ -31,6 +37,7 @@ export default function ProfilePage() {
         // Load settings from local storage
         const hq = localStorage.getItem('ekko_hq_audio') === 'true'
         setHighQuality(hq)
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     const getProfile = async () => {
@@ -57,7 +64,7 @@ export default function ProfilePage() {
                 setProfile(data)
                 setFullName(data.full_name || "")
             }
-        } catch (error: any) {
+        } catch {
             toast.error("Error loading profile")
         } finally {
             setLoading(false)
@@ -157,11 +164,11 @@ export default function ProfilePage() {
 
     return (
         <div className="p-4 md:p-8 min-h-full font-geist-sans pb-24 md:pb-8">
-            <h1 className="text-4xl font-black tracking-tighter mb-8 bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent w-fit drop-shadow-sm">Profile</h1>
+            <SparklesText className="text-4xl font-black tracking-tighter mb-8 w-fit" sparklesCount={6}>Profile</SparklesText>
 
             <div className="max-w-2xl mx-auto space-y-8">
                 {/* Avatar Section */}
-                <div className="relative overflow-hidden rounded-3xl bg-neutral-900/40 border border-white/5 p-8 backdrop-blur-md">
+                <ShineBorder className="relative overflow-hidden rounded-3xl bg-neutral-900/40 border border-white/5 p-8 backdrop-blur-md" shineColor={["#9E7AFF", "#FE8BBB"]}>
                     <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 via-purple-500/5 to-pink-500/10" />
 
                     <div className="relative z-10 flex flex-col md:flex-row items-center gap-8">
@@ -201,77 +208,81 @@ export default function ProfilePage() {
                             </div>
                         </div>
                     </div>
-                </div>
+                </ShineBorder>
 
                 {/* Settings Grid */}
                 <div className="grid gap-6">
                     {/* Profile Fields */}
-                    <div className="space-y-6 bg-neutral-900/40 p-6 rounded-2xl border border-white/5 backdrop-blur-sm">
-                        <h3 className="text-lg font-bold flex items-center gap-2">
-                            <User className="w-5 h-5 text-indigo-400" /> Personal Details
-                        </h3>
-                        <div className="space-y-4">
-                            <div className="space-y-2">
-                                <Label htmlFor="name" className="text-neutral-300">Display Name</Label>
-                                <Input
-                                    id="name"
-                                    value={fullName}
-                                    onChange={(e) => setFullName(e.target.value)}
-                                    className="bg-black/50 border-neutral-800 focus:border-indigo-500/50 transition-colors h-11"
-                                    placeholder="Enter your name"
-                                />
+                    <MagicCard gradientColor="#4f46e5" className="rounded-2xl">
+                        <div className="space-y-6 bg-neutral-900/40 p-6 rounded-2xl border border-white/5 backdrop-blur-sm">
+                            <h3 className="text-lg font-bold flex items-center gap-2">
+                                <User className="w-5 h-5 text-indigo-400" /> Personal Details
+                            </h3>
+                            <div className="space-y-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="name" className="text-neutral-300">Display Name</Label>
+                                    <Input
+                                        id="name"
+                                        value={fullName}
+                                        onChange={(e) => setFullName(e.target.value)}
+                                        className="bg-black/50 border-neutral-800 focus:border-indigo-500/50 transition-colors h-11"
+                                        placeholder="Enter your name"
+                                    />
+                                </div>
+                                <Button
+                                    onClick={updateProfile}
+                                    className="w-full bg-white text-black hover:bg-neutral-200 font-bold h-11 rounded-full"
+                                    disabled={loading}
+                                >
+                                    Save Changes
+                                </Button>
                             </div>
-                            <Button
-                                onClick={updateProfile}
-                                className="w-full bg-white text-black hover:bg-neutral-200 font-bold h-11 rounded-full"
-                                disabled={loading}
-                            >
-                                Save Changes
-                            </Button>
                         </div>
-                    </div>
+                    </MagicCard>
 
-                    {/* App Settings */}
-                    <div className="space-y-6 bg-neutral-900/40 p-6 rounded-2xl border border-white/5 backdrop-blur-sm">
-                        <h3 className="text-lg font-bold flex items-center gap-2">
-                            <Music className="w-5 h-5 text-pink-400" /> Preferences
-                        </h3>
-                        <div className="flex items-center justify-between p-4 rounded-xl bg-black/20 border border-white/5">
-                            <div className="space-y-1">
-                                <Label className="text-base font-medium">High Quality Audio</Label>
-                                <p className="text-xs text-neutral-400">Stream in 320kbps (uses more data)</p>
+                    <MagicCard gradientColor="#ec4899" className="rounded-2xl">
+                        <div className="space-y-6 bg-neutral-900/40 p-6 rounded-2xl border border-white/5 backdrop-blur-sm">
+                            <h3 className="text-lg font-bold flex items-center gap-2">
+                                <Music className="w-5 h-5 text-pink-400" /> Preferences
+                            </h3>
+                            <div className="flex items-center justify-between p-4 rounded-xl bg-black/20 border border-white/5">
+                                <div className="space-y-1">
+                                    <Label className="text-base font-medium">High Quality Audio</Label>
+                                    <p className="text-xs text-neutral-400">Stream in 320kbps (uses more data)</p>
+                                </div>
+                                <Switch checked={highQuality} onCheckedChange={toggleHighQuality} />
                             </div>
-                            <Switch checked={highQuality} onCheckedChange={toggleHighQuality} />
                         </div>
-                    </div>
+                    </MagicCard>
 
-                    {/* Security */}
-                    <div className="space-y-6 bg-neutral-900/40 p-6 rounded-2xl border border-white/5 backdrop-blur-sm">
-                        <h3 className="text-lg font-bold flex items-center gap-2">
-                            <Lock className="w-5 h-5 text-purple-400" /> Security
-                        </h3>
-                        <div className="space-y-4">
-                            <div className="space-y-2">
-                                <Label htmlFor="password" className="text-neutral-300">New Password</Label>
-                                <Input
-                                    id="password"
-                                    type="password"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    className="bg-black/50 border-neutral-800 focus:border-purple-500/50 transition-colors h-11"
-                                    placeholder="Enter new password"
-                                />
+                    <MagicCard gradientColor="#7c3aed" className="rounded-2xl">
+                        <div className="space-y-6 bg-neutral-900/40 p-6 rounded-2xl border border-white/5 backdrop-blur-sm">
+                            <h3 className="text-lg font-bold flex items-center gap-2">
+                                <Lock className="w-5 h-5 text-purple-400" /> Security
+                            </h3>
+                            <div className="space-y-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="password" className="text-neutral-300">New Password</Label>
+                                    <Input
+                                        id="password"
+                                        type="password"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        className="bg-black/50 border-neutral-800 focus:border-purple-500/50 transition-colors h-11"
+                                        placeholder="Enter new password"
+                                    />
+                                </div>
+                                <Button
+                                    onClick={updatePassword}
+                                    disabled={!password || loading}
+                                    variant="outline"
+                                    className="w-full border-neutral-800 hover:bg-neutral-800 h-11 rounded-full text-neutral-300 hover:text-white"
+                                >
+                                    Update Password
+                                </Button>
                             </div>
-                            <Button
-                                onClick={updatePassword}
-                                disabled={!password || loading}
-                                variant="outline"
-                                className="w-full border-neutral-800 hover:bg-neutral-800 h-11 rounded-full text-neutral-300 hover:text-white"
-                            >
-                                Update Password
-                            </Button>
                         </div>
-                    </div>
+                    </MagicCard>
                 </div>
 
                 <div className="pt-8 border-t border-neutral-900">

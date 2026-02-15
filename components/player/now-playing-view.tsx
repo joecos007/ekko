@@ -11,8 +11,8 @@ import { MediaItemActionMenu } from '@/components/media/media-item-action-menu'
 import { useSwipeGesture } from '@/hooks/use-swipe-gesture'
 
 import { VibeOverlay } from '@/components/vibes/vibe-overlay'
-import { VibeHeatmap } from '@/components/vibes/vibe-heatmap'
 import { VibeInput } from '@/components/vibes/vibe-input'
+import { AudioVisualizer } from '@/components/ui/audio-visualizer'
 
 export function NowPlayingView() {
     const {
@@ -31,8 +31,6 @@ export function NowPlayingView() {
         cycleRepeat,
         currentTime,
         duration,
-        setCurrentTime,
-        setDuration,
         isRadio,
         radioMetadata
     } = usePlayer()
@@ -85,6 +83,7 @@ export function NowPlayingView() {
                         src={display.coverUrl}
                         alt="Background"
                         fill
+                        sizes="100vw"
                         className="object-cover blur-3xl opacity-40 scale-110"
                     />
                 )}
@@ -123,6 +122,7 @@ export function NowPlayingView() {
                             src={display.coverUrl}
                             alt={display.title}
                             fill
+                            sizes="(max-width: 768px) 100vw, 50vw"
                             className="object-cover"
                         />
                     ) : (
@@ -151,9 +151,11 @@ export function NowPlayingView() {
                     </div>
                 </div>
 
-                {/* Progress Bar */}
+                {/* Progress Bar & Visualizer */}
                 <div className="w-full mb-8 group relative">
-                    <VibeHeatmap />
+                    <div className="absolute inset-x-0 bottom-full mb-4 h-32 flex items-end justify-center opacity-80 pointer-events-none">
+                        <AudioVisualizer className="w-full h-full" color="#a855f7" />
+                    </div>
                     <Slider
                         value={sliderValue}
                         max={duration || 100}
@@ -166,11 +168,7 @@ export function NowPlayingView() {
                         onValueCommit={(val) => {
                             if (isRadio) return
                             setIsDragging(false)
-                            const player = document.querySelector('audio')
-                            if (player) {
-                                player.currentTime = val[0]
-                                setCurrentTime(val[0])
-                            }
+                            usePlayer.getState().requestSeek(val[0])
                         }}
                         className={cn("w-full py-4", isRadio ? "cursor-default opacity-50" : "hover:cursor-pointer")}
                         disabled={isRadio}

@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react'
 import { cn } from '@/lib/utils'
 
 export function ProgressBar() {
-    const { currentTime, duration, setCurrentTime, isPlaying, isRadio } = usePlayer()
+    const { currentTime, duration, isRadio } = usePlayer()
     const [localValue, setLocalValue] = useState<number[]>([0])
     const [isDragging, setIsDragging] = useState(false)
 

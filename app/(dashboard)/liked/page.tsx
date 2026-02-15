@@ -1,13 +1,14 @@
 'use client'
 
 import { useQuery } from "@tanstack/react-query"
-import { supabase } from "@/lib/supabase"
+import { createClient } from "@/utils/supabase/client"
 import { usePlayer } from "@/store/player-store"
 import { Button } from "@/components/ui/button"
 import { Clock, Play, Heart } from "lucide-react"
 import { MediaItemActionMenu } from "@/components/media/media-item-action-menu"
 
 export default function LikedSongsPage() {
+    const supabase = createClient()
     const { setQueue } = usePlayer()
 
     const { data: likedSongs } = useQuery({

@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button"
 import { X, Home, Search, Library, Heart, Disc, User, LogOut, Sparkles } from "lucide-react"
 import Link from "next/link"
 import { usePlaylists } from "@/hooks/use-playlists"
-import { supabase } from "@/lib/supabase"
+import { createClient } from "@/utils/supabase/client"
 import { useRouter, usePathname } from "next/navigation"
 import { TeamStoryDialog } from "@/components/layout/team-story-dialog"
 
@@ -21,6 +21,7 @@ interface MenuDrawerProps {
 }
 
 export function MenuDrawer({ children }: MenuDrawerProps) {
+    const supabase = createClient()
     const { playlists } = usePlaylists()
     const router = useRouter()
     const pathname = usePathname() // Add usePathname
@@ -28,8 +29,11 @@ export function MenuDrawer({ children }: MenuDrawerProps) {
 
     // Close drawer when pathname changes
     useEffect(() => {
-        setOpen(false)
-    }, [pathname])
+        if (open) {
+            const timer = setTimeout(() => setOpen(false), 0)
+            return () => clearTimeout(timer)
+        }
+    }, [pathname, open])
 
     const handleLogout = async () => {
         setOpen(false)

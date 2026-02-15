@@ -1,15 +1,18 @@
 'use client'
 
 import { useQuery } from "@tanstack/react-query"
-import { supabase } from "@/lib/supabase"
-import { useParams } from "next/navigation"
+import { createClient } from "@/utils/supabase/client"
+import { useParams, useRouter } from "next/navigation"
 import { usePlayer } from "@/store/player-store"
 import { Button } from "@/components/ui/button"
 import { Clock, Play } from "lucide-react"
 import { MediaItemActionMenu } from "@/components/media/media-item-action-menu"
+import Image from 'next/image'
 import { getCoverArt } from "@/lib/cover-art"
 
 export default function PlaylistPage() {
+    const supabase = createClient()
+    const router = useRouter()
     const { id } = useParams()
     const { setQueue } = usePlayer()
 
@@ -128,7 +131,7 @@ export default function PlaylistPage() {
                                 </span>
 
                                 <div className="relative w-10 h-10 overflow-hidden rounded-sm bg-neutral-800">
-                                    <img src={song.coverUrl} alt={song.title} className="object-cover w-full h-full" />
+                                    <Image src={song.coverUrl} alt={song.title} fill className="object-cover" unoptimized />
                                 </div>
 
                                 <div className="flex flex-col min-w-0">
@@ -162,7 +165,7 @@ export default function PlaylistPage() {
                         Find songs you love and add them to this playlist.
                     </p>
                     <Button variant="outline" className="border-white/20 hover:bg-white hover:text-black hover:border-white transition-colors"
-                        onClick={() => window.location.href = '/search'}
+                        onClick={() => router.push('/search')}
                     >
                         Find Songs
                     </Button>

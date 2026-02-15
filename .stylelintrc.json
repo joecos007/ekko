@@ -1,0 +1,27 @@
+{
+    "extends": "stylelint-config-standard",
+    "rules": {
+        "selector-class-pattern": null,
+        "import-notation": "string",
+        "at-rule-no-unknown": [
+            true,
+            {
+                "ignoreAtRules": [
+                    "tailwind",
+                    "apply",
+                    "variants",
+                    "responsive",
+                    "screen",
+                    "layer",
+                    "theme",
+                    "plugin",
+                    "config",
+                    "source"
+                ]
+            }
+        ],
+        "rule-empty-line-before": null,
+        "comment-empty-line-before": null,
+        "declaration-block-no-duplicate-properties": null
+    }
+}

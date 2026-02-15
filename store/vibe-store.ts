@@ -34,7 +34,6 @@ export const useVibeStore = create<VibeState>((set, get) => ({
     activeChannel: null,
 
     fetchVibes: async (songId) => {
-        console.log(`[VibeStore] fetchVibes called for songId: ${songId}`)
         set({ isLoading: true })
         const supabase = createClient()
 
@@ -43,12 +42,11 @@ export const useVibeStore = create<VibeState>((set, get) => ({
         const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(songId)
 
         if (!isUUID) {
-            console.warn(`[VibeStore] Skipping DB fetch for non-UUID song: ${songId}. Checking local storage.`)
+            // Non-UUID song: load local vibes only
             // Load Local Vibes ONLY
             try {
                 const localVibesRaw = JSON.parse(localStorage.getItem('ekko_local_vibes') || '[]') as Vibe[]
                 const localVibesForSong = localVibesRaw.filter(v => v.song_id === songId).sort((a, b) => a.timestamp - b.timestamp)
-                console.log(`[VibeStore] Loaded ${localVibesForSong.length} local vibes for ${songId}`)
                 set({ vibes: localVibesForSong, isLoading: false })
             } catch (e) {
                 console.error("[VibeStore] Error parsing local vibes", e)
@@ -66,27 +64,32 @@ export const useVibeStore = create<VibeState>((set, get) => ({
         if (vibeError) {
             // Check if table is missing (Postgres code 42P01 or PostgREST code PGRST205)
             if (vibeError.code === '42P01' || vibeError.code === 'PGRST205') {
-                console.warn("[VibeStore] 'vibes' table missing. Feature will be local-only.")
+                // 'vibes' table missing — feature will be local-only
 
                 // Load Local Vibes ONLY
                 try {
                     const localVibesRaw = JSON.parse(localStorage.getItem('ekko_local_vibes') || '[]') as Vibe[]
                     const localVibesForSong = localVibesRaw.filter(v => v.song_id === songId).sort((a, b) => a.timestamp - b.timestamp)
-                    console.log(`[VibeStore] Loaded ${localVibesForSong.length} local vibes (table missing)`)
                     set({ vibes: localVibesForSong, isLoading: false })
-                } catch (e) {
+                } catch {
                     set({ vibes: [], isLoading: false })
                 }
                 return
             }
 
-            console.error('[VibeStore] Error fetching vibes:', JSON.stringify(vibeError, null, 2))
+            // Handle Network Errors gracefully (e.g. adblockers, offline)
+            if (vibeError.message && (vibeError.message.includes("NetworkError") || vibeError.message.includes("fetch"))) {
+                // Network error — use local fallback
+                set({ isLoading: false })
+                return
+            }
+
+            console.error('[VibeStore] Error fetching vibes:', vibeError)
             set({ isLoading: false })
             return
         }
 
         const vibes = vibeData as Vibe[]
-        console.log(`[VibeStore] Fetched ${vibes.length} vibes from DB`)
 
         if (vibes.length === 0) {
             // Still check local vibes even if DB returned empty
@@ -94,11 +97,10 @@ export const useVibeStore = create<VibeState>((set, get) => ({
                 const localVibesRaw = JSON.parse(localStorage.getItem('ekko_local_vibes') || '[]') as Vibe[]
                 const localVibesForSong = localVibesRaw.filter(v => v.song_id === songId).sort((a, b) => a.timestamp - b.timestamp)
                 if (localVibesForSong.length > 0) {
-                    console.log(`[VibeStore] Merged ${localVibesForSong.length} local vibes with empty DB result`)
                     set({ vibes: localVibesForSong, isLoading: false })
                     return
                 }
-            } catch (e) { }
+            } catch { }
 
             set({ vibes: [], isLoading: false })
             return
@@ -131,7 +133,6 @@ export const useVibeStore = create<VibeState>((set, get) => ({
 
             const allVibes = [...vibesWithProfiles, ...uniqueLocalVibes].sort((a, b) => a.timestamp - b.timestamp)
 
-            console.log(`[VibeStore] Final vibes count: ${allVibes.length} (DB: ${vibes.length}, Local: ${uniqueLocalVibes.length})`)
             set({ vibes: allVibes, isLoading: false })
         } catch (e) {
             console.error("[VibeStore] Error loading local vibes:", e)
@@ -140,14 +141,7 @@ export const useVibeStore = create<VibeState>((set, get) => ({
     },
 
     addVibe: async (vibe) => {
-        console.log("[VibeStore] addVibe called", vibe)
         const supabase = createClient()
-
-        // Get current user profile for optimistic update
-        const { data: { user } } = await supabase.auth.getUser()
-        // We'll optimistically assume we can't get the profile details instantly without a fetch
-        // unless we store current user profile in a separate store.
-        // For now, let's just use a placeholder or empty profile optimistically.
 
         // Optimistic update
         const tempId = crypto.randomUUID()
@@ -159,21 +153,19 @@ export const useVibeStore = create<VibeState>((set, get) => ({
         }
 
         set((state) => ({ vibes: [...state.vibes, newVibe].sort((a, b) => a.timestamp - b.timestamp) }))
-        console.log("[VibeStore] Optimistic Vibe Added", newVibe)
 
         const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(vibe.song_id)
 
         if (vibe.song_id === "demo-radio" || vibe.user_id === "demo-user" || !isUUID) {
             // Demo mode OR non-database song: Don't hit Supabase, just let strict optimistic update persist
-            console.log("[VibeStore] Demo/Local vibe detected. Saving to localStorage.")
+            // Demo/Local vibe: save to localStorage only
             // Save to localStorage for persistence in this session
             try {
                 const localVibes = JSON.parse(localStorage.getItem('ekko_local_vibes') || '[]')
                 localVibes.push(newVibe)
                 localStorage.setItem('ekko_local_vibes', JSON.stringify(localVibes))
-                console.log("[VibeStore] Saved to localStorage")
-            } catch (e) {
-                console.error("[VibeStore] Failed to save local vibe", e)
+            } catch {
+                console.error("[VibeStore] Failed to save local vibe")
             }
             return
         }
@@ -186,17 +178,17 @@ export const useVibeStore = create<VibeState>((set, get) => ({
 
         if (error) {
             // Check if table is missing (Postgres code 42P01 or PostgREST code PGRST205)
-            if (error.code === '42P01' || error.code === 'PGRST205') {
-                console.warn("[VibeStore] 'vibes' table missing. Vibe added locally (not saved).")
+            // OR if RLS/permission denied (42501, PGRST301)
+            if (error.code === '42P01' || error.code === 'PGRST205' || error.code === '42501' || error.code === 'PGRST301') {
+                // 'vibes' table missing OR permission denied — save locally
 
                 // Save to localStorage for persistence in this session
                 try {
                     const localVibes = JSON.parse(localStorage.getItem('ekko_local_vibes') || '[]')
                     localVibes.push(newVibe)
                     localStorage.setItem('ekko_local_vibes', JSON.stringify(localVibes))
-                    console.log("[VibeStore] Saved to localStorage (fallback)")
-                } catch (e) {
-                    console.error("[VibeStore] Failed to save local vibe", e)
+                } catch {
+                    console.error("[VibeStore] Failed to save local vibe")
                 }
 
                 // Do NOT rollback. Let the optimistic update stay.
@@ -209,7 +201,6 @@ export const useVibeStore = create<VibeState>((set, get) => ({
             return
         }
 
-        console.log("[VibeStore] Vibe saved to DB successfully")
         // Replace temp with real
         set((state) => ({
             vibes: state.vibes.map(v => v.id === tempId ? (data as unknown as Vibe) : v)
@@ -217,44 +208,61 @@ export const useVibeStore = create<VibeState>((set, get) => ({
     },
 
     subscribeToVibes: (songId) => {
-        const supabase = createClient()
-        const channel = supabase
-            .channel(`vibes:${songId}`)
-            .on(
-                'postgres_changes',
-                { event: 'INSERT', schema: 'public', table: 'vibes', filter: `song_id=eq.${songId}` },
-                async (payload: any) => {
-                    const newVibeRaw = payload.new
+        let retryCount = 0
+        const MAX_RETRIES = 3
 
-                    // Fetch profile for this user
-                    const { data: profile } = await supabase
-                        .from('profiles')
-                        .select('username, avatar_url')
-                        .eq('id', newVibeRaw.user_id)
-                        .single()
+        const setupSubscription = () => {
+            const supabase = createClient()
+            const channel = supabase
+                .channel(`vibes:${songId}`)
+                .on(
+                    'postgres_changes',
+                    { event: 'INSERT', schema: 'public', table: 'vibes', filter: `song_id=eq.${songId}` },
+                    async (payload: any) => {
+                        const newVibeRaw = payload.new
 
-                    const newVibe: Vibe = {
-                        ...newVibeRaw,
-                        profiles: profile || { username: 'Unknown', avatar_url: null }
+                        // Fetch profile for this user
+                        const { data: profile } = await supabase
+                            .from('profiles')
+                            .select('username, avatar_url')
+                            .eq('id', newVibeRaw.user_id)
+                            .single()
+
+                        const newVibe: Vibe = {
+                            ...newVibeRaw,
+                            profiles: profile || { username: 'Unknown', avatar_url: null }
+                        }
+
+                        set((state) => {
+                            // Avoid duplicates if we just added it optimistically
+                            if (state.vibes.some(v => v.id === newVibe.id)) return state
+                            return { vibes: [...state.vibes, newVibe].sort((a, b) => a.timestamp - b.timestamp) }
+                        })
                     }
+                )
+                .subscribe((status) => {
+                    if (status === 'SUBSCRIBED') {
+                        // console.log('Subscribed to vibes')
+                        retryCount = 0 // Reset on success
+                    }
+                    if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
 
-                    set((state) => {
-                        // Avoid duplicates if we just added it optimistically
-                        if (state.vibes.some(v => v.id === newVibe.id)) return state
-                        return { vibes: [...state.vibes, newVibe].sort((a, b) => a.timestamp - b.timestamp) }
-                    })
-                }
-            )
-            .subscribe((status, err) => {
-                if (status === 'SUBSCRIBED') {
-                    // console.log('Subscribed to vibes')
-                }
-                if (status === 'CHANNEL_ERROR') {
-                    console.warn('VibeStream: Realtime subscription error (likely missing table).', err)
-                }
-            })
+                        if (retryCount < MAX_RETRIES) {
+                            retryCount++
+                            setTimeout(() => {
+                                channel.unsubscribe()
+                                setupSubscription()
+                            }, 2000)
+                        } else {
+                            console.error("VibeStream: Max retries reached. Realtime updates disabled for this session.")
+                        }
+                    }
+                })
 
-        set({ activeChannel: channel } as any)
+            set({ activeChannel: channel } as any)
+        }
+
+        setupSubscription()
     },
 
     unsubscribeFromVibes: () => {

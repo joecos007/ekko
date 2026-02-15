@@ -1,6 +1,6 @@
 "use client"
 
-import { usePlayer, RadioStation } from "@/store/player-store"
+import { usePlayer } from "@/store/player-store"
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -10,7 +10,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
-import { Radio, Signal } from "lucide-react"
+import { Signal } from "lucide-react"
 
 export function RadioStationSelector() {
     const { stations, currentStation, setStation, isRadio } = usePlayer()

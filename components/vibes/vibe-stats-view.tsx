@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { createClient } from "@/utils/supabase/client"
 import { Loader2, Radio, Music, Sparkles } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
+import Image from "next/image"
 import { usePlayer } from "@/store/player-store" // Import player store for local metadata
 
 type AggregatedVibe = {
@@ -28,127 +29,127 @@ export function VibeStatsView() {
     const { queue } = usePlayer()
 
     useEffect(() => {
-        loadStats()
-    }, [queue]) // Re-run if queue changes (e.g. first load)
+        const loadStats = async () => {
+            setIsLoading(true)
+            const supabase = createClient()
+            const aggregator = new Map<string, AggregatedVibe>()
 
-    const loadStats = async () => {
-        setIsLoading(true)
-        const supabase = createClient()
-        const aggregator = new Map<string, AggregatedVibe>()
+            // Helper to process a vibe
+            const processVibe = (v: any) => {
+                const songId = v.song_id || "unknown"
 
-        // Helper to process a vibe
-        const processVibe = (v: any) => {
-            const songId = v.song_id || "unknown"
-
-            if (!aggregator.has(songId)) {
-                // Initialize with default values. We will try to resolve metadata later.
-                aggregator.set(songId, {
-                    song_id: songId,
-                    song_title: songId === "demo-radio" ? "Live Radio" : "Unknown Song",
-                    song_artist: songId === "demo-radio" ? "Ekko FM" : "Unknown Artist",
-                    total_vibes: 0,
-                    emoji_counts: {},
-                    last_activity: 0
-                })
-            }
-
-            const agg = aggregator.get(songId)!
-            agg.total_vibes += 1
-
-            // Emoji count
-            if (v.emoji) {
-                agg.emoji_counts[v.emoji] = (agg.emoji_counts[v.emoji] || 0) + 1
-            }
-
-            // Capture most recent text message
-            if (v.text && !agg.recent_message) {
-                agg.recent_message = v.text
-            }
-
-            // Activity
-            const time = new Date(v.created_at).getTime()
-            if (time > agg.last_activity) agg.last_activity = time
-        }
-
-        try {
-            // 1. Fetch DB Vibes
-            const { data: dbVibes } = await supabase
-                .from('vibes')
-                .select('*')
-                .order('created_at', { ascending: false })
-                .limit(100)
-
-            if (dbVibes) {
-                dbVibes.forEach(processVibe)
-            }
-
-            // 2. Fetch Local Vibes
-            try {
-                const localVibesRaw = JSON.parse(localStorage.getItem('ekko_local_vibes') || '[]')
-                // Sort local vibes descending to capture recent messages correctly
-                localVibesRaw.sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-                localVibesRaw.forEach(processVibe)
-            } catch (e) {
-                console.error("Error loading local vibes", e)
-            }
-
-            // 3. Resolve Metadata (DB + Local Fallback)
-            const songIds = Array.from(aggregator.keys()).filter(id => id !== "demo-radio" && id !== "unknown")
-
-            // 3a. Try fetching from Supabase first
-            if (songIds.length > 0) {
-                const { data: songData } = await supabase
-                    .from('songs')
-                    .select('id, title, artist, cover_url')
-                    .in('id', songIds)
-
-                if (songData) {
-                    songData.forEach(song => {
-                        const agg = aggregator.get(song.id)
-                        if (agg) {
-                            agg.song_title = song.title
-                            agg.song_artist = song.artist
-                            agg.song_cover = song.cover_url
-                        }
+                if (!aggregator.has(songId)) {
+                    // Initialize with default values. We will try to resolve metadata later.
+                    aggregator.set(songId, {
+                        song_id: songId,
+                        song_title: songId === "demo-radio" ? "Live Radio" : "Unknown Song",
+                        song_artist: songId === "demo-radio" ? "Ekko FM" : "Unknown Artist",
+                        total_vibes: 0,
+                        emoji_counts: {},
+                        last_activity: 0
                     })
                 }
+
+                const agg = aggregator.get(songId)!
+                agg.total_vibes += 1
+
+                // Emoji count
+                if (v.emoji) {
+                    agg.emoji_counts[v.emoji] = (agg.emoji_counts[v.emoji] || 0) + 1
+                }
+
+                // Capture most recent text message
+                if (v.text && !agg.recent_message) {
+                    agg.recent_message = v.text
+                }
+
+                // Activity
+                const time = new Date(v.created_at).getTime()
+                if (time > agg.last_activity) agg.last_activity = time
             }
 
-            // 3b. Local Fallback for remaining "Unknown" songs
-            // Iterate through the aggregator to find still-unknown songs
-            aggregator.forEach((agg) => {
-                if (agg.song_title === "Unknown Song" && agg.song_id !== "unknown") {
-                    // Try to find in local queue
-                    const localSong = queue.find(s => s.id === agg.song_id)
-                    if (localSong) {
-                        agg.song_title = localSong.title
-                        agg.song_artist = localSong.artist
-                        agg.song_cover = localSong.coverUrl
+            try {
+                // 1. Fetch DB Vibes
+                const { data: dbVibes } = await supabase
+                    .from('vibes')
+                    .select('*')
+                    .order('created_at', { ascending: false })
+                    .limit(100)
+
+                if (dbVibes) {
+                    dbVibes.forEach(processVibe)
+                }
+
+                // 2. Fetch Local Vibes
+                try {
+                    const localVibesRaw = JSON.parse(localStorage.getItem('ekko_local_vibes') || '[]')
+                    // Sort local vibes descending to capture recent messages correctly
+                    localVibesRaw.sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+                    localVibesRaw.forEach(processVibe)
+                } catch (_e) {
+                    console.error("Error loading local vibes", _e)
+                }
+
+                // 3. Resolve Metadata (DB + Local Fallback)
+                const songIds = Array.from(aggregator.keys()).filter(id => id !== "demo-radio" && id !== "unknown")
+
+                // 3a. Try fetching from Supabase first
+                if (songIds.length > 0) {
+                    const { data: songData } = await supabase
+                        .from('songs')
+                        .select('id, title, artist, cover_url')
+                        .in('id', songIds)
+
+                    if (songData) {
+                        songData.forEach(song => {
+                            const agg = aggregator.get(song.id)
+                            if (agg) {
+                                agg.song_title = song.title
+                                agg.song_artist = song.artist
+                                agg.song_cover = song.cover_url
+                            }
+                        })
                     }
                 }
-            })
 
-            // 4. Calculate Dominant Emoji & Final Sort
-            const result = Array.from(aggregator.values()).map(agg => {
-                let maxCount = 0
-                let dominant = "🎵" // Default
-                Object.entries(agg.emoji_counts).forEach(([emoji, count]) => {
-                    if (count > maxCount) {
-                        maxCount = count
-                        dominant = emoji
+                // 3b. Local Fallback for remaining "Unknown" songs
+                // Iterate through the aggregator to find still-unknown songs
+                aggregator.forEach((agg) => {
+                    if (agg.song_title === "Unknown Song" && agg.song_id !== "unknown") {
+                        // Try to find in local queue
+                        const localSong = queue.find(s => s.id === agg.song_id)
+                        if (localSong) {
+                            agg.song_title = localSong.title
+                            agg.song_artist = localSong.artist
+                            agg.song_cover = localSong.coverUrl
+                        }
                     }
                 })
-                return { ...agg, dominant_emoji: dominant }
-            }).sort((a, b) => b.last_activity - a.last_activity)
 
-            setStats(result)
+                // 4. Calculate Dominant Emoji & Final Sort
+                const result = Array.from(aggregator.values()).map(agg => {
+                    let maxCount = 0
+                    let dominant = "🎵" // Default
+                    Object.entries(agg.emoji_counts).forEach(([emoji, count]) => {
+                        if (count > maxCount) {
+                            maxCount = count
+                            dominant = emoji
+                        }
+                    })
+                    return { ...agg, dominant_emoji: dominant }
+                }).sort((a, b) => b.last_activity - a.last_activity)
 
-        } catch (e) {
-            console.error("Error aggregating stats:", e)
-        } finally {
-            setIsLoading(false)
+                setStats(result)
+
+            } catch (_e) {
+                console.error("Error aggregating stats:", _e)
+            } finally {
+                setIsLoading(false)
+            }
         }
-    }
+
+        loadStats()
+    }, [queue]) // Re-run if queue changes (e.g. first load)
 
     if (isLoading) {
         return (
@@ -200,10 +201,12 @@ function VibeTile({ stat, index }: { stat: AggregatedVibe, index: number }) {
             {/* Background Image */}
             <div className="absolute inset-0">
                 {stat.song_cover ? (
-                    <img
+                    <Image
                         src={stat.song_cover}
                         alt={stat.song_title}
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-60 group-hover:opacity-40"
+                        fill
+                        className="object-cover transition-transform duration-700 group-hover:scale-110 opacity-60 group-hover:opacity-40"
+                        unoptimized
                     />
                 ) : (
                     <div className="w-full h-full bg-gradient-to-br from-neutral-800 to-neutral-900 flex items-center justify-center">
@@ -233,7 +236,7 @@ function VibeTile({ stat, index }: { stat: AggregatedVibe, index: number }) {
                 {stat.recent_message && (
                     <div className="absolute translate-y-20 opacity-0 group-hover:opacity-100 group-hover:translate-y-16 transition-all duration-500 text-center px-4 w-full">
                         <p className="text-[10px] text-white/90 font-medium bg-black/60 backdrop-blur-md px-3 py-2 rounded-xl border border-white/5 line-clamp-2 shadow-xl italic leading-relaxed">
-                            "{stat.recent_message}"
+                            &quot;{stat.recent_message}&quot;
                         </p>
                     </div>
                 )}

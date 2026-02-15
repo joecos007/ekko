@@ -15,13 +15,12 @@ export function VibeOverlay() {
     const [visibleVibes, setVisibleVibes] = useState<Vibe[]>([])
     const soundRef = useRef<Howl | null>(null)
 
+    const processedVibesRef = useRef<Set<string>>(new Set())
+
     // Init sound
     useEffect(() => {
-        soundRef.current = new Howl({
-            src: ['https://assets.mixkit.co/sfx/preview/mixkit-software-interface-start-2574.mp3'], // Subtle pop/shimmer
-            volume: 0.2,
-            preload: true
-        })
+        // Sound disabled for now to avoid auto-play policy issues
+        soundRef.current = null
     }, [])
 
     // Load vibes when song changes
@@ -35,11 +34,15 @@ export function VibeOverlay() {
         fetchVibes(targetId)
         subscribeToVibes(targetId)
 
+        // Capture ref value for cleanup to avoid stale ref warning
+        const processedVibes = processedVibesRef.current
+
         return () => {
             unsubscribeFromVibes()
             setVisibleVibes([])
+            processedVibes.clear()
         }
-    }, [currentSong?.id, isRadio])
+    }, [currentSong?.id, isRadio, fetchVibes, subscribeToVibes, unsubscribeFromVibes])
 
     // Specific logic to show vibes that match current timestamp
     useEffect(() => {
@@ -51,8 +54,8 @@ export function VibeOverlay() {
         )
 
         activeVibes.forEach(v => {
-            if (!visibleVibes.find(existing => existing.id === v.id)) {
-                console.log("[VibeOverlay] Showing vibe:", v)
+            if (!processedVibesRef.current.has(v.id)) {
+                processedVibesRef.current.add(v.id)
                 setVisibleVibes(prev => [...prev, v])
 
                 // Play sound

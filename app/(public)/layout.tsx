@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Disc } from "lucide-react";
 import { PublicMobileNav } from "@/components/layout/public-mobile-nav";
+import { PublicFooter } from "@/components/layout/public-footer";
 
 export default function PublicLayout({
     children,
@@ -9,7 +10,7 @@ export default function PublicLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <div className="min-h-screen bg-background text-foreground flex flex-col font-geist-sans pb-24 md:pb-32">
+        <div className="min-h-[100dvh] bg-background text-foreground flex flex-col font-geist-sans">
             <header className="fixed top-0 w-full z-50 px-6 md:px-16 lg:px-24 py-4 flex items-center justify-between transition-all duration-300 bg-black/50 backdrop-blur-md border-b border-white/5 supports-[backdrop-filter]:bg-black/20">
                 <Link href="/" className="flex items-center gap-2 group cursor-pointer">
                     <div className="relative">
@@ -39,9 +40,7 @@ export default function PublicLayout({
             <main className="flex-1">
                 {children}
             </main>
-            <footer className="py-8 text-center text-neutral-500 text-sm border-t border-neutral-900">
-                <p>© {new Date().getFullYear()} EKKO. Built for the future of audio.</p>
-            </footer>
+            <PublicFooter />
         </div>
     );
 }

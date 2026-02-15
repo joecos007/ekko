@@ -7,6 +7,7 @@ import { useUser } from "@/hooks/use-user"
 import { useRouter } from "next/navigation"
 import { useDropzone } from "react-dropzone"
 import * as tus from "tus-js-client"
+import NextImage from "next/image"
 
 import {
     Dialog,
@@ -59,8 +60,7 @@ export function UploadSongDialog({ children }: UploadSongDialogProps) {
         handleSubmit,
         reset,
         setValue,
-        watch,
-        formState: { errors }
+        watch
     } = useForm<UploadFormValues>({
         defaultValues: {
             author: '',
@@ -420,7 +420,7 @@ export function UploadSongDialog({ children }: UploadSongDialogProps) {
                             <input {...getImageInputProps()} />
                             {imageFile ? (
                                 <div className="relative w-full h-full">
-                                    <img src={imagePreviewUrl || ''} className="w-full h-full object-cover" alt="Preview" />
+                                    <NextImage src={imagePreviewUrl || ''} fill className="object-cover" alt="Preview" unoptimized />
                                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                                         <p className="text-xs font-bold">Change</p>
                                     </div>
