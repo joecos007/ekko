@@ -73,6 +73,8 @@ export function DotPattern({
   glow = false,
   ...props
 }: DotPatternProps) {
+  if (width <= 0) width = 16
+  if (height <= 0) height = 16
 
   const id = useId()
   const containerRef = useRef<SVGSVGElement>(null)

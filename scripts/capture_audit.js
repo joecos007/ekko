@@ -11,13 +11,14 @@ import { chromium } from 'playwright-core';
 
         // 1. Home Page Audit
         console.log('Navigating to Home...');
-        await page.goto('http://localhost:3000/home');
+        const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
+        await page.goto(`${baseUrl}/home`);
         await page.waitForTimeout(3000); // Wait for animations
         await page.screenshot({ path: 'audit_home.png', fullPage: true });
 
         // 2. Search Page Audit
         console.log('Navigating to Search...');
-        await page.goto('http://localhost:3000/search');
+        await page.goto(`${baseUrl}/search`);
         await page.waitForTimeout(2000);
         await page.screenshot({ path: 'audit_search_empty.png', fullPage: true });
 

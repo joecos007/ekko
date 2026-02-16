@@ -370,11 +370,15 @@
   --animate-shiny-text: shiny-text 8s infinite;
   --animate-marquee: marquee var(--duration) infinite linear;
   --animate-marquee-vertical: marquee-vertical var(--duration) linear infinite;
+  --animate-ripple: ripple var(--duration,2s) ease calc(var(--i, 0)*.2s) infinite;
+  --animate-shine: shine var(--duration) infinite linear;
+
   @keyframes shimmer-slide {
   to {
     transform: translate(calc(100cqw - 100%), 0);
     }
   }
+
   @keyframes spin-around {
   0% {
     transform: translateZ(0) rotate(0);
@@ -389,6 +393,7 @@
     transform: translateZ(0) rotate(360deg);
     }
   }
+
   @keyframes shiny-text {
   0%, 90%, 100% {
     background-position: calc(-100% - var(--shiny-width)) 0;
@@ -397,6 +402,7 @@
     background-position: calc(100% + var(--shiny-width)) 0;
     }
   }
+
   @keyframes marquee {
   from {
     transform: translateX(0);
@@ -405,6 +411,7 @@
     transform: translateX(calc(-100% - var(--gap)));
     }
   }
+
   @keyframes marquee-vertical {
   from {
     transform: translateY(0);
@@ -413,8 +420,7 @@
     transform: translateY(calc(-100% - var(--gap)));
     }
   }
-  --animate-ripple: ripple var(--duration,2s) ease calc(var(--i, 0)*.2s) infinite
-;
+
   @keyframes ripple {
   0%, 100% {
     transform: translate(-50%, -50%) scale(1);
@@ -423,7 +429,7 @@
     transform: translate(-50%, -50%) scale(0.9);
     }
   }
-  --animate-shine: shine var(--duration) infinite linear;
+
   @keyframes shine {
   0% {
     background-position: 0% 0%;
@@ -431,10 +437,11 @@
   50% {
     background-position: 100% 100%;
     }
-  to {
+  100% {
     background-position: 0% 0%;
     }
-  }}
+  }
+}
 
 @layer base {
   * {

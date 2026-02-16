@@ -21,7 +21,7 @@ import { LogOut, User as UserSettings } from "lucide-react"
 import { toast } from "sonner"
 
 export function Header() {
-    const supabase = createClient()
+    const [supabase] = useState(() => createClient())
     const { user } = useUser()
     const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
     const router = useRouter()

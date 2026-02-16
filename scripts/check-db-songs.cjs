@@ -13,8 +13,6 @@ try {
         console.log('.env.local found. Parsing...');
         const envConfig = fs.readFileSync(envPath, 'utf8');
         const lines = envConfig.split(/\r?\n/); // Handle CRLF
-        console.log('First 5 lines of .env.local:');
-        lines.slice(0, 5).forEach(l => console.log(`[${l}]`));
 
         lines.forEach(line => {
             const trimmed = line.trim();

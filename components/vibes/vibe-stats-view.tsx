@@ -17,6 +17,7 @@ type AggregatedVibe = {
     dominant_emoji?: string
     last_activity: number
     recent_message?: string
+    recent_message_time?: number
 }
 
 export function VibeStatsView() {
@@ -59,8 +60,12 @@ export function VibeStatsView() {
                 }
 
                 // Capture most recent text message
-                if (v.text && !agg.recent_message) {
-                    agg.recent_message = v.text
+                if (v.text) {
+                    const msgTime = new Date(v.created_at).getTime()
+                    if (!agg.recent_message_time || msgTime > agg.recent_message_time) {
+                        agg.recent_message = v.text
+                        agg.recent_message_time = msgTime
+                    }
                 }
 
                 // Activity
@@ -70,11 +75,13 @@ export function VibeStatsView() {
 
             try {
                 // 1. Fetch DB Vibes
-                const { data: dbVibes } = await supabase
+                const { data: dbVibes, error: dbError } = await supabase
                     .from('vibes')
                     .select('*')
                     .order('created_at', { ascending: false })
                     .limit(100)
+
+                if (dbError) throw dbError
 
                 if (dbVibes) {
                     dbVibes.forEach(processVibe)

@@ -210,6 +210,7 @@ export const useVibeStore = create<VibeState>((set, get) => ({
     subscribeToVibes: (songId) => {
         let retryCount = 0
         const MAX_RETRIES = 3
+        let retryTimeout: NodeJS.Timeout | null = null
 
         const setupSubscription = () => {
             const supabase = createClient()
@@ -242,14 +243,17 @@ export const useVibeStore = create<VibeState>((set, get) => ({
                 )
                 .subscribe((status) => {
                     if (status === 'SUBSCRIBED') {
-                        // console.log('Subscribed to vibes')
                         retryCount = 0 // Reset on success
                     }
                     if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
 
                         if (retryCount < MAX_RETRIES) {
                             retryCount++
-                            setTimeout(() => {
+                            // Store timeout so we can clear it if unsubscribed
+                            retryTimeout = setTimeout(() => {
+                                // Only retry if we are still the active channel? 
+                                // Actually, if we unsubscribe, we should have cleared this timeout.
+                                // But if we are here, it means we haven't unsubscribed yet explicitly via the action.
                                 channel.unsubscribe()
                                 setupSubscription()
                             }, 2000)
@@ -259,17 +263,23 @@ export const useVibeStore = create<VibeState>((set, get) => ({
                     }
                 })
 
-            set({ activeChannel: channel } as any)
+            // Store channel and timeout in a way we can access for cleanup?
+            // Since we only have one active channel, we can store it in state.
+            // But we also need to store the timeout to clear it.
+            // For now, let's attach the timeout to the channel object or store it in module scope?
+            // Module scope is bad. Store it in the store state.
+            set({ activeChannel: channel, retryTimeout } as any)
         }
 
         setupSubscription()
     },
 
     unsubscribeFromVibes: () => {
-        const { activeChannel } = get()
+        const { activeChannel, retryTimeout } = get() as any
+        if (retryTimeout) clearTimeout(retryTimeout)
         if (activeChannel) {
             activeChannel.unsubscribe()
-            set({ activeChannel: null })
+            set({ activeChannel: null, retryTimeout: null } as any)
         }
     }
 }))

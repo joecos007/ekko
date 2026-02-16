@@ -247,13 +247,13 @@ export default function Home() {
                 </div>
               )
 
-              if (song.isSpecial) {
-                return (
-                  <ElectricBorder key={song.id} color="#60A5FA" speed={2} chaos={0.3} className="h-full rounded-2xl">
-                    {CardContent}
-                  </ElectricBorder>
-                )
-              }
+              // if (song.isSpecial) {
+              //   return (
+              //     <ElectricBorder key={song.id} color="#60A5FA" speed={2} chaos={0.3} className="h-full rounded-2xl">
+              //       {CardContent}
+              //     </ElectricBorder>
+              //   )
+              // }
 
               return <div key={song.id} className="h-full">{CardContent}</div>
             })}

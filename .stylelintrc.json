@@ -16,7 +16,8 @@
                     "theme",
                     "plugin",
                     "config",
-                    "source"
+                    "source",
+                    "custom-variant"
                 ]
             }
         ],
