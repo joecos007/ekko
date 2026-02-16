@@ -3,7 +3,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import Image from 'next/image'
 import { ChevronLeft, ChevronRight, Users, Sparkles, Music2 } from 'lucide-react'
-import { usePlayer } from '@/store/player-store'
 
 interface FeaturedSlide {
     id: string
@@ -63,8 +62,6 @@ export function FeaturedCarousel() {
     const [currentSlide, setCurrentSlide] = useState(0)
     const [isHovered, setIsHovered] = useState(false)
     const [direction, setDirection] = useState<'left' | 'right'>('right')
-    // setQueue is not used, so usePlayer can be removed if no other player state/actions are needed.
-    // const { setQueue } = usePlayer()
 
     const goToSlide = useCallback((index: number) => {
         setDirection(index > currentSlide ? 'right' : 'left')

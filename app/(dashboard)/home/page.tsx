@@ -128,7 +128,7 @@ export default function Home() {
       {/* ═══════════════════════════════════════════════════ */}
       {/* 🎯 FEATURED CAROUSEL — Auto-rotating hero section */}
       {/* ═══════════════════════════════════════════════════ */}
-      <FeaturedCarousel allSongs={allSongs} />
+      <FeaturedCarousel />
 
       {/* ═══════════════════════════════════════════════════ */}
       {/* Quick Access Row                                    */}

@@ -3,7 +3,15 @@ import { test, expect } from '@playwright/test';
 test('analyze radio transition performance', async ({ page }) => {
     console.log('Starting Radio Performance Test...');
 
-    // 1. Go to Home
+    // 1. Login first
+    await page.goto('http://localhost:3000/login');
+    // Use robust locators matching complete-workflow
+    await page.locator('input[type="email"], input[name="email"]').first().fill('admin@ekko.app');
+    await page.locator('input[type="password"], input[name="password"]').first().fill('Test@2026');
+    await page.locator('button[type="submit"], button:has-text("Sign In"), button:has-text("Login")').first().click();
+    await page.waitForURL('**/home', { timeout: 30000 });
+
+    // 2. Go to Home (ensure we are there)
     await page.goto('http://localhost:3000/home');
     await page.waitForLoadState('domcontentloaded');
     console.log('Page loaded.');
@@ -11,7 +19,9 @@ test('analyze radio transition performance', async ({ page }) => {
     // 2. Play a normal song first
     console.log('Playing normal song...');
     // Click the first track row to play a song
+    // Wait for the song cards to actually be visible and interactive
     const trackRow = page.locator('.group.relative').first();
+    await expect(trackRow).toBeVisible({ timeout: 10000 });
     await trackRow.click();
 
     // Wait for player to be active (Play/Pause button exists)

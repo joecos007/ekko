@@ -64,7 +64,7 @@ test.describe('EKKO Complete User Workflow', () => {
 
             console.log('Waiting for dashboard redirect...')
             // Increase timeout for cold starts / auth processing
-            await page.waitForURL((url) => url.pathname.includes('/home'), { timeout: 20000 })
+            await page.waitForURL((url) => url.pathname.includes('/home'), { timeout: 30000 })
             await page.waitForLoadState('domcontentloaded')
             console.log('Login successful.')
         })
@@ -86,7 +86,13 @@ test.describe('EKKO Complete User Workflow', () => {
             await expect(carouselDots.first()).toBeVisible()
 
             // Verify quick access cards
-            await expect(page.getByText('Liked Songs').first()).toBeVisible()
+            // Wait for the container to be present first
+            const quickAccessSection = page.locator('section').filter({ hasText: 'Liked Songs' }).first()
+            await expect(quickAccessSection).toBeVisible({ timeout: 10000 })
+
+            const likedSongsBtn = page.getByText('Liked Songs').first()
+            await likedSongsBtn.scrollIntoViewIfNeeded()
+            await expect(likedSongsBtn).toBeVisible()
             await expect(page.getByText('Daily Mix').first()).toBeVisible()
             console.log('Dashboard verified.')
         })
