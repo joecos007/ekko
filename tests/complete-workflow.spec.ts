@@ -111,7 +111,7 @@ test.describe('EKKO Complete User Workflow', () => {
                 // Go back to home
                 const homeLink = sidebar.getByRole('link', { name: /home/i })
                 await homeLink.click({ force: true })
-                await page.waitForURL('**/')
+                await page.waitForURL('**/home')
             }
 
             // Navigate to Library

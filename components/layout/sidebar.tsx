@@ -61,18 +61,18 @@ export function Sidebar() {
                 </Link>
 
                 <nav className="flex flex-col gap-1.5">
-                    <Link href="/">
+                    <Link href="/home">
                         <Button
                             variant="ghost"
                             className={cn(
                                 "w-full justify-start gap-4 text-sm font-medium transition-all duration-300 relative overflow-hidden group/btn",
-                                pathname === "/"
+                                pathname === "/home"
                                     ? "bg-blue-600/10 text-white shadow-[0_0_20px_rgba(37,99,235,0.3)] border border-blue-500/30"
                                     : "text-neutral-400 hover:text-white hover:bg-white/5 hover:pl-6"
                             )}
                         >
-                            {pathname === "/" && <div className="absolute inset-y-0 left-0 w-1 bg-blue-500 shadow-[0_0_10px_#3b82f6]" />}
-                            <Home className={cn("w-5 h-5 transition-colors", pathname === "/" ? "text-blue-400" : "group-hover/btn:text-blue-400")} />
+                            {pathname === "/home" && <div className="absolute inset-y-0 left-0 w-1 bg-blue-500 shadow-[0_0_10px_#3b82f6]" />}
+                            <Home className={cn("w-5 h-5 transition-colors", pathname === "/home" ? "text-blue-400" : "group-hover/btn:text-blue-400")} />
                             Home
                         </Button>
                     </Link>

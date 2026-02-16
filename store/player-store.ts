@@ -94,7 +94,7 @@ export const usePlayer = create<PlayerState>((set, get) => ({
     }),
 
     setQueue: (songs, startIndex = 0) =>
-        set({ queue: songs, currentIndex: startIndex, isPlaying: true, isRadio: false, isLoading: true }),
+        set({ queue: songs, currentIndex: startIndex, isPlaying: true, isRadio: false, isLoading: true, currentTime: 0 }),
 
     play: () => set({ isPlaying: true }),
     pause: () => set({ isPlaying: false }),
@@ -127,7 +127,7 @@ export const usePlayer = create<PlayerState>((set, get) => ({
             }
         }
 
-        set({ currentIndex: nextIndex, isPlaying: true, isLoading: true })
+        set({ currentIndex: nextIndex, isPlaying: true, isLoading: true, currentTime: 0 })
     },
 
     prev: () => {
@@ -147,7 +147,7 @@ export const usePlayer = create<PlayerState>((set, get) => ({
         }
 
         if (currentIndex > 0) {
-            set({ currentIndex: currentIndex - 1, isPlaying: true, isLoading: true })
+            set({ currentIndex: currentIndex - 1, isPlaying: true, isLoading: true, currentTime: 0 })
         }
     },
 
@@ -241,6 +241,7 @@ export const usePlayer = create<PlayerState>((set, get) => ({
         isRadio: true, // Auto switch to radio mode
         isPlaying: true, // Auto play
         isLoading: true, // Start loading
+        currentTime: 0, // Reset time
         radioMetadata: {
             title: station.name,
             artist: station.style,

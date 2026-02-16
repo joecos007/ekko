@@ -87,7 +87,7 @@ export default function LandingPage() {
                         className="flex flex-col sm:flex-row gap-4"
                     >
                         <PremiumButton
-                            href="/signup"
+                            href="/login"
                             icon={<Sparkles className="w-5 h-5" />}
                         >
                             Start Creating
@@ -299,7 +299,7 @@ export default function LandingPage() {
                                     ))}
                                 </div>
 
-                                <Link href="/signup">
+                                <Link href="/login">
                                     <Button className="w-fit rounded-full px-8 h-12 bg-white text-black hover:bg-neutral-200 font-bold">
                                         Start Your Journey
                                     </Button>
