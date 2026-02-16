@@ -93,7 +93,7 @@ export function PlayerBar() {
                 <div className="absolute bottom-0 left-4 right-4 h-[2px] bg-white/10 rounded-full overflow-hidden">
                     <div
                         className="h-full bg-white/50 rounded-full transition-[width] duration-200"
-                        style={{ width: `${duration > 0 && duration !== Infinity ? (currentTime / duration) * 100 : 0}%` }}
+                        style={{ width: `${duration > 0 && duration !== Infinity ? Math.min((currentTime / duration) * 100, 100) : 0}%` }}
                     />
                 </div>
             </div>

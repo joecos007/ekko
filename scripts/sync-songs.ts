@@ -9,9 +9,12 @@ const envPath = path.resolve(process.cwd(), '.env.local');
 const envContent = fs.readFileSync(envPath, 'utf-8');
 const env: Record<string, string> = {};
 envContent.split('\n').forEach(line => {
-    const [key, value] = line.split('=');
+    const eqIndex = line.indexOf('=');
+    if (eqIndex === -1) return;
+    const key = line.slice(0, eqIndex).trim();
+    const value = line.slice(eqIndex + 1).trim();
     if (key && value) {
-        env[key.trim()] = value.trim();
+        env[key] = value;
     }
 });
 

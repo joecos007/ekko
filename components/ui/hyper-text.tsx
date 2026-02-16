@@ -37,8 +37,7 @@ export function HyperText({
   delay = 0,
   startOnView = false,
   animateOnHover = true,
-  characterSet = DEFAULT_CHARACTER_SET,
-  ...props
+  characterSet = DEFAULT_CHARACTER_SET
 }: HyperTextProps) {
 
   const [displayText, setDisplayText] = useState<string[]>(() =>
@@ -124,7 +123,6 @@ export function HyperText({
       ref={elementRef}
       className={cn("overflow-hidden py-2 text-4xl font-bold", className)}
       onMouseEnter={handleAnimationTrigger}
-      {...props}
     >
       <AnimatePresence>
         {displayText.map((letter, index) => (

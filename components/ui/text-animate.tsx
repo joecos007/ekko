@@ -308,11 +308,9 @@ const TextAnimateBase = ({
   className,
   segmentClassName,
   startOnView = true,
-  once = false,
   by = "word",
   animation = "fadeIn",
-  accessible = true,
-  ...props
+  accessible = true
 }: TextAnimateProps) => {
 
 
@@ -388,9 +386,7 @@ const TextAnimateBase = ({
         animate={startOnView ? undefined : "show"}
         exit="exit"
         className={cn("whitespace-pre-wrap", className)}
-        viewport={{ once }}
         aria-label={accessible ? children : undefined}
-        {...props}
       >
         {accessible && <span className="sr-only">{children}</span>}
         {segments.map((segment, i) => (

@@ -43,3 +43,8 @@ next-env.d.ts
 # test results
 /test-results/
 /playwright-report/
+
+# PWA build artifacts
+/public/sw.js
+/public/workbox-*.js
+/public/sw.js.map

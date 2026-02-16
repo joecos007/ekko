@@ -2,8 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import Image from 'next/image'
-import { Play, ChevronLeft, ChevronRight, Users, Sparkles, Music2 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { ChevronLeft, ChevronRight, Users, Sparkles, Music2 } from 'lucide-react'
 import { usePlayer } from '@/store/player-store'
 
 interface FeaturedSlide {
@@ -151,33 +150,17 @@ export function FeaturedCarousel({ allSongs }: { allSongs?: any[] }) {
                     </p>
                 )}
 
-                {/* Stats + Actions */}
-                <div className="flex items-center gap-6 mt-5">
-                    <Button
-                        size="lg"
-                        className="rounded-full bg-white text-black hover:bg-white/90 px-8 font-bold h-12 shadow-[0_0_30px_rgba(255,255,255,0.2)] hover:scale-105 transition-all duration-300 active:scale-95"
-                        onClick={() => {
-                            if (allSongs && allSongs.length > 0) {
-                                const shuffled = [...allSongs].sort(() => 0.5 - Math.random())
-                                setQueue(shuffled)
-                            }
-                        }}
-                    >
-                        <Play className="w-5 h-5 fill-black mr-2" />
-                        Play Now
-                    </Button>
-
-                    {slide.stats && (
-                        <div className="hidden md:flex items-center gap-4">
-                            {slide.stats.map((stat) => (
-                                <div key={stat.label} className="flex items-center gap-2">
-                                    <span className="text-white/90 font-bold text-sm">{stat.value}</span>
-                                    <span className="text-white/40 text-xs font-medium">{stat.label}</span>
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                </div>
+                {/* Stats Only - No Play Button for Clean Look */}
+                {slide.stats && (
+                    <div className="flex items-center gap-4 mt-5">
+                        {slide.stats.map((stat) => (
+                            <div key={stat.label} className="flex items-center gap-2">
+                                <span className="text-white/90 font-bold text-sm">{stat.value}</span>
+                                <span className="text-white/40 text-xs font-medium">{stat.label}</span>
+                            </div>
+                        ))}
+                    </div>
+                )}
             </div>
 
             {/* Navigation Arrows */}

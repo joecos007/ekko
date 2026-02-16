@@ -30,7 +30,7 @@ import { RecentlyPlayed } from "@/components/home/recently-played"
 
 export default function Home() {
   const router = useRouter()
-  const supabase = createClient()
+  const [supabase] = useState(() => createClient())
   const { isPlaying, queue, currentIndex, togglePlay, setQueue } = usePlayer()
   const currentSong = queue[currentIndex]
 
@@ -146,7 +146,10 @@ export default function Home() {
             className="cursor-pointer"
           >
             <div
+              role="button"
+              tabIndex={0}
               onClick={() => router.push(item.href)}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); router.push(item.href) } }}
               className="group flex items-center gap-3 bg-white/5 hover:bg-white/10 border border-white/5 rounded-lg overflow-hidden transition-all duration-300 hover:scale-[1.02]"
             >
               <div className={`h-16 w-16 flex items-center justify-center text-xl font-bold text-white shadow-lg ${item.color}`}>
@@ -193,8 +196,11 @@ export default function Home() {
             {allSongs?.map((song: any, i: number) => {
               const CardContent = (
                 <div
+                  role="button"
+                  tabIndex={0}
                   className={`glass-card p-4 md:p-5 rounded-2xl group cursor-pointer h-full transition-all duration-500 hover:scale-[1.03] hover:shadow-glow-blue ${!song.isSpecial ? 'hover:bg-white/10' : ''}`}
                   onClick={() => setQueue(allSongs, i)}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setQueue(allSongs, i) } }}
                 >
                   <div className="relative aspect-square w-full mb-5 bg-neutral-900 shadow-2xl overflow-hidden rounded-xl border border-white/5">
                     <Image

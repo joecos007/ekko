@@ -6,11 +6,11 @@ export default function PrivacyPage() {
                 <div className="prose prose-invert prose-lg text-neutral-400">
                     <p>Last updated: February 14, 2026</p>
                     <p>Your privacy is important to us. It is Ekko&apos;s policy to respect your privacy regarding any information we may collect from you across our website, https://ekko.ai, and other sites we own and operate.</p>
-                    <h3>1. Information We Collect</h3>
+                    <h2>1. Information We Collect</h2>
                     <p>We only ask for personal information when we truly need it to provide a service to you. We collect it by fair and lawful means, with your knowledge and consent.</p>
-                    <h3>2. Usage of AI Data</h3>
+                    <h2>2. Usage of AI Data</h2>
                     <p>When you use our generative tools, we may analyze your inputs to improve our models. However, we anonymize this data and do not use personal identifiers in our training sets.</p>
-                    <h3>3. Audio Fingerprinting</h3>
+                    <h2>3. Audio Fingerprinting</h2>
                     <p>We use audio fingerprinting technology to identify copyright claims and ensure proper attribution for artists on our platform.</p>
                     <p>We generally retain collected information for as long as necessary to provide you with your requested service.</p>
                 </div>

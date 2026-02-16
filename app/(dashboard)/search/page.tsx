@@ -6,7 +6,7 @@ import { useQuery } from "@tanstack/react-query"
 import { createClient } from "@/utils/supabase/client"
 import { usePlayer } from "@/store/player-store"
 import { Play, ArrowUpRight, Loader2 } from "lucide-react"
-import { Suspense } from "react"
+import { Suspense, useState } from "react"
 import { MediaItemActionMenu } from "@/components/media/media-item-action-menu"
 import Image from "next/image"
 
@@ -16,7 +16,7 @@ import { AnimatedList } from "@/components/ui/animated-list"
 import { MagicCard } from "@/components/ui/magic-card"
 
 function SearchContent() {
-    const supabase = createClient()
+    const [supabase] = useState(() => createClient())
     const searchParams = useSearchParams()
     const query = searchParams.get("q")
     const { setQueue } = usePlayer()
@@ -184,8 +184,11 @@ function SearchContent() {
                                 {results.map((song: any, i: number) => (
                                     <div
                                         key={song.id}
+                                        role="button"
+                                        tabIndex={0}
                                         className="group relative bg-neutral-900/40 hover:bg-neutral-900/80 border border-white/5 hover:border-purple-500/30 rounded-2xl p-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl cursor-pointer"
                                         onClick={() => setQueue(results, i)}
+                                        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setQueue(results, i) } }}
                                     >
                                         <div className="aspect-square rounded-xl bg-neutral-950 mb-4 relative overflow-hidden shadow-lg border border-white/5">
                                             {song.coverUrl ? (

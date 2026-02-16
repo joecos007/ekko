@@ -44,12 +44,14 @@ export function ArtistPills() {
                 <div className="flex items-center gap-2">
                     <button
                         onClick={() => scroll('left')}
+                        aria-label="Scroll artists left"
                         className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white/50 hover:text-white hover:bg-white/10 transition-all"
                     >
                         <ChevronLeft className="w-4 h-4" />
                     </button>
                     <button
                         onClick={() => scroll('right')}
+                        aria-label="Scroll artists right"
                         className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white/50 hover:text-white hover:bg-white/10 transition-all"
                     >
                         <ChevronRight className="w-4 h-4" />

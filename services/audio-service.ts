@@ -40,7 +40,7 @@ class AudioService {
         this.sound = new Howl({
             src: [src],
             html5: true, // Force HTML5 Audio for streaming/large files
-            preload: 'metadata',
+            preload: true,
             volume: 0, // Start silent for fade-in
             format: isLive ? ['mp3'] : undefined,
             onplay: () => {

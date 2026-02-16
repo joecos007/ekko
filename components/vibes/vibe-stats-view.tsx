@@ -30,7 +30,9 @@ export function VibeStatsView() {
     const { queue } = usePlayer()
 
     useEffect(() => {
+        let isMounted = true
         const loadStats = async () => {
+            if (!isMounted) return
             setIsLoading(true)
             const supabase = createClient()
             const aggregator = new Map<string, AggregatedVibe>()
@@ -146,17 +148,19 @@ export function VibeStatsView() {
                     return { ...agg, dominant_emoji: dominant }
                 }).sort((a, b) => b.last_activity - a.last_activity)
 
-                setStats(result)
+                if (isMounted) setStats(result)
 
             } catch (_e) {
                 console.error("Error aggregating stats:", _e)
             } finally {
-                setIsLoading(false)
+                if (isMounted) setIsLoading(false)
             }
         }
 
         loadStats()
-    }, [queue]) // Re-run if queue changes (e.g. first load)
+
+        return () => { isMounted = false }
+    }, [queue])
 
     if (isLoading) {
         return (

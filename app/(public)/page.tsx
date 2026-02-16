@@ -18,6 +18,8 @@ import { AnimatedShinyText } from "@/components/ui/animated-shiny-text";
 import { BorderBeam } from "@/components/ui/border-beam";
 import { Particles } from "@/components/ui/particles";
 import { Marquee } from "@/components/ui/marquee";
+import { PremiumButton } from "@/components/ui/premium-button";
+import { GlassButton } from "@/components/ui/glass-button";
 
 const aiKeywords = [
     "Generative Audio",
@@ -49,7 +51,7 @@ export default function LandingPage() {
                     <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/90" />
                 </div>
 
-                <div className="relative z-10 flex flex-col items-center justify-center text-center px-4 md:px-8 h-full">
+                <div className="relative z-10 flex flex-col items-center justify-center text-center px-4 md:px-8 h-full pt-40 md:pt-48">
                     <div className="z-10 flex items-center justify-center mb-8">
                         <Link href="/platform" className={cn("group rounded-full border border-black/5 bg-neutral-100/10 text-base transition-all ease-in hover:cursor-pointer hover:bg-neutral-200/10 dark:border-white/5 dark:bg-neutral-900/10 dark:hover:bg-neutral-900/20")}>
                             <AnimatedShinyText className="inline-flex items-center justify-center px-4 py-1 transition ease-out hover:text-neutral-600 hover:duration-300 hover:dark:text-neutral-400">
@@ -63,7 +65,7 @@ export default function LandingPage() {
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-                        className="text-5xl md:text-7xl lg:text-9xl font-bold tracking-tighter leading-none mb-6 text-white text-transparent bg-clip-text bg-gradient-to-b from-neutral-200 to-neutral-600"
+                        className="text-4xl md:text-6xl lg:text-8xl font-bold tracking-tighter leading-none mb-6 text-white text-transparent bg-clip-text bg-gradient-to-b from-neutral-200 to-neutral-600"
                     >
                         Every Story <br />
                         Deserves a Song.
@@ -73,7 +75,7 @@ export default function LandingPage() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8, delay: 0.4 }}
-                        className="text-neutral-400 text-base md:text-xl max-w-xl leading-relaxed mb-10"
+                        className="text-neutral-200 text-base md:text-xl max-w-xl leading-relaxed mb-10 drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)]"
                     >
                         Turn your life&apos;s moments into melodies. Create with AI, share your journey, and find your rhythm in a community of dreamers.
                     </motion.p>
@@ -84,31 +86,29 @@ export default function LandingPage() {
                         transition={{ duration: 0.5, delay: 0.6 }}
                         className="flex flex-col sm:flex-row gap-4"
                     >
-                        <Link href="/signup">
-                            <ShimmerButton className="shadow-2xl">
-                                <span className="whitespace-pre-wrap text-center text-sm font-medium leading-none tracking-tight text-white dark:from-white dark:to-slate-900/10 lg:text-lg">
-                                    Start Creating
-                                </span>
-                            </ShimmerButton>
-                        </Link>
-                        <Link href="/about">
-                            <Button variant="outline" className="h-12 px-8 rounded-full border-white/20 hover:bg-white/10 text-white font-bold tracking-wide backdrop-blur-sm transition-all">
-                                Our Story
-                            </Button>
-                        </Link>
+                        <PremiumButton
+                            href="/signup"
+                            icon={<Sparkles className="w-5 h-5" />}
+                        >
+                            Start Creating
+                        </PremiumButton>
+                        <GlassButton href="/about">
+                            Our Story
+                        </GlassButton>
+                    </motion.div>
+
+                    {/* Scroll Indicator */}
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 1, duration: 1 }}
+                        className="mt-16 flex flex-col items-center gap-2"
+                    >
+                        <span className="text-[10px] uppercase tracking-widest text-neutral-500">Discover</span>
+                        <div className="w-[1px] h-12 bg-gradient-to-b from-white/50 to-transparent" />
                     </motion.div>
                 </div>
 
-                {/* Scroll Indicator */}
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 1, duration: 1 }}
-                    className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2"
-                >
-                    <span className="text-[10px] uppercase tracking-widest text-neutral-500">Discover</span>
-                    <div className="w-[1px] h-12 bg-gradient-to-b from-white/50 to-transparent" />
-                </motion.div>
                 <Particles
                     className="absolute inset-0 z-0"
                     quantity={100}
