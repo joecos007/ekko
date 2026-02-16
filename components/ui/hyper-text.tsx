@@ -16,8 +16,6 @@ interface HyperTextProps extends MotionProps {
   duration?: number
   /** Delay before animation starts in milliseconds */
   delay?: number
-  /** Component to render as - defaults to div */
-  as?: React.ElementType
   /** Whether to start animation when element comes into view */
   startOnView?: boolean
   /** Whether to trigger animation on hover */
@@ -37,7 +35,6 @@ export function HyperText({
   className,
   duration = 800,
   delay = 0,
-  as: Component = "div",
   startOnView = false,
   animateOnHover = true,
   characterSet = DEFAULT_CHARACTER_SET,
@@ -124,9 +121,6 @@ export function HyperText({
 
   return (
     <motion.div
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      as={Component as any}
       ref={elementRef}
       className={cn("overflow-hidden py-2 text-4xl font-bold", className)}
       onMouseEnter={handleAnimationTrigger}

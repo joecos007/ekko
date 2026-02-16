@@ -20,6 +20,7 @@ type VibeState = {
     vibes: Vibe[]
     isLoading: boolean
     activeChannel: any | null
+    retryTimeout: NodeJS.Timeout | null
 
     // Actions
     fetchVibes: (songId: string) => Promise<void>
@@ -32,6 +33,7 @@ export const useVibeStore = create<VibeState>((set, get) => ({
     vibes: [],
     isLoading: false,
     activeChannel: null,
+    retryTimeout: null,
 
     fetchVibes: async (songId) => {
         set({ isLoading: true })
@@ -80,7 +82,13 @@ export const useVibeStore = create<VibeState>((set, get) => ({
             // Handle Network Errors gracefully (e.g. adblockers, offline)
             if (vibeError.message && (vibeError.message.includes("NetworkError") || vibeError.message.includes("fetch"))) {
                 // Network error — use local fallback
-                set({ isLoading: false })
+                try {
+                    const localVibesRaw = JSON.parse(localStorage.getItem('ekko_local_vibes') || '[]') as Vibe[]
+                    const localVibesForSong = localVibesRaw.filter(v => v.song_id === songId).sort((a, b) => a.timestamp - b.timestamp)
+                    set({ vibes: localVibesForSong, isLoading: false })
+                } catch {
+                    set({ vibes: [], isLoading: false })
+                }
                 return
             }
 
@@ -244,6 +252,10 @@ export const useVibeStore = create<VibeState>((set, get) => ({
                 .subscribe((status) => {
                     if (status === 'SUBSCRIBED') {
                         retryCount = 0 // Reset on success
+                        if (retryTimeout) {
+                            clearTimeout(retryTimeout)
+                            retryTimeout = null
+                        }
                     }
                     if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
 
@@ -268,18 +280,18 @@ export const useVibeStore = create<VibeState>((set, get) => ({
             // But we also need to store the timeout to clear it.
             // For now, let's attach the timeout to the channel object or store it in module scope?
             // Module scope is bad. Store it in the store state.
-            set({ activeChannel: channel, retryTimeout } as any)
+            set({ activeChannel: channel, retryTimeout })
         }
 
         setupSubscription()
     },
 
     unsubscribeFromVibes: () => {
-        const { activeChannel, retryTimeout } = get() as any
+        const { activeChannel, retryTimeout } = get()
         if (retryTimeout) clearTimeout(retryTimeout)
         if (activeChannel) {
             activeChannel.unsubscribe()
-            set({ activeChannel: null, retryTimeout: null } as any)
+            set({ activeChannel: null, retryTimeout: null })
         }
     }
 }))

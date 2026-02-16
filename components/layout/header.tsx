@@ -74,7 +74,7 @@ export function Header() {
                                 <Avatar className="h-8 w-8 transition-transform hover:scale-105 border-2 border-transparent hover:border-white/20 cursor-pointer">
                                     <AvatarImage src={avatarUrl || user.user_metadata?.avatar_url || ""} className="object-cover" />
                                     <AvatarFallback className="bg-gradient-to-br from-indigo-500 to-purple-600 text-white text-xs font-bold">
-                                        {user.email?.[0].toUpperCase()}
+                                        {user.email?.[0]?.toUpperCase() ?? "?"}
                                     </AvatarFallback>
                                 </Avatar>
                             </DropdownMenuTrigger>

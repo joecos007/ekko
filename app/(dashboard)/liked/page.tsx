@@ -102,7 +102,6 @@ export default function LikedSongsPage() {
                                 <MediaItemActionMenu
                                     songId={song.id}
                                     songTitle={song.title}
-                                    artistName={song.artist}
                                 />
                             </div>
                         </div>

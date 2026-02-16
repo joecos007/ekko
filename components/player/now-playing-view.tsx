@@ -142,7 +142,7 @@ export function NowPlayingView() {
                     <div className="flex items-center gap-4 mb-2">
                         {/* Action Menu integration - Only for songs */}
                         {!isRadio && (
-                            <MediaItemActionMenu songId={display.id} songTitle={display.title} artistName={display.artist}>
+                            <MediaItemActionMenu songId={display.id} songTitle={display.title}>
                                 <Button size="icon" variant="ghost" className="text-neutral-400 hover:text-white hover:scale-110 transition-transform">
                                     <Heart className="w-8 h-8" />
                                 </Button>

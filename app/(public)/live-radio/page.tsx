@@ -60,14 +60,14 @@ export default function LiveRadioPage() {
                     </div>
 
                     <div className="absolute inset-0 flex items-center justify-center">
-                        <Link href="/login">
-                            <Button className="h-16 w-16 rounded-full bg-white text-black hover:scale-110 transition-transform shadow-[0_0_30px_rgba(255,255,255,0.5)] flex items-center justify-center pl-1">
+                        <Button asChild className="h-16 w-16 rounded-full bg-white text-black hover:scale-110 transition-transform shadow-[0_0_30px_rgba(255,255,255,0.5)] flex items-center justify-center pl-1">
+                            <Link href="/login">
                                 <span className="sr-only">Play</span>
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M8 5V19L19 12L8 5Z" />
                                 </svg>
-                            </Button>
-                        </Link>
+                            </Link>
+                        </Button>
                     </div>
                 </div>
 

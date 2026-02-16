@@ -146,7 +146,6 @@ export default function PlaylistPage() {
                                         <MediaItemActionMenu
                                             songId={song.id}
                                             songTitle={song.title}
-                                            artistName={song.artist}
                                             playlistId={id as string}
                                         />
                                     </div>

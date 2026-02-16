@@ -183,12 +183,14 @@ export function FeaturedCarousel({ allSongs }: { allSongs?: any[] }) {
             {/* Navigation Arrows */}
             <button
                 onClick={prevSlide}
+                aria-label="Previous slide"
                 className="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-black/40 backdrop-blur-md border border-white/10 flex items-center justify-center text-white/70 hover:text-white hover:bg-black/60 transition-all opacity-0 group-hover:opacity-100 duration-300"
             >
                 <ChevronLeft className="w-5 h-5" />
             </button>
             <button
                 onClick={nextSlide}
+                aria-label="Next slide"
                 className="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-black/40 backdrop-blur-md border border-white/10 flex items-center justify-center text-white/70 hover:text-white hover:bg-black/60 transition-all opacity-0 group-hover:opacity-100 duration-300"
             >
                 <ChevronRight className="w-5 h-5" />
@@ -200,6 +202,8 @@ export function FeaturedCarousel({ allSongs }: { allSongs?: any[] }) {
                     <button
                         key={i}
                         onClick={() => goToSlide(i)}
+                        aria-label={`Go to slide ${i + 1}`}
+                        aria-current={i === currentSlide ? 'true' : undefined}
                         className={`rounded-full transition-all duration-500 ${i === currentSlide
                             ? 'w-8 h-2.5 bg-white shadow-[0_0_10px_rgba(255,255,255,0.5)]'
                             : 'w-2.5 h-2.5 bg-white/30 hover:bg-white/50'

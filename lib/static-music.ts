@@ -29,7 +29,7 @@ export const STATIC_SONGS = [
         artist: "Team Ekko",
         audio_path: "/music/poblacion-3-groove.mp3",
         audioUrl: "/music/poblacion-3-groove.mp3",
-        coverUrl: "/song-cover/pablacion-3-groove.jpeg",
+        coverUrl: "/song-cover/poblacion-3-groove.jpeg",
         duration: 0,
         isSpecial: false,
         source: 'static'

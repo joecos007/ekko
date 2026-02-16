@@ -187,8 +187,7 @@ export const Particles: React.FC<ParticlesProps> = ({
 
   const initCanvas = useCallback(() => {
     resizeCanvas()
-    drawParticles()
-  }, [resizeCanvas, drawParticles])
+  }, [resizeCanvas])
 
   const onMouseMove = useCallback(() => {
     if (canvasRef.current) {

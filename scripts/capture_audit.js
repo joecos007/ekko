@@ -32,7 +32,7 @@ import { chromium } from 'playwright-core';
         // 4. Verify Now Playing / Visualizer
         console.log('Testing Player...');
         // Go back home to ensure clean state
-        await page.goto('http://localhost:3000/home');
+        await page.goto(`${baseUrl}/home`);
         await page.waitForTimeout(2000);
 
         // Click the first play button found on a card

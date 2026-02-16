@@ -148,7 +148,6 @@ export default function DailyMixPage() {
                                     <MediaItemActionMenu
                                         songId={song.id}
                                         songTitle={song.title}
-                                        artistName={song.artist}
                                     />
                                 </div>
                             </span>

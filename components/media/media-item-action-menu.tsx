@@ -21,7 +21,6 @@ import { useState } from "react"
 interface MediaItemActionMenuProps {
     songId: string
     songTitle: string
-    artistName?: string
     children?: React.ReactNode
     className?: string
     playlistId?: string // Context for removal
@@ -63,11 +62,18 @@ export function MediaItemActionMenu({
 
     const handleLike = async () => {
         try {
+            const { data: { user }, error: authError } = await supabase.auth.getUser()
+            if (authError || !user) {
+                toast.error("Please sign in to like songs")
+                setIsOpen(false)
+                return
+            }
+
             const { error } = await supabase
                 .from('liked_songs')
                 .insert({
                     song_id: songId,
-                    user_id: (await supabase.auth.getUser()).data.user?.id
+                    user_id: user.id
                 })
 
             if (error) {

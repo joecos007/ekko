@@ -386,9 +386,6 @@ const TextAnimateBase = ({
   return (
     <AnimatePresence mode="popLayout">
       <motion.div
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        as={Component as any}
         variants={finalVariants.container as Variants}
         initial="hidden"
         whileInView={startOnView ? "show" : undefined}

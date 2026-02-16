@@ -193,7 +193,6 @@ function SearchContent() {
                                                 <MediaItemActionMenu
                                                     songId={song.id}
                                                     songTitle={song.title}
-                                                    artistName={song.artist}
                                                     className="bg-black/50 hover:bg-black/70 backdrop-blur-md rounded-full w-8 h-8 text-white"
                                                 />
                                             </div>

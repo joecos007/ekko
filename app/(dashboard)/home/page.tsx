@@ -11,7 +11,7 @@ import { MediaItemActionMenu } from "@/components/media/media-item-action-menu"
 import { getCoverArt, PLAYLIST_COVERS } from "@/lib/cover-art"
 
 import { TurntableLoader } from "@/components/ui/turntable-loader"
-import { ElectricBorder } from "@/components/ui/electric-border"
+
 import { FloatingParticles } from "@/components/ui/floating-particles"
 import { STATIC_SONGS } from "@/lib/static-music"
 import { useRouter } from "next/navigation"
@@ -237,7 +237,6 @@ export default function Home() {
                       <MediaItemActionMenu
                         songId={song.id}
                         songTitle={song.title}
-                        artistName={song.artist}
                         className="h-9 w-9 hover:bg-white/10 text-white rounded-full transition-colors"
                       />
                     </div>
@@ -247,13 +246,7 @@ export default function Home() {
                 </div>
               )
 
-              // if (song.isSpecial) {
-              //   return (
-              //     <ElectricBorder key={song.id} color="#60A5FA" speed={2} chaos={0.3} className="h-full rounded-2xl">
-              //       {CardContent}
-              //     </ElectricBorder>
-              //   )
-              // }
+
 
               return <div key={song.id} className="h-full">{CardContent}</div>
             })}

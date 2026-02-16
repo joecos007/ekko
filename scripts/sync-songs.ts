@@ -40,7 +40,7 @@ async function syncSongs() {
 
     for (const file of files) {
         console.log(`Processing ${file}...`);
-        const audioPathInDb = `/music/${file}`;
+        const audioPathInDb = `/music/${encodeURIComponent(file)}`;
 
         // 2. Check if exists in DB
         const { data: existing } = await supabase

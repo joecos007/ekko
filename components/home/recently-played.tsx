@@ -86,7 +86,6 @@ export function RecentlyPlayed({ songs }: { songs: any[] }) {
                                     <MediaItemActionMenu
                                         songId={song.id}
                                         songTitle={song.title}
-                                        artistName={song.artist}
                                         className="h-8 w-8 hover:bg-white/10 text-white/40 rounded-full transition-colors"
                                     />
                                 </div>
