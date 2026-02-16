@@ -1,11 +1,12 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { supabase } from "@/lib/supabase"
+import { createClient } from "@/utils/supabase/client"
 import { useState } from "react"
 import { Loader2 } from "lucide-react"
 
 export function OAuthButtons() {
+    const supabase = createClient()
     const [loadingGoogle, setLoadingGoogle] = useState(false)
     const [loadingGithub, setLoadingGithub] = useState(false)
 

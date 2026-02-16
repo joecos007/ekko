@@ -61,6 +61,11 @@ type PlayerState = {
     toggleRadio: () => void
     setRadioMetadata: (metadata: Partial<{ title: string; artist: string; coverUrl: string; listeners: number }>) => void
     setStation: (station: RadioStation) => void
+
+    isLoading: boolean
+    setIsLoading: (loading: boolean) => void
+
+    reset: () => void
 }
 
 export const usePlayer = create<PlayerState>((set, get) => ({
@@ -72,9 +77,24 @@ export const usePlayer = create<PlayerState>((set, get) => ({
     duration: 0,
     shuffle: false,
     repeat: 'off',
+    isLoading: false,
+
+    setIsLoading: (loading) => set({ isLoading: loading }),
+
+    reset: () => set({
+        queue: [],
+        currentIndex: 0,
+        isPlaying: false,
+        currentTime: 0,
+        duration: 0,
+        isRadio: false,
+        isLoading: false,
+        seekRequest: null,
+        // We can keep volume and stations/metadata defaults
+    }),
 
     setQueue: (songs, startIndex = 0) =>
-        set({ queue: songs, currentIndex: startIndex, isPlaying: true, isRadio: false }),
+        set({ queue: songs, currentIndex: startIndex, isPlaying: true, isRadio: false, isLoading: true }),
 
     play: () => set({ isPlaying: true }),
     pause: () => set({ isPlaying: false }),
@@ -107,7 +127,7 @@ export const usePlayer = create<PlayerState>((set, get) => ({
             }
         }
 
-        set({ currentIndex: nextIndex, isPlaying: true })
+        set({ currentIndex: nextIndex, isPlaying: true, isLoading: true })
     },
 
     prev: () => {
@@ -121,17 +141,13 @@ export const usePlayer = create<PlayerState>((set, get) => ({
         }
 
         if (currentTime > 3) {
-            // Logic to replay song will be handled by UI consuming this state
-            // For now, we update state, but usually we need a way to signal "seek to 0" 
-            // We'll rely on the AudioProvider listening to 'currentIndex' change or explicit seek
-            // But preventing 'prev' means we just stay on current index.
-            // We'll leave it as is for now: UI sets audio.currentTime = 0 if detecting this?
-            // Actually, best to just decrement index if possible, or do nothing.
-            // Simplified:
+            // Restart the current song by seeking to the beginning
+            set({ seekRequest: 0, currentTime: 0 })
+            return
         }
 
         if (currentIndex > 0) {
-            set({ currentIndex: currentIndex - 1, isPlaying: true })
+            set({ currentIndex: currentIndex - 1, isPlaying: true, isLoading: true })
         }
     },
 
@@ -181,14 +197,14 @@ export const usePlayer = create<PlayerState>((set, get) => ({
         {
             id: 'lofi-beats',
             name: 'Lofi Hip Hop',
-            url: 'https://stream.zeno.fm/0r0xa792kwzuv',
+            url: 'https://boxradio-edge-00.streamafrica.net/lofi',
             style: 'Chill / Study',
             cover: '/images/stations/lofi.jpg'
         },
         {
             id: 'classical',
             name: 'Classical Flow',
-            url: 'https://icecast.radiofrance.fr/francemusiqueeasyclassique-midfi.mp3',
+            url: 'https://wrti-live.streamguys1.com/classical-mp3',
             style: 'Classical / Focus',
             cover: '/images/stations/classical.jpg'
         },
@@ -213,7 +229,6 @@ export const usePlayer = create<PlayerState>((set, get) => ({
         return {
             isRadio: willBeRadio,
             isPlaying: willBeRadio,
-            ...(willBeRadio ? {} : { isPlaying: false })
         }
     }),
 
@@ -221,10 +236,11 @@ export const usePlayer = create<PlayerState>((set, get) => ({
         radioMetadata: { ...state.radioMetadata, ...metadata }
     })),
 
-    setStation: (station) => set((state) => ({
+    setStation: (station) => set(() => ({
         currentStation: station,
         isRadio: true, // Auto switch to radio mode
         isPlaying: true, // Auto play
+        isLoading: true, // Start loading
         radioMetadata: {
             title: station.name,
             artist: station.style,

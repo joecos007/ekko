@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { supabase } from '@/lib/supabase'
+import { createClient } from '@/utils/supabase/client'
 
 export type Playlist = {
     id: string
@@ -11,6 +11,7 @@ export type Playlist = {
 
 export function usePlaylists() {
     const queryClient = useQueryClient()
+    const supabase = createClient()
 
     const { data: playlists, isLoading } = useQuery({
         queryKey: ['playlists'],
@@ -32,13 +33,17 @@ export function usePlaylists() {
     })
 
     const createPlaylist = useMutation({
-        mutationFn: async (title: string) => {
+        mutationFn: async ({ title, description }: { title: string, description?: string }) => {
             const { data: { user } } = await supabase.auth.getUser()
             if (!user) throw new Error("Not authenticated")
 
             const { data, error } = await supabase
                 .from('playlists')
-                .insert({ title, user_id: user.id })
+                .insert({
+                    title,
+                    description,
+                    user_id: user.id
+                })
                 .select()
                 .single()
 

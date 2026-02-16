@@ -3,14 +3,22 @@
 import { usePlaylists } from "@/hooks/use-playlists"
 import { usePlayer } from "@/store/player-store"
 import { useQuery } from "@tanstack/react-query"
-import { supabase } from "@/lib/supabase"
+import { createClient } from "@/utils/supabase/client"
+import { useRouter } from "next/navigation"
+import Image from 'next/image'
 import Link from "next/link"
-import { Heart, ListMusic, Sparkles, Disc, Play } from "lucide-react"
+import { Heart, ListMusic, Play } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
 import { getCoverArt, PLAYLIST_COVERS } from "@/lib/cover-art"
 
+// Magic UI Components
+import { BorderBeam } from "@/components/ui/border-beam"
+import { MagicCard } from "@/components/ui/magic-card"
+
 export default function LibraryPage() {
+    const router = useRouter()
+    const supabase = createClient()
     const { playlists } = usePlaylists()
     const { setQueue } = usePlayer()
 
@@ -81,10 +89,12 @@ export default function LibraryPage() {
                         <Link href="/liked">
                             <div className="relative overflow-hidden bg-neutral-900 md:col-span-2 p-6 rounded-lg h-64 flex flex-col justify-end group cursor-pointer hover:scale-[1.01] transition-all shadow-lg glow-purple">
                                 <div className="absolute inset-0 z-0">
-                                    <img
+                                    <Image
                                         src={PLAYLIST_COVERS.liked}
                                         alt="Liked Songs"
-                                        className="w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity"
+                                        fill
+                                        className="object-cover opacity-60 group-hover:opacity-80 transition-opacity"
+                                        unoptimized
                                     />
                                     <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
                                 </div>
@@ -96,21 +106,24 @@ export default function LibraryPage() {
                                     <h3 className="text-3xl font-bold mb-1 tracking-tight">Liked Songs</h3>
                                     <p className="text-indigo-100 text-sm font-medium">{likedCount || 0} songs</p>
                                 </div>
+                                <BorderBeam size={250} duration={12} delay={9} />
                             </div>
                         </Link>
 
                         {/* User Playlists */}
                         {playlists?.map(playlist => (
-                            <Link key={playlist.id} href={`/playlist/${playlist.id}`}>
-                                <div className="glass-card glow-teal p-4 rounded-lg h-64 flex flex-col justify-end group cursor-pointer transition-all">
-                                    <div className="flex-1 flex items-center justify-center mb-4 bg-neutral-900/50 rounded-md shadow-inner relative overflow-hidden group-hover:shadow-2xl transition-all">
-                                        <div className="absolute inset-0 bg-gradient-to-br from-neutral-800 to-neutral-900 opacity-50" />
-                                        <ListMusic className="w-12 h-12 text-neutral-600 group-hover:text-white transition-colors relative z-10" />
+                            <MagicCard key={playlist.id} gradientColor="#14f195" className="h-64 rounded-lg">
+                                <Link href={`/playlist/${playlist.id}`}>
+                                    <div className="glass-card glow-teal p-4 rounded-lg h-full flex flex-col justify-end group cursor-pointer transition-all">
+                                        <div className="flex-1 flex items-center justify-center mb-4 bg-neutral-900/50 rounded-md shadow-inner relative overflow-hidden group-hover:shadow-2xl transition-all">
+                                            <div className="absolute inset-0 bg-gradient-to-br from-neutral-800 to-neutral-900 opacity-50" />
+                                            <ListMusic className="w-12 h-12 text-neutral-600 group-hover:text-white transition-colors relative z-10" />
+                                        </div>
+                                        <h3 className="font-bold truncate">{playlist.title}</h3>
+                                        <p className="text-xs text-neutral-500 mt-1 uppercase tracking-wide">My Playlist</p>
                                     </div>
-                                    <h3 className="font-bold truncate">{playlist.title}</h3>
-                                    <p className="text-xs text-neutral-500 mt-1 uppercase tracking-wide">My Playlist</p>
-                                </div>
-                            </Link>
+                                </Link>
+                            </MagicCard>
                         ))}
                     </div>
                 </TabsContent>
@@ -120,13 +133,15 @@ export default function LibraryPage() {
                         {/* Daily Mix Card */}
                         <div
                             className="relative overflow-hidden border border-white/5 bg-neutral-900 rounded-lg h-64 flex flex-col justify-end group cursor-pointer hover:scale-[1.02] transition-all shadow-lg glow-teal"
-                            onClick={() => window.location.href = '/mix/daily'}
+                            onClick={() => router.push('/mix/daily')}
                         >
                             <div className="absolute inset-0 z-0">
-                                <img
+                                <Image
                                     src={PLAYLIST_COVERS.dailyMix}
                                     alt="Daily Mix"
-                                    className="w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity"
+                                    fill
+                                    className="object-cover opacity-60 group-hover:opacity-80 transition-opacity"
+                                    unoptimized
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
                             </div>
@@ -152,10 +167,12 @@ export default function LibraryPage() {
 
                         <div className="relative overflow-hidden border border-white/5 bg-neutral-900 rounded-lg h-64 flex flex-col justify-end group cursor-pointer hover:scale-[1.02] transition-all shadow-lg glow-purple opacity-90 hover:opacity-100">
                             <div className="absolute inset-0 z-0">
-                                <img
+                                <Image
                                     src={PLAYLIST_COVERS.discover}
                                     alt="Discover Weekly"
-                                    className="w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity"
+                                    fill
+                                    className="object-cover opacity-60 group-hover:opacity-80 transition-opacity"
+                                    unoptimized
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
                             </div>

@@ -2,16 +2,19 @@
 import { createClient } from '@supabase/supabase-js';
 import fs from 'fs';
 import path from 'path';
-import { fileURLToPath } from 'url';
+// import { fileURLToPath } from 'url';
 
 // Load environment variables from .env.local manually
 const envPath = path.resolve(process.cwd(), '.env.local');
 const envContent = fs.readFileSync(envPath, 'utf-8');
 const env: Record<string, string> = {};
 envContent.split('\n').forEach(line => {
-    const [key, value] = line.split('=');
+    const eqIndex = line.indexOf('=');
+    if (eqIndex === -1) return;
+    const key = line.slice(0, eqIndex).trim();
+    const value = line.slice(eqIndex + 1).trim();
     if (key && value) {
-        env[key.trim()] = value.trim();
+        env[key] = value;
     }
 });
 
@@ -40,43 +43,14 @@ async function syncSongs() {
 
     for (const file of files) {
         console.log(`Processing ${file}...`);
-        const filePath = path.join(MUSIC_DIR, file);
-        const fileBuffer = fs.readFileSync(filePath);
-
-        // 1. Upload to Storage
-        const storagePath = `uploads/${file}`; // Using 'uploads' folder in bucket to avoid collisions? Or just root.
-        // Let's check if it exists first?
-        // Actually, upsert: false by default.
-
-        // Sanitize filename for storage?
-        const sanitizedFile = file.replace(/[^a-zA-Z0-9.\-_]/g, '_');
-        const finalStoragePath = sanitizedFile;
-
-        console.log(`  Uploading to storage as ${finalStoragePath}...`);
-        const { data: uploadData, error: uploadError } = await supabase.storage
-            .from('songs') // Bucket name
-            .upload(finalStoragePath, fileBuffer, {
-                upsert: true,
-                contentType: 'audio/mpeg'
-            });
-
-        if (uploadError) {
-            console.error(`  Upload failed: ${uploadError.message}`);
-            // If it failed, it might verify if it already exists?
-            // createClient auth might be an issue if RLS is strict for anon.
-            // But we will try.
-        } else {
-            console.log(`  Upload successful: ${uploadData?.path}`);
-        }
-
-        const audioPathInDb = finalStoragePath;
+        const audioPathInDb = `/music/${encodeURIComponent(file)}`;
 
         // 2. Check if exists in DB
         const { data: existing } = await supabase
             .from('songs')
             .select('id')
             .eq('title', file.replace('.mp3', '')) // Simple check by title
-            .single();
+            .maybeSingle();
 
         if (existing) {
             console.log(`  Song already in DB (ID: ${existing.id}). Skipping insert.`);

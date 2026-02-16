@@ -4,9 +4,9 @@
 EKKO is a next-generation social audio streaming platform built with modern web technologies. It focuses on high-fidelity audio, real-time social interaction ("Vibes"), and a premium, immersive user interface.
 
 ## Tech Stack
-- **Frontend Framework**: Next.js 15 (App Router)
+- **Frontend Framework**: Next.js 16 (App Router)
 - **Language**: TypeScript
-- **Styling**: Tailwind CSS with custom animations and utility classes
+- **Styling**: Tailwind CSS 4 with custom animations
 - **State Management**: Zustand (Player, Vibes)
 - **Data Fetching**: TanStack Query
 - **Backend/Database**: Supabase (PostgreSQL, Auth, Storage, Realtime)
@@ -16,39 +16,33 @@ EKKO is a next-generation social audio streaming platform built with modern web 
 
 ### 1. Authentication
 - Implemented via Supabase Auth.
-- Protected routes handling in `middleware.ts`.
+- Protected routes handled in root `middleware.ts`.
 - Custom Login/Signup pages in `app/(auth)`.
 
 ### 2. Player System
-- **Global State**: `store/player-store.ts` manages queue, playback status, and volume.
-- **Audio Provider**: `components/player/audio-provider.tsx` handles the actual `Howler` instance and audio lifecycle.
-- **UI**: `components/player/player-bar.tsx` provides the persistent playback controls.
+- **Global State**: `store/player-store.ts`.
+- **Audio Service**: `services/audio-service.ts` (Singleton).
+- **UI**: `components/player/` (Bar, Now Playing, Controls).
 
 ### 3. Vibe System (Real-time)
-- **Concept**: Users can share "vibes" (emojis/reactions) attached to specific timestamps or songs.
-- **Implementation**: Supabase Realtime channels.
-- **Components**: `components/vibes/*` handles the heatmap and interactive elements.
+- **Concept**: Interactive emojis/reactions.
+- **Components**: `components/vibes/`.
 
-### 4. Admin Dashboard
-- Dedicated section for platform management.
-- Features: User management, song upload/management, system stats.
-- Located in `app/admin`.
+### 4. Admin API
+- `app/api/admin/` (Skeleton/In-progress).
 
 ## Directory Structure
-- `app/`: Next.js App Router pages and layouts.
-  - `(auth)/`: Authentication routes.
-  - `(dashboard)/`: Main user interface (Sidebar + Content).
-  - `(public)/`: Landing page and public-facing content.
-- `components/`: Reusable UI components.
-  - `ui/`: Primitives (Buttons, Inputs, etc.) mostly compatible with shadcn/ui.
-  - `player/`: Audio player specific components.
-  - `visualizations/`: Canvas/WebGL based audio visualizers.
-- `lib/`: Utilities and configuration.
-  - `supabase.ts`: Supabase client initialization.
-  - `utils.ts`: Helper functions.
-- `public/`: Static assets (images, fonts, music files).
-- `store/`: Zustand state definitions.
-- `hooks/`: Custom React hooks.
+- `app/`: Next.js App Router.
+- `components/`: UI components.
+  - `ui/`: Shared primitives.
+  - `player/`: Audio components.
+  - `vibes/`: Social features.
+- `lib/`: Utilities (`utils.ts`).
+- `utils/`: Core infrastructure (`supabase/client.ts`, `supabase/middleware.ts`).
+- `scripts/`: Maintenance and sync scripts.
+- `public/`: Static assets & music.
+- `store/`: Zustand stores.
+- `hooks/`: Custom hooks.
 
 ## Key Design Principles
 - **"Glassmorphism"**: Extensive use of backdrop blur, semi-transparent backgrounds, and glowing borders.

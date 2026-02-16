@@ -45,8 +45,8 @@ async function optimizeImages(dir) {
 
                 const newSize = optimizedBuffer.length;
                 console.log(`  -> Saved ${(originalSize - newSize) / 1024 / 1024 / ((originalSize / 1024 / 1024) || 1) * 100}% (${(newSize / 1024 / 1024).toFixed(2)} MB)`);
-            } catch (err) {
-                console.error(`Error optimizing ${file}:`, err);
+            } catch (_err) {
+                console.error(`Error optimizing ${file}:`, _err);
             }
         }
     }

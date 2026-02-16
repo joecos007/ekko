@@ -1,13 +1,14 @@
 'use client'
 
 import { useQuery } from "@tanstack/react-query"
-import { supabase } from "@/lib/supabase"
+import { createClient } from "@/utils/supabase/client"
 import { usePlayer } from "@/store/player-store"
 import { Button } from "@/components/ui/button"
 import { Clock, Play, Heart } from "lucide-react"
 import { MediaItemActionMenu } from "@/components/media/media-item-action-menu"
 
 export default function LikedSongsPage() {
+    const supabase = createClient()
     const { setQueue } = usePlayer()
 
     const { data: likedSongs } = useQuery({
@@ -91,8 +92,8 @@ export default function LikedSongsPage() {
                                 <span className="text-white font-medium">{song.title}</span>
                                 <span className="text-neutral-400 text-xs">{song.artist}</span>
                             </div>
-                            <span className="text-neutral-400 text-sm flex items-center">
-                                Today
+                            <span className="text-neutral-400 text-sm hidden md:flex items-center">
+                                {song.created_at ? new Date(song.created_at).toLocaleDateString() : '—'}
                             </span>
                             <span className="text-neutral-400 text-sm flex items-center justify-end font-variant-numeric tabular-nums">
                                 {Math.floor(song.duration / 60)}:{(song.duration % 60).toString().padStart(2, '0')}
@@ -101,7 +102,6 @@ export default function LikedSongsPage() {
                                 <MediaItemActionMenu
                                     songId={song.id}
                                     songTitle={song.title}
-                                    artistName={song.artist}
                                 />
                             </div>
                         </div>

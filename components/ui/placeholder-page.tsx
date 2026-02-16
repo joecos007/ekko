@@ -10,7 +10,7 @@ export default function PlaceholderPage({
     description = "This feature is currently under development."
 }: PlaceholderPageProps) {
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center p-4 text-center animate-in fade-in duration-500">
+        <div className="min-h-[100dvh] flex flex-col items-center justify-center p-4 text-center animate-in fade-in duration-500">
             <div className="p-6 bg-white/5 rounded-full mb-6">
                 <Construction className="w-12 h-12 text-neutral-400" />
             </div>

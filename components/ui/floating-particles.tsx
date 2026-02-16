@@ -15,14 +15,17 @@ export function FloatingParticles({ count = 15 }: { count?: number }) {
     const [particles, setParticles] = useState<Particle[]>([])
 
     useEffect(() => {
-        setParticles(Array.from({ length: count }, (_, i) => ({
-            id: i,
-            x: Math.random() * 100,
-            size: Math.random() * 20 + 10,
-            duration: Math.random() * 15 + 15,
-            delay: Math.random() * 10,
-            type: Math.random() > 0.5 ? "note" : "orb",
-        })))
+        const timer = setTimeout(() => {
+            setParticles(Array.from({ length: count }, (_, i) => ({
+                id: i,
+                x: Math.random() * 100,
+                size: Math.random() * 20 + 10,
+                duration: Math.random() * 15 + 15,
+                delay: Math.random() * 10,
+                type: Math.random() > 0.5 ? "note" : "orb",
+            })))
+        }, 0)
+        return () => clearTimeout(timer)
     }, [count])
 
     if (particles.length === 0) return null

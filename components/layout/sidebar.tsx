@@ -8,7 +8,8 @@ import { Button } from "@/components/ui/button"
 import dynamic from "next/dynamic"
 import { usePlaylists } from "@/hooks/use-playlists"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { supabase } from "@/lib/supabase"
+import { useUser } from "@/hooks/use-user"
+import { createClient } from "@/utils/supabase/client"
 import { useEffect, useState } from "react"
 
 
@@ -30,23 +31,26 @@ const TeamStoryDialog = dynamic(
 import { PlusCircle } from "lucide-react"
 
 export function Sidebar() {
+    const supabase = createClient()
     const { playlists } = usePlaylists()
+    const { user } = useUser()
     const pathname = usePathname()
     const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
 
     useEffect(() => {
         const getProfile = async () => {
-            const { data: { user } } = await supabase.auth.getUser()
             if (user) {
                 const { data } = await supabase.from('profiles').select('avatar_url').eq('id', user.id).single()
                 if (data) setAvatarUrl(data.avatar_url)
+            } else {
+                setAvatarUrl(null)
             }
         }
         getProfile()
-    }, [])
+    }, [user, supabase])
 
     return (
-        <div className="hidden md:flex w-72 flex-col gap-2 glass-sidebar h-screen p-4 sticky top-0 font-geist-sans z-20">
+        <div className="hidden md:flex w-72 flex-col gap-2 glass-sidebar h-[100dvh] p-4 sticky top-0 font-geist-sans z-20">
             <div className="flex flex-col gap-6 px-3 py-6">
                 <Link href="/" className="flex items-center gap-2 group px-2 mb-2 cursor-pointer">
                     <div className="relative">
@@ -61,13 +65,14 @@ export function Sidebar() {
                         <Button
                             variant="ghost"
                             className={cn(
-                                "w-full justify-start gap-4 text-sm font-medium transition-all duration-300",
+                                "w-full justify-start gap-4 text-sm font-medium transition-all duration-300 relative overflow-hidden group/btn",
                                 pathname === "/"
-                                    ? "bg-white/10 text-white shadow-glow-white border border-white/10"
-                                    : "text-neutral-400 hover:text-white hover:bg-white/5"
+                                    ? "bg-blue-600/10 text-white shadow-[0_0_20px_rgba(37,99,235,0.3)] border border-blue-500/30"
+                                    : "text-neutral-400 hover:text-white hover:bg-white/5 hover:pl-6"
                             )}
                         >
-                            <Home className={cn("w-5 h-5", pathname === "/" ? "text-blue-400" : "")} />
+                            {pathname === "/" && <div className="absolute inset-y-0 left-0 w-1 bg-blue-500 shadow-[0_0_10px_#3b82f6]" />}
+                            <Home className={cn("w-5 h-5 transition-colors", pathname === "/" ? "text-blue-400" : "group-hover/btn:text-blue-400")} />
                             Home
                         </Button>
                     </Link>
@@ -75,13 +80,14 @@ export function Sidebar() {
                         <Button
                             variant="ghost"
                             className={cn(
-                                "w-full justify-start gap-4 text-sm font-medium transition-all duration-300",
+                                "w-full justify-start gap-4 text-sm font-medium transition-all duration-300 relative overflow-hidden group/btn",
                                 pathname === "/search"
-                                    ? "bg-white/10 text-white shadow-glow-white border border-white/10"
-                                    : "text-neutral-400 hover:text-white hover:bg-white/5"
+                                    ? "bg-purple-600/10 text-white shadow-[0_0_20px_rgba(147,51,234,0.3)] border border-purple-500/30"
+                                    : "text-neutral-400 hover:text-white hover:bg-white/5 hover:pl-6"
                             )}
                         >
-                            <Search className={cn("w-5 h-5", pathname === "/search" ? "text-blue-400" : "")} />
+                            {pathname === "/search" && <div className="absolute inset-y-0 left-0 w-1 bg-purple-500 shadow-[0_0_10px_#a855f7]" />}
+                            <Search className={cn("w-5 h-5 transition-colors", pathname === "/search" ? "text-purple-400" : "group-hover/btn:text-purple-400")} />
                             Search
                         </Button>
                     </Link>
@@ -89,28 +95,30 @@ export function Sidebar() {
                         <Button
                             variant="ghost"
                             className={cn(
-                                "w-full justify-start gap-4 text-sm font-medium transition-all duration-300",
+                                "w-full justify-start gap-4 text-sm font-medium transition-all duration-300 relative overflow-hidden group/btn",
                                 pathname === "/vibes"
-                                    ? "bg-white/10 text-white shadow-glow-white border border-white/10"
-                                    : "text-neutral-400 hover:text-white hover:bg-white/5"
+                                    ? "bg-pink-600/10 text-white shadow-[0_0_20px_rgba(219,39,119,0.3)] border border-pink-500/30"
+                                    : "text-neutral-400 hover:text-white hover:bg-white/5 hover:pl-6"
                             )}
                         >
-                            <Sparkles className={cn("w-5 h-5", pathname === "/vibes" ? "text-blue-400" : "")} />
-                            Community Vibes
+                            {pathname === "/vibes" && <div className="absolute inset-y-0 left-0 w-1 bg-pink-500 shadow-[0_0_10px_#ec4899]" />}
+                            <Sparkles className={cn("w-5 h-5 transition-colors", pathname === "/vibes" ? "text-pink-400" : "group-hover/btn:text-pink-400")} />
+                            Vibes
                         </Button>
                     </Link>
                     <Link href="/library">
                         <Button
                             variant="ghost"
                             className={cn(
-                                "w-full justify-start gap-4 text-sm font-medium transition-all duration-300",
+                                "w-full justify-start gap-4 text-sm font-medium transition-all duration-300 relative overflow-hidden group/btn",
                                 pathname === "/library"
-                                    ? "bg-white/10 text-white shadow-glow-white border border-white/10"
-                                    : "text-neutral-400 hover:text-white hover:bg-white/5"
+                                    ? "bg-green-600/10 text-white shadow-[0_0_20px_rgba(34,197,94,0.3)] border border-green-500/30"
+                                    : "text-neutral-400 hover:text-white hover:bg-white/5 hover:pl-6"
                             )}
                         >
-                            <Library className={cn("w-5 h-5", pathname === "/library" ? "text-blue-400" : "")} />
-                            Your Library
+                            {pathname === "/library" && <div className="absolute inset-y-0 left-0 w-1 bg-green-500 shadow-[0_0_10px_#22c55e]" />}
+                            <Library className={cn("w-5 h-5 transition-colors", pathname === "/library" ? "text-green-400" : "group-hover/btn:text-green-400")} />
+                            Library
                         </Button>
                     </Link>
                     <Link href="/profile">
@@ -124,7 +132,7 @@ export function Sidebar() {
                             )}
                         >
                             <Avatar className="w-5 h-5 border border-white/10 shadow-sm">
-                                <AvatarImage src={avatarUrl || ""} className="object-cover" />
+                                <AvatarImage src={avatarUrl || undefined} className="object-cover" />
                                 <AvatarFallback className="bg-transparent">
                                     <UserIcon className={cn("w-4 h-4", pathname === "/profile" ? "text-blue-400" : "")} />
                                 </AvatarFallback>
@@ -161,9 +169,18 @@ export function Sidebar() {
                     </Button>
                 </UploadSongDialog>
                 <Link href="/liked">
-                    <Button variant="ghost" className="w-full justify-start gap-4 text-sm font-medium transition-all duration-300 text-neutral-400 hover:text-white hover:bg-white/5 group px-3">
-                        <div className="w-5 h-5 flex items-center justify-center bg-gradient-to-br from-blue-600 to-indigo-600 rounded-[4px] shadow-lg shadow-blue-600/20">
-                            <Heart className="w-3 h-3 text-white fill-white" />
+                    <Button
+                        variant="ghost"
+                        className={cn(
+                            "w-full justify-start gap-4 text-sm font-medium transition-all duration-300 relative overflow-hidden group/btn px-3",
+                            pathname === "/liked"
+                                ? "bg-red-600/10 text-white shadow-[0_0_20px_rgba(220,38,38,0.3)] border border-red-500/30"
+                                : "text-neutral-400 hover:text-white hover:bg-white/5 hover:pl-4"
+                        )}
+                    >
+                        {pathname === "/liked" && <div className="absolute inset-y-0 left-0 w-1 bg-red-500 shadow-[0_0_10px_#ef4444]" />}
+                        <div className="w-5 h-5 flex items-center justify-center bg-gradient-to-br from-blue-600 to-indigo-600 rounded-[4px] shadow-lg shadow-blue-600/20 group-hover/btn:scale-110 transition-transform">
+                            <Heart className={cn("w-3 h-3 text-white fill-white transition-colors", pathname === "/liked" ? "text-white" : "")} />
                         </div>
                         Liked Songs
                     </Button>

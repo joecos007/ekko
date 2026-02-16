@@ -1,14 +1,12 @@
 'use client'
 
 import { useState } from "react"
-import { useRouter } from "next/navigation"
 import {
     Drawer,
     DrawerContent,
     DrawerHeader,
     DrawerTitle,
     DrawerDescription,
-    DrawerFooter,
     DrawerClose,
     DrawerTrigger
 } from "@/components/ui/drawer"
@@ -17,7 +15,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
-import { Mic, Wand2, Music, Shuffle, X } from "lucide-react"
+import { Wand2, Music, Shuffle, X } from "lucide-react"
 
 interface StudioSheetProps {
     open?: boolean

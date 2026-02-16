@@ -2,6 +2,7 @@
 
 import { useEffect, useCallback } from 'react'
 import { usePlayer } from '@/store/player-store'
+import { useLikeSong } from '@/hooks/use-like-song'
 
 /**
  * Global keyboard shortcuts for the music player.
@@ -29,6 +30,8 @@ export function useKeyboardShortcuts() {
         queue
     } = usePlayer()
 
+    const { likeSong } = useLikeSong()
+
     const handleKeyDown = useCallback((e: KeyboardEvent) => {
         // Don't trigger shortcuts when typing in inputs
         const target = e.target as HTMLElement
@@ -47,7 +50,7 @@ export function useKeyboardShortcuts() {
             case 'Space':
                 e.preventDefault()
                 if (hasSongs) {
-                    isPlaying ? pause() : play()
+                    void (isPlaying ? pause() : play())
                 }
                 break
 
@@ -83,14 +86,18 @@ export function useKeyboardShortcuts() {
                 break
 
             case 'KeyL':
-                // Placeholder for like functionality
-                // TODO: Integrate with liked songs mutation
+                if (hasSongs) {
+                    const currentSong = queue[usePlayer.getState().currentIndex]
+                    if (currentSong) {
+                        likeSong(currentSong.id, currentSong.title)
+                    }
+                }
                 break
 
             default:
                 break
         }
-    }, [isPlaying, play, pause, next, prev, volume, setVolume, queue, previousVolume, setPreviousVolume])
+    }, [isPlaying, play, pause, next, prev, volume, setVolume, queue, previousVolume, setPreviousVolume, likeSong])
 
     useEffect(() => {
         window.addEventListener('keydown', handleKeyDown)

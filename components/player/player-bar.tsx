@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { Controls } from './controls'
 import { ProgressBar } from './progress-bar'
 import { VolumeControl } from './volume-control'
@@ -14,7 +15,7 @@ import { VibeOverlay } from '@/components/vibes/vibe-overlay'
 import { VibeInput } from '@/components/vibes/vibe-input'
 
 export function PlayerBar() {
-    const { queue, currentIndex, isPlaying, togglePlay, setExpanded, isRadio, radioMetadata, next } = usePlayer()
+    const { queue, currentIndex, isPlaying, togglePlay, setExpanded, isRadio, radioMetadata, next, currentTime, duration } = usePlayer()
     const song = queue[currentIndex]
 
     // Determine what to show
@@ -48,7 +49,7 @@ export function PlayerBar() {
             >
                 {/* Album Art with Rotate Animation */}
                 <div className={cn("relative h-12 w-12 rounded-xl overflow-hidden shadow-lg flex-shrink-0", isPlaying ? "animate-spin-slow" : "")}>
-                    <img src={displaySong.coverUrl || "/placeholder.png"} alt={displaySong.title} className="object-cover w-full h-full" />
+                    <Image src={displaySong.coverUrl || "/placeholder.png"} alt={displaySong.title} fill className="object-cover" unoptimized />
                 </div>
 
                 {/* Info */}
@@ -90,10 +91,10 @@ export function PlayerBar() {
 
                 {/* Progress Bar (Bottom Line) */}
                 <div className="absolute bottom-0 left-4 right-4 h-[2px] bg-white/10 rounded-full overflow-hidden">
-                    {/* Note: Connecting this to real progress requires a separate component or context subscription to avoid re-rendering the whole bar excessively. 
-                         For now, keeping it static or minimal. Real progress is in Expanded View. 
-                     */}
-                    <div className="h-full bg-white/50 w-1/3 rounded-full" />
+                    <div
+                        className="h-full bg-white/50 rounded-full transition-[width] duration-200"
+                        style={{ width: `${duration > 0 && duration !== Infinity ? Math.min((currentTime / duration) * 100, 100) : 0}%` }}
+                    />
                 </div>
             </div>
 

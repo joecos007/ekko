@@ -17,7 +17,7 @@ export async function updateSession(request: NextRequest) {
                     return request.cookies.getAll()
                 },
                 setAll(cookiesToSet) {
-                    cookiesToSet.forEach(({ name, value, options }) => request.cookies.set(name, value))
+                    cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
                     response = NextResponse.next({
                         request,
                     })
@@ -48,8 +48,8 @@ export async function updateSession(request: NextRequest) {
         return NextResponse.redirect(url)
     }
 
-    // 2. Authenticated user trying to access Auth pages or Landing page (root) -> Redirect to Home
-    if (user && (isAuthPage || request.nextUrl.pathname === '/')) {
+    // 2. Authenticated user trying to access Auth pages -> Redirect to Home
+    if (user && isAuthPage) {
         const url = request.nextUrl.clone()
         url.pathname = '/home'
         return NextResponse.redirect(url)

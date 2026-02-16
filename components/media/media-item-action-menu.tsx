@@ -12,7 +12,7 @@ import {
     DropdownMenuSubContent,
 } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
-import { supabase } from "@/lib/supabase"
+import { createClient } from "@/utils/supabase/client"
 import { MoreHorizontal, Plus, ListMusic, User, Heart } from "lucide-react"
 import { usePlaylists } from "@/hooks/use-playlists"
 import { toast } from "sonner"
@@ -21,7 +21,6 @@ import { useState } from "react"
 interface MediaItemActionMenuProps {
     songId: string
     songTitle: string
-    artistName?: string
     children?: React.ReactNode
     className?: string
     playlistId?: string // Context for removal
@@ -30,11 +29,11 @@ interface MediaItemActionMenuProps {
 export function MediaItemActionMenu({
     songId,
     songTitle,
-    artistName,
     children,
     className,
     playlistId
 }: MediaItemActionMenuProps) {
+    const supabase = createClient()
     const { playlists, addToPlaylist, removeFromPlaylist } = usePlaylists()
     const [isOpen, setIsOpen] = useState(false)
 
@@ -63,11 +62,18 @@ export function MediaItemActionMenu({
 
     const handleLike = async () => {
         try {
+            const { data: { user }, error: authError } = await supabase.auth.getUser()
+            if (authError || !user) {
+                toast.error("Please sign in to like songs")
+                setIsOpen(false)
+                return
+            }
+
             const { error } = await supabase
                 .from('liked_songs')
                 .insert({
                     song_id: songId,
-                    user_id: (await supabase.auth.getUser()).data.user?.id
+                    user_id: user.id
                 })
 
             if (error) {

@@ -1,13 +1,15 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { supabase } from '@/lib/supabase';
+import { createClient } from '@/utils/supabase/client';
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Loader2, Mail, Lock, User, Eye, EyeOff, Shield, Clock, LayoutTemplate, Disc } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function SignupPage() {
+    const supabase = createClient()
     const [fullName, setFullName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -47,7 +49,7 @@ export default function SignupPage() {
     };
 
     return (
-        <div className="min-h-screen bg-black text-white antialiased selection:bg-white/20 selection:text-white flex items-center justify-center p-4 sm:p-6 overflow-hidden relative">
+        <div className="min-h-[100dvh] bg-black text-white antialiased selection:bg-white/20 selection:text-white flex items-center justify-center p-4 sm:p-6 overflow-hidden relative">
             {/* Background with gradients */}
             <div className="fixed inset-0 -z-10">
                 <div className="absolute top-0 right-1/4 w-96 h-96 bg-primary/20 rounded-full blur-[150px]" />
@@ -64,10 +66,13 @@ export default function SignupPage() {
                         {/* Left Side - Visual */}
                         <div className="relative w-full md:w-1/2 h-48 md:h-auto min-h-[200px] md:min-h-[400px] overflow-hidden">
                             <div className="absolute inset-0 bg-neutral-900">
-                                <img
+                                <Image
                                     src="/auth.png"
-                                    alt="Authentication"
-                                    className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-700"
+                                    alt="Music visualization"
+                                    width={800}
+                                    height={800}
+                                    className="object-cover w-full h-full opacity-80 group-hover:opacity-100 transition-opacity duration-700"
+                                    priority
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-60" />
                             </div>

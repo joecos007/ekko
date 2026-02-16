@@ -3,13 +3,20 @@
 import { SearchInput } from "@/components/search/search-input"
 import { useSearchParams, useRouter } from "next/navigation"
 import { useQuery } from "@tanstack/react-query"
-import { supabase } from "@/lib/supabase"
+import { createClient } from "@/utils/supabase/client"
 import { usePlayer } from "@/store/player-store"
 import { Play, ArrowUpRight, Loader2 } from "lucide-react"
-import { Suspense } from "react"
+import { Suspense, useState } from "react"
 import { MediaItemActionMenu } from "@/components/media/media-item-action-menu"
+import Image from "next/image"
+
+// Magic UI Components
+import { BlurFade } from "@/components/ui/blur-fade"
+import { AnimatedList } from "@/components/ui/animated-list"
+import { MagicCard } from "@/components/ui/magic-card"
 
 function SearchContent() {
+    const [supabase] = useState(() => createClient())
     const searchParams = useSearchParams()
     const query = searchParams.get("q")
     const { setQueue } = usePlayer()
@@ -81,9 +88,11 @@ function SearchContent() {
                                 </span>
                                 System Index: Live
                             </div>
-                            <h2 className="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-br from-white via-neutral-200 to-neutral-600 tracking-tighter">
-                                Discover Frequencies
-                            </h2>
+                            <BlurFade delay={0.25} inView>
+                                <h2 className="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-br from-white via-neutral-200 to-neutral-600 tracking-tighter">
+                                    Discover Frequencies
+                                </h2>
+                            </BlurFade>
                             <p className="text-neutral-400 text-lg max-w-lg mx-auto leading-relaxed">
                                 Enter keywords to search the neural network or select a vibe channel below.
                             </p>
@@ -91,21 +100,68 @@ function SearchContent() {
 
                         {/* Suggested Vibes Grid */}
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-4xl">
-                            {["Cyberpunk", "Neon Noir", "Lo-Fi High", "Deep Focus", "Future Funk", "Ambient", "Tech House", "Synthwave"].map((vibe, i) => (
-                                <button
-                                    key={vibe}
-                                    onClick={() => router.push(`/search?q=${encodeURIComponent(vibe)}`)}
-                                    className="group relative h-24 rounded-xl bg-neutral-900/50 border border-white/5 overflow-hidden hover:border-purple-500/50 transition-all duration-300 hover:scale-[1.02] active:scale-95"
+                            {[
+                                { name: "Cyberpunk", img: "/playlist-liked.png" },
+                                { name: "Neon Noir", img: "/playlist-discover.png" },
+                                { name: "Lo-Fi High", img: "/playlist-daily-mix.png" },
+                                { name: "Deep Focus", img: "/community-connect.png" },
+                                { name: "Future Funk", img: "/hero-main.png" },
+                                { name: "Ambient", img: "/agos-ghibli.png" },
+                                { name: "Tech House", img: "/bayanihan-ghibli.png" },
+                                { name: "Synthwave", img: "/digital-village.png" }
+                            ].map((vibe) => (
+                                <MagicCard
+                                    key={vibe.name}
+                                    gradientColor="#7c3aed"
+                                    className="h-24 rounded-xl overflow-hidden"
                                 >
-                                    <div className="absolute inset-0 bg-gradient-to-br from-purple-500/0 via-purple-500/0 to-purple-500/0 group-hover:to-purple-500/10 transition-all" />
-                                    <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <ArrowUpRight className="w-4 h-4 text-purple-400" />
-                                    </div>
-                                    <span className="absolute bottom-4 left-4 font-bold text-neutral-300 group-hover:text-white group-hover:translate-x-1 transition-all">
-                                        {vibe}
-                                    </span>
-                                </button>
+                                    <button
+                                        onClick={() => router.push(`/search?q=${encodeURIComponent(vibe.name)}`)}
+                                        className="group relative w-full h-full bg-black/50 overflow-hidden hover:border-purple-500/50 transition-all duration-300 active:scale-95"
+                                    >
+                                        <Image
+                                            src={vibe.img}
+                                            alt={vibe.name}
+                                            fill
+                                            className="object-cover opacity-40 group-hover:opacity-60 transition-all duration-500 group-hover:scale-110"
+                                            unoptimized
+                                        />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+
+                                        <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                                            <ArrowUpRight className="w-4 h-4 text-purple-400" />
+                                        </div>
+                                        <span className="absolute bottom-3 left-3 font-black text-sm text-white/90 group-hover:text-white group-hover:translate-x-1 transition-all z-10 text-left leading-tight drop-shadow-md">
+                                            {vibe.name}
+                                        </span>
+                                    </button>
+                                </MagicCard>
                             ))}
+                        </div>
+
+                        {/* Network Activity / Trending */}
+                        <div className="mt-16 w-full max-w-4xl border-t border-white/5 pt-8">
+                            <h3 className="text-sm font-bold text-neutral-500 uppercase tracking-widest mb-6 flex items-center gap-2">
+                                <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+                                Network Activity
+                            </h3>
+
+                            <AnimatedList delay={2000}>
+                                {[
+                                    { user: "Sarah_K", action: "tuned into", target: "Cyberpunk City", time: "2s ago" },
+                                    { user: "Dev_X", action: "liked", target: "Neon Nights", time: "15s ago" },
+                                    { user: "Ghost_01", action: "shared", target: "Lo-Fi Beats", time: "42s ago" }
+                                ].map((activity, i) => (
+                                    <div key={i} className="flex items-center justify-between text-sm group">
+                                        <div className="flex items-center gap-2 text-neutral-400">
+                                            <span className="font-mono text-blue-400">{activity.user}</span>
+                                            <span>{activity.action}</span>
+                                            <span className="text-white font-medium group-hover:text-purple-400 transition-colors cursor-pointer">{activity.target}</span>
+                                        </div>
+                                        <span className="text-neutral-600 text-xs font-mono">{activity.time}</span>
+                                    </div>
+                                ))}
+                            </AnimatedList>
                         </div>
                     </div>
                 ) : isLoading ? (
@@ -128,12 +184,15 @@ function SearchContent() {
                                 {results.map((song: any, i: number) => (
                                     <div
                                         key={song.id}
+                                        role="button"
+                                        tabIndex={0}
                                         className="group relative bg-neutral-900/40 hover:bg-neutral-900/80 border border-white/5 hover:border-purple-500/30 rounded-2xl p-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl cursor-pointer"
                                         onClick={() => setQueue(results, i)}
+                                        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setQueue(results, i) } }}
                                     >
                                         <div className="aspect-square rounded-xl bg-neutral-950 mb-4 relative overflow-hidden shadow-lg border border-white/5">
                                             {song.coverUrl ? (
-                                                <img src={song.coverUrl} alt={song.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-80 group-hover:opacity-100" />
+                                                <Image src={song.coverUrl} alt={song.title} fill className="object-cover group-hover:scale-105 transition-transform duration-700 opacity-80 group-hover:opacity-100" unoptimized />
                                             ) : (
                                                 <div className="w-full h-full flex items-center justify-center">
                                                     <div className="w-16 h-16 rounded-full bg-neutral-800 flex items-center justify-center text-neutral-600">
@@ -154,7 +213,6 @@ function SearchContent() {
                                                 <MediaItemActionMenu
                                                     songId={song.id}
                                                     songTitle={song.title}
-                                                    artistName={song.artist}
                                                     className="bg-black/50 hover:bg-black/70 backdrop-blur-md rounded-full w-8 h-8 text-white"
                                                 />
                                             </div>

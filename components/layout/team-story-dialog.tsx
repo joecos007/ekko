@@ -198,7 +198,7 @@ export function TeamStoryDialog({ children }: TeamStoryDialogProps) {
                         <div className="border-t border-white/10 pt-12 flex flex-col items-center justify-center gap-6 text-center">
                             <div>
                                 <h2 className="text-2xl font-black tracking-tight mb-2 text-white">Want to Join Our Team?</h2>
-                                <p className="text-neutral-400 max-w-sm mx-auto text-sm">We're always looking for talented Virtual Assistants and Agents to join our network.</p>
+                                <p className="text-neutral-400 max-w-sm mx-auto text-sm">We&apos;re always looking for talented Virtual Assistants and Agents to join our network.</p>
                             </div>
                             <div className="flex gap-4">
                                 <Button disabled className="rounded-full h-12 px-8 bg-white/5 text-neutral-400 font-bold tracking-widest uppercase text-xs cursor-not-allowed border border-white/5">
