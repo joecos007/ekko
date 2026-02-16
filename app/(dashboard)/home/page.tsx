@@ -178,9 +178,11 @@ export default function Home() {
       {/* 🎵 LATEST DROPS — Full song grid                    */}
       {/* ═══════════════════════════════════════════════════ */}
       <section className="mb-12 relative z-10">
-        <TextAnimate animation="blurInUp" by="word" as="h2" className="text-3xl font-black mb-8 tracking-tight text-white/90 drop-shadow-md">
-          Latest Drops
-        </TextAnimate>
+        <h2 className="text-3xl font-black mb-8 tracking-tight text-white/90 drop-shadow-md">
+          <TextAnimate animation="blurInUp" by="word">
+            Latest Drops
+          </TextAnimate>
+        </h2>
 
         {isLoadingReleases ? (
           <div className="flex flex-col items-center justify-center py-12">
