@@ -92,8 +92,8 @@ export default function LikedSongsPage() {
                                 <span className="text-white font-medium">{song.title}</span>
                                 <span className="text-neutral-400 text-xs">{song.artist}</span>
                             </div>
-                            <span className="text-neutral-400 text-sm flex items-center">
-                                Today
+                            <span className="text-neutral-400 text-sm hidden md:flex items-center">
+                                {song.created_at ? new Date(song.created_at).toLocaleDateString() : '—'}
                             </span>
                             <span className="text-neutral-400 text-sm flex items-center justify-end font-variant-numeric tabular-nums">
                                 {Math.floor(song.duration / 60)}:{(song.duration % 60).toString().padStart(2, '0')}

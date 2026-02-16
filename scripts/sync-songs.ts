@@ -47,7 +47,7 @@ async function syncSongs() {
             .from('songs')
             .select('id')
             .eq('title', file.replace('.mp3', '')) // Simple check by title
-            .single();
+            .maybeSingle();
 
         if (existing) {
             console.log(`  Song already in DB (ID: ${existing.id}). Skipping insert.`);

@@ -156,14 +156,7 @@ export const Particles: React.FC<ParticlesProps> = ({
     }
   }, [])
 
-  const drawParticles = useCallback(() => {
-    clearContext()
-    const particleCount = quantity
-    for (let i = 0; i < particleCount; i++) {
-      const circle = circleParams()
-      drawCircle(circle)
-    }
-  }, [quantity, circleParams, drawCircle, clearContext])
+
 
   const resizeCanvas = useCallback(() => {
     if (canvasContainerRef.current && canvasRef.current && context.current) {

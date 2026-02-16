@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import {
     Drawer,
     DrawerContent,
@@ -27,9 +27,16 @@ export function MenuDrawer({ children }: MenuDrawerProps) {
     const pathname = usePathname() // Add usePathname
     const [open, setOpen] = useState(false) // Add open state
 
+    const prevPathname = useRef(pathname) // Add useRef
+
     // Close drawer when pathname changes
     useEffect(() => {
-        setOpen(false)
+        if (prevPathname.current !== pathname) {
+            // Fix: Wrap in setTimeout to avoid synchronous state update in effect
+            const t = setTimeout(() => setOpen(false), 0)
+            prevPathname.current = pathname
+            return () => clearTimeout(t)
+        }
     }, [pathname])
 
     const handleLogout = async () => {
