@@ -197,14 +197,14 @@ export const usePlayer = create<PlayerState>((set, get) => ({
         {
             id: 'lofi-beats',
             name: 'Lofi Hip Hop',
-            url: 'https://stream.zeno.fm/0r0xa792kwzuv',
+            url: 'https://boxradio-edge-00.streamafrica.net/lofi',
             style: 'Chill / Study',
             cover: '/images/stations/lofi.jpg'
         },
         {
             id: 'classical',
             name: 'Classical Flow',
-            url: 'https://icecast.radiofrance.fr/francemusiqueeasyclassique-midfi.mp3',
+            url: 'https://wrti-live.streamguys1.com/classical-mp3',
             style: 'Classical / Focus',
             cover: '/images/stations/classical.jpg'
         },

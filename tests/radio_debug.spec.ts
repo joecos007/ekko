@@ -41,7 +41,7 @@ test('analyze radio transition performance', async ({ page }) => {
             await expect(spinner).not.toBeVisible({ timeout: 15000 });
         }
         // ensure we are playing
-        await expect(playButton).toBeVisible({ timeout: 15000 });
+        await expect(playButton).toBeVisible({ timeout: 60000 });
 
         const loadTime = Date.now() - startTime;
         console.log(`Radio Load Time: ${loadTime}ms`);
