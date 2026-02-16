@@ -11,7 +11,7 @@ import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 // Magic UI Components
-import { ShimmerButton } from "@/components/ui/shimmer-button";
+
 import { BlurFade } from "@/components/ui/blur-fade";
 import { NumberTicker } from "@/components/ui/number-ticker";
 import { AnimatedShinyText } from "@/components/ui/animated-shiny-text";
