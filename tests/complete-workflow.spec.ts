@@ -86,33 +86,39 @@ test.describe('EKKO Complete User Workflow', () => {
             await expect(carouselDots.first()).toBeVisible()
 
             // Verify quick access cards
-            await expect(page.getByText('Liked Songs')).toBeVisible()
-            await expect(page.getByText('Daily Mix')).toBeVisible()
+            await expect(page.getByText('Liked Songs').first()).toBeVisible()
+            await expect(page.getByText('Daily Mix').first()).toBeVisible()
             console.log('Dashboard verified.')
         })
 
         // ══════════════════════════════════════════════════════
         // 5. Navigation Tests
         // ══════════════════════════════════════════════════════
+        // 5. Navigation Tests
         await test.step('Test sidebar navigation', async () => {
             console.log('Testing navigation...')
+
+            // Scope to the main navigation sidebar to avoid matching carousel items or other links
+            const sidebar = page.locator('nav').first()
+
             // Navigate to Search
-            const searchLink = page.getByRole('link', { name: /search/i })
+            const searchLink = sidebar.getByRole('link', { name: /search/i })
             if (await searchLink.isVisible()) {
                 await searchLink.click()
                 await page.waitForURL('**/search')
-                await expect(page.getByPlaceholder(/search/i)).toBeVisible()
+                await expect(page.getByPlaceholder(/Ask the system/i).first()).toBeVisible()
 
                 // Go back to home
-                await page.getByRole('link', { name: /home/i }).click()
-                await page.waitForURL('**/home')
+                const homeLink = sidebar.getByRole('link', { name: /home/i })
+                await homeLink.click({ force: true })
+                await page.waitForURL('**/')
             }
 
             // Navigate to Library
-            const libraryLink = page.getByRole('link', { name: /library/i })
+            const libraryLink = sidebar.getByRole('link', { name: /library/i })
             if (await libraryLink.isVisible()) {
                 await libraryLink.click()
-                await page.waitForLoadState('networkidle')
+                await page.waitForLoadState('domcontentloaded')
             }
         })
 
@@ -122,7 +128,7 @@ test.describe('EKKO Complete User Workflow', () => {
         await test.step('Test search', async () => {
             console.log('Testing search...')
             await page.goto('http://localhost:3000/search')
-            await page.waitForLoadState('networkidle')
+            await page.waitForLoadState('domcontentloaded')
 
             const searchInput = page.getByPlaceholder(/search/i)
             if (await searchInput.isVisible()) {
@@ -141,7 +147,7 @@ test.describe('EKKO Complete User Workflow', () => {
         // ══════════════════════════════════════════════════════
         await test.step('Test carousel navigation', async () => {
             await page.goto('http://localhost:3000/home')
-            await page.waitForLoadState('networkidle')
+            await page.waitForLoadState('domcontentloaded')
 
             // Test next slide button
             const nextButton = page.getByRole('button', { name: /next slide/i })
@@ -166,7 +172,7 @@ test.describe('EKKO Complete User Workflow', () => {
             // Set mobile viewport
             await page.setViewportSize({ width: 375, height: 667 })
             await page.goto('http://localhost:3000/home')
-            await page.waitForLoadState('networkidle')
+            await page.waitForLoadState('domcontentloaded')
 
             // Look for mobile menu toggle
             const menuButton = page.getByRole('button', { name: /menu/i })
@@ -174,9 +180,10 @@ test.describe('EKKO Complete User Workflow', () => {
                 await menuButton.click()
                 await page.waitForTimeout(300)
 
-                // Verify menu opened
-                const nav = page.locator('nav').filter({ hasText: /home|search|library/i })
-                await expect(nav).toBeVisible()
+                // Verify menu opened (Drawer uses dialog role, not nav)
+                const menuDrawer = page.getByRole('dialog')
+                await expect(menuDrawer).toBeVisible()
+                await expect(menuDrawer.getByRole('link', { name: /home/i })).toBeVisible()
             }
 
             // Reset to desktop
@@ -188,7 +195,7 @@ test.describe('EKKO Complete User Workflow', () => {
         // ══════════════════════════════════════════════════════
         await test.step('Capture screenshots', async () => {
             await page.goto('http://localhost:3000/home')
-            await page.waitForLoadState('networkidle')
+            await page.waitForLoadState('domcontentloaded')
             await page.screenshot({ path: 'test-results/dashboard-home.png', fullPage: true })
 
             await page.goto('http://localhost:3000/search')
