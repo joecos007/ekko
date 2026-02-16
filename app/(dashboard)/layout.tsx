@@ -6,6 +6,8 @@ import { Header } from "@/components/layout/header";
 import { MobileNav } from "@/components/layout/mobile-nav";
 import { ScrollProgress } from "@/components/ui/scroll-progress";
 
+import { ClientOnly } from "@/components/ui/client-only";
+
 export default function DashboardLayout({
     children,
 }: Readonly<{
@@ -15,7 +17,9 @@ export default function DashboardLayout({
 
     return (
         <>
-            <ScrollProgress className="top-0" container={mainRef} />
+            <ClientOnly>
+                <ScrollProgress className="top-0" container={mainRef} />
+            </ClientOnly>
             <div className="flex min-h-screen bg-mesh relative overflow-hidden">
                 {/* Decorative Background Orbs */}
                 <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-600/10 blur-[120px] rounded-full animate-float" />

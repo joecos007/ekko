@@ -339,20 +339,20 @@ export default function Home() {
             <div className="absolute top-0 right-0 w-1/2 h-full bg-blue-600/10 blur-[120px] rounded-full animate-pulse-glow" />
           </div>
 
-          <div className="relative z-10 p-10 flex flex-col md:flex-row items-center justify-between w-full">
-            <div className="flex flex-col gap-3">
+          <div className="relative z-10 p-6 md:p-10 flex flex-col md:flex-row items-center justify-between w-full h-full">
+            <div className="flex flex-col gap-3 w-full md:w-auto">
               <div className="flex items-center gap-2">
                 <div className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse shadow-glow-destructive" />
                 <span className="text-xs font-black uppercase tracking-[0.2em] text-blue-400/80">Live Session</span>
               </div>
-              <HyperText className="text-5xl font-black tracking-tighter text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.2)]" animateOnHover startOnView>EKKO_SESSION_01</HyperText>
+              <HyperText className="text-4xl md:text-5xl font-black tracking-tighter text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.2)]" animateOnHover startOnView>EKKO_SESSION</HyperText>
               <div className="flex items-center gap-4 text-blue-200/40 text-sm mt-1 font-medium">
                 <div className="flex items-center gap-1">
                   <div className="flex -space-x-2 mr-3">
                     {[1, 2, 3].map((i) => (
-                      <div key={i} className="w-12 h-12 rounded-full overflow-hidden border-2 border-white/20">
+                      <div key={i} className="w-8 h-8 md:w-12 md:h-12 rounded-full overflow-hidden border-2 border-white/20">
                         <Image
-                          src={`https://i.pravatar.cc/100?u=10`}
+                          src={`https://i.pravatar.cc/100?u=${10 + i}`}
                           alt="Profile"
                           width={48}
                           height={48}
@@ -362,16 +362,18 @@ export default function Home() {
                       </div>
                     ))}
                   </div>
-                  <span className="font-bold text-white/80">1,204 Listeners</span>
-                  <span className="mx-2 opacity-50">•</span>
-                  <span className="tracking-wide">Global Feed</span>
+                  <div className="flex flex-col md:flex-row md:items-center gap-0.5 md:gap-2">
+                    <span className="font-bold text-white/80 text-xs md:text-sm">1,204 Listeners</span>
+                    <span className="hidden md:inline mx-2 opacity-50">•</span>
+                    <span className="tracking-wide text-xs md:text-sm">Global Feed</span>
+                  </div>
                 </div>
               </div>
             </div>
 
             <Button
               size="lg"
-              className="mt-8 md:mt-0 rounded-full bg-white text-black hover:bg-blue-50 px-10 font-bold h-14 shadow-[0_0_30px_rgba(255,255,255,0.15)] group-hover:scale-105 transition-all duration-300 active:scale-95"
+              className="mt-6 md:mt-0 w-full md:w-auto rounded-full bg-white text-black hover:bg-blue-50 px-8 font-bold h-12 md:h-14 shadow-[0_0_30px_rgba(255,255,255,0.15)] group-hover:scale-105 transition-all duration-300 active:scale-95"
               onClick={(e) => {
                 e.stopPropagation()
                 const { isRadio, toggleRadio } = usePlayer.getState()

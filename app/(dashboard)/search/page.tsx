@@ -100,22 +100,39 @@ function SearchContent() {
 
                         {/* Suggested Vibes Grid */}
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-4xl">
-                            {["Cyberpunk", "Neon Noir", "Lo-Fi High", "Deep Focus", "Future Funk", "Ambient", "Tech House", "Synthwave"].map((vibe) => (
+                            {[
+                                { name: "Cyberpunk", img: "/playlist-liked.png" },
+                                { name: "Neon Noir", img: "/playlist-discover.png" },
+                                { name: "Lo-Fi High", img: "/playlist-daily-mix.png" },
+                                { name: "Deep Focus", img: "/community-connect.png" },
+                                { name: "Future Funk", img: "/hero-main.png" },
+                                { name: "Ambient", img: "/agos-ghibli.png" },
+                                { name: "Tech House", img: "/bayanihan-ghibli.png" },
+                                { name: "Synthwave", img: "/digital-village.png" }
+                            ].map((vibe) => (
                                 <MagicCard
-                                    key={vibe}
+                                    key={vibe.name}
                                     gradientColor="#7c3aed"
-                                    className="h-24 rounded-xl"
+                                    className="h-24 rounded-xl overflow-hidden"
                                 >
                                     <button
-                                        onClick={() => router.push(`/search?q=${encodeURIComponent(vibe)}`)}
-                                        className="group relative w-full h-full rounded-xl bg-neutral-900/50 border border-white/5 overflow-hidden hover:border-purple-500/50 transition-all duration-300 active:scale-95"
+                                        onClick={() => router.push(`/search?q=${encodeURIComponent(vibe.name)}`)}
+                                        className="group relative w-full h-full bg-black/50 overflow-hidden hover:border-purple-500/50 transition-all duration-300 active:scale-95"
                                     >
-                                        <div className="absolute inset-0 bg-gradient-to-br from-purple-500/0 via-purple-500/0 to-purple-500/0 group-hover:to-purple-500/10 transition-all" />
-                                        <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <Image
+                                            src={vibe.img}
+                                            alt={vibe.name}
+                                            fill
+                                            className="object-cover opacity-40 group-hover:opacity-60 transition-all duration-500 group-hover:scale-110"
+                                            unoptimized
+                                        />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+
+                                        <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
                                             <ArrowUpRight className="w-4 h-4 text-purple-400" />
                                         </div>
-                                        <span className="absolute bottom-4 left-4 font-bold text-neutral-300 group-hover:text-white group-hover:translate-x-1 transition-all">
-                                            {vibe}
+                                        <span className="absolute bottom-3 left-3 font-black text-sm text-white/90 group-hover:text-white group-hover:translate-x-1 transition-all z-10 text-left leading-tight drop-shadow-md">
+                                            {vibe.name}
                                         </span>
                                     </button>
                                 </MagicCard>

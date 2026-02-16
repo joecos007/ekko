@@ -29,11 +29,8 @@ export function MenuDrawer({ children }: MenuDrawerProps) {
 
     // Close drawer when pathname changes
     useEffect(() => {
-        if (open) {
-            const timer = setTimeout(() => setOpen(false), 0)
-            return () => clearTimeout(timer)
-        }
-    }, [pathname, open])
+        setOpen(false)
+    }, [pathname])
 
     const handleLogout = async () => {
         setOpen(false)
@@ -72,19 +69,19 @@ export function MenuDrawer({ children }: MenuDrawerProps) {
                     <div className="flex-1 overflow-y-auto space-y-8 pr-2">
                         {/* Main Nav */}
                         <div className="flex flex-col gap-2">
-                            <Link href="/" onClick={() => setOpen(false)} className="flex items-center gap-4 text-xl font-bold text-neutral-400 hover:text-white transition-colors p-2 hover:bg-white/5 rounded-lg">
+                            <Link href="/" className="flex items-center gap-4 text-xl font-bold text-neutral-400 hover:text-white transition-colors p-2 hover:bg-white/5 rounded-lg">
                                 <Home className="w-6 h-6" /> Home
                             </Link>
-                            <Link href="/search" onClick={() => setOpen(false)} className="flex items-center gap-4 text-xl font-bold text-neutral-400 hover:text-white transition-colors p-2 hover:bg-white/5 rounded-lg">
+                            <Link href="/search" className="flex items-center gap-4 text-xl font-bold text-neutral-400 hover:text-white transition-colors p-2 hover:bg-white/5 rounded-lg">
                                 <Search className="w-6 h-6" /> Search
                             </Link>
-                            <Link href="/vibes" onClick={() => setOpen(false)} className="flex items-center gap-4 text-xl font-bold text-neutral-400 hover:text-white transition-colors p-2 hover:bg-white/5 rounded-lg">
+                            <Link href="/vibes" className="flex items-center gap-4 text-xl font-bold text-neutral-400 hover:text-white transition-colors p-2 hover:bg-white/5 rounded-lg">
                                 <Sparkles className="w-6 h-6" /> Community Vibes
                             </Link>
-                            <Link href="/library" onClick={() => setOpen(false)} className="flex items-center gap-4 text-xl font-bold text-neutral-400 hover:text-white transition-colors p-2 hover:bg-white/5 rounded-lg">
+                            <Link href="/library" className="flex items-center gap-4 text-xl font-bold text-neutral-400 hover:text-white transition-colors p-2 hover:bg-white/5 rounded-lg">
                                 <Library className="w-6 h-6" /> Your Library
                             </Link>
-                            <Link href="/profile" onClick={() => setOpen(false)} className="flex items-center gap-4 text-xl font-bold text-neutral-400 hover:text-white transition-colors p-2 hover:bg-white/5 rounded-lg">
+                            <Link href="/profile" className="flex items-center gap-4 text-xl font-bold text-neutral-400 hover:text-white transition-colors p-2 hover:bg-white/5 rounded-lg">
                                 <User className="w-6 h-6" /> Profile
                             </Link>
                             <TeamStoryDialog>
@@ -100,7 +97,7 @@ export function MenuDrawer({ children }: MenuDrawerProps) {
                         {/* Your Music */}
                         <div>
                             <div className="px-2 text-[10px] font-black text-blue-400/50 uppercase tracking-[0.2em] mb-4">Your Music</div>
-                            <Link href="/liked" onClick={() => setOpen(false)} className="flex items-center gap-4 text-lg font-medium text-neutral-300 hover:text-white transition-colors p-2 hover:bg-white/5 rounded-lg group">
+                            <Link href="/liked" className="flex items-center gap-4 text-lg font-medium text-neutral-300 hover:text-white transition-colors p-2 hover:bg-white/5 rounded-lg group">
                                 <div className="w-6 h-6 flex items-center justify-center bg-gradient-to-br from-blue-600 to-indigo-600 rounded-[6px] shadow-lg shadow-blue-600/20 group-hover:scale-110 transition-transform">
                                     <Heart className="w-3.5 h-3.5 text-white fill-white" />
                                 </div>
@@ -113,7 +110,7 @@ export function MenuDrawer({ children }: MenuDrawerProps) {
                             <div className="px-2 text-[10px] font-black text-blue-400/50 uppercase tracking-[0.2em] mb-4">Playlists</div>
                             <div className="flex flex-col gap-1">
                                 {playlists?.map(playlist => (
-                                    <Link key={playlist.id} href={`/playlist/${playlist.id}`} onClick={() => setOpen(false)} className="text-lg font-medium text-neutral-400 hover:text-white transition-colors p-2 hover:bg-white/5 rounded-lg truncate">
+                                    <Link key={playlist.id} href={`/playlist/${playlist.id}`} className="text-lg font-medium text-neutral-400 hover:text-white transition-colors p-2 hover:bg-white/5 rounded-lg truncate">
                                         {playlist.title}
                                     </Link>
                                 ))}
