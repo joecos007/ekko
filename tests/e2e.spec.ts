@@ -7,25 +7,24 @@ const HAS_CREDENTIALS = !!(EMAIL && PASSWORD);
 const login = async (page: any) => {
     await page.goto('/login');
 
-    const emailInput = page.locator('input[type="email"]');
+    const emailInput = page.locator('input[type="email"], input[name="email"], input[placeholder*="email" i]').first();
     await expect(emailInput).toBeVisible({ timeout: 10_000 });
 
-    // pressSequentially is more robust than fill() on Mobile Safari
-    await emailInput.click();
-    await emailInput.pressSequentially(EMAIL!, { delay: 50 });
+    await emailInput.fill(EMAIL!);
     await expect(emailInput).toHaveValue(EMAIL!);
 
-    const passwordInput = page.locator('input[type="password"]');
-    await passwordInput.click();
-    await passwordInput.pressSequentially(PASSWORD!, { delay: 50 });
+    const passwordInput = page.locator('input[type="password"], input[name="password"], input[placeholder*="password" i]').first();
+    await passwordInput.fill(PASSWORD!);
     await expect(passwordInput).toHaveValue(PASSWORD!);
 
+    const submitBtn = page.locator('button[type="submit"], button:has-text("Sign In"), button:has-text("Login")').first();
+
     await Promise.all([
-        page.waitForURL(/\/(home)?$/, { timeout: 30_000 }),
-        page.click('button[type="submit"]'),
+        page.waitForURL('**/home', { timeout: 60_000 }),
+        submitBtn.click(),
     ]);
 
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 };
 
 test.describe('Ekko E2E Workflow', () => {

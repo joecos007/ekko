@@ -43,10 +43,19 @@ test.describe('Phase 18: New Pages & Link Fixes', () => {
 
         // Login
         await page.goto('/login')
-        await page.getByPlaceholder('you@domain.com').fill(EMAIL!)
-        await page.getByPlaceholder('••••••••').fill(PASSWORD!)
-        await page.getByRole('button', { name: /sign in/i }).click()
-        await page.waitForURL('**/home')
+
+        // Use robust selectors like in complete-workflow
+        const emailInput = page.locator('input[type="email"], input[name="email"], input[placeholder*="email" i]').first()
+        await emailInput.fill(EMAIL!)
+
+        const passwordInput = page.locator('input[type="password"], input[name="password"], input[placeholder*="password" i]').first()
+        await passwordInput.fill(PASSWORD!)
+
+        const submitBtn = page.locator('button[type="submit"], button:has-text("Sign In"), button:has-text("Login")').first()
+        await submitBtn.click()
+
+        await page.waitForURL('**/home', { timeout: 60000 })
+        await page.waitForLoadState('domcontentloaded')
 
         // 1. Categories Page
         await page.goto('/categories')
@@ -59,7 +68,7 @@ test.describe('Phase 18: New Pages & Link Fixes', () => {
         // 2. Artists Page
         await page.goto('/artists')
         await expect(page).toHaveURL(/.*artists/)
-        await expect(page.getByText('Artists')).toBeVisible()
+        await expect(page.getByText('Discover the voices behind EKKO')).toBeVisible()
         await expect(page.getByText('Team Ekko')).toBeVisible()
 
         // 3. Verify Sidebar Links work

@@ -30,7 +30,7 @@ export function SongRow({ title, songs }: SongRowProps) {
     if (!songs || songs.length === 0) return null
 
     return (
-        <section className="mb-8">
+        <section className="mb-8" data-testid="song-row-section">
             <div className="flex items-center justify-between mb-4 px-1">
                 <h2 className="text-xl md:text-2xl font-bold text-white tracking-tight">{title}</h2>
                 <Button variant="link" className="text-neutral-400 hover:text-white text-xs font-bold uppercase tracking-wider">
@@ -50,6 +50,7 @@ export function SongRow({ title, songs }: SongRowProps) {
                                 key={song.id}
                                 className="group relative w-[160px] md:w-[180px] cursor-pointer"
                                 onClick={() => setQueue(songs, i)}
+                                data-testid={`song-card-${song.title}`}
                             >
                                 <div className="relative aspect-square w-full overflow-hidden rounded-none bg-neutral-800 mb-3 shadow-lg group-hover:shadow-xl transition-all">
                                     <Image
