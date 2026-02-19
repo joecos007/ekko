@@ -167,8 +167,8 @@ export default function SignupPage() {
         <div className="min-h-[100dvh] bg-black text-white antialiased selection:bg-white/20 selection:text-white flex items-center justify-center p-4 sm:p-6 overflow-hidden relative">
             {/* Background with gradients */}
             <div className="fixed inset-0 -z-10">
-                <div className="absolute top-0 right-1/4 w-96 h-96 bg-ekko-500/20 rounded-full blur-[150px]" />
-                <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-ekko-700/20 rounded-full blur-[150px]" />
+                <div className="absolute top-0 right-1/4 w-96 h-96 bg-ekko-500/20 rounded-none blur-[150px]" />
+                <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-ekko-700/20 rounded-none blur-[150px]" />
             </div>
 
             {/* Main Card */}

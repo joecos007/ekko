@@ -72,8 +72,8 @@ export default function ResetPasswordPage() {
         <div className="min-h-[100dvh] bg-black text-white antialiased selection:bg-white/20 selection:text-white flex items-center justify-center p-4 sm:p-6 overflow-hidden relative">
             {/* Background */}
             <div className="fixed inset-0 -z-10">
-                <div className="absolute top-0 right-1/4 w-96 h-96 bg-ekko-500/15 rounded-full blur-[150px]" />
-                <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-ekko-700/15 rounded-full blur-[150px]" />
+                <div className="absolute top-0 right-1/4 w-96 h-96 bg-ekko-500/15 rounded-none blur-[150px]" />
+                <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-ekko-700/15 rounded-none blur-[150px]" />
             </div>
 
             <MagicCard
@@ -99,7 +99,7 @@ export default function ResetPasswordPage() {
                                 animate={{ opacity: 1, scale: 1 }}
                                 className="text-center space-y-6 py-4"
                             >
-                                <div className="mx-auto w-16 h-16 rounded-full bg-ekko-500/10 border border-ekko-500/20 flex items-center justify-center">
+                                <div className="mx-auto w-16 h-16 rounded-none bg-ekko-500/10 border border-ekko-500/20 flex items-center justify-center">
                                     <CheckCircle2 className="w-8 h-8 text-ekko-400" />
                                 </div>
                                 <div>

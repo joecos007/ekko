@@ -225,7 +225,7 @@ export default function LoginPage() {
                     <div className="flex items-center gap-4 text-sm text-neutral-500">
                         <div className="flex -space-x-3">
                             {[1, 2, 3].map(i => (
-                                <div key={i} className="w-8 h-8 rounded-full border border-black bg-neutral-800 flex items-center justify-center text-[10px] uppercase">
+                                <div key={i} className="w-8 h-8 rounded-none border border-black bg-neutral-800 flex items-center justify-center text-[10px] uppercase">
                                     A{i}
                                 </div>
                             ))}
