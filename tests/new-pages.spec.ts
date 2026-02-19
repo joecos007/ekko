@@ -1,5 +1,8 @@
 import { test, expect } from '@playwright/test'
 
+const EMAIL = process.env.TEST_USER_EMAIL!;
+const PASSWORD = process.env.TEST_USER_PASSWORD!;
+
 test.describe('Phase 18: New Pages & Link Fixes', () => {
 
     test('should navigate to public contact page', async ({ page }) => {
@@ -21,8 +24,8 @@ test.describe('Phase 18: New Pages & Link Fixes', () => {
     test('should verify protected dashboard pages (require login)', async ({ page }) => {
         // Login first
         await page.goto('/login')
-        await page.getByPlaceholder('you@domain.com').fill('admin@ekko.app')
-        await page.getByPlaceholder('••••••••').fill('Test@2026')
+        await page.getByPlaceholder('you@domain.com').fill(EMAIL)
+        await page.getByPlaceholder('••••••••').fill(PASSWORD)
         await page.getByRole('button', { name: /sign in/i }).click()
         await page.waitForURL('**/home')
 

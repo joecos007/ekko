@@ -36,8 +36,7 @@ export async function GET(request: Request) {
         const { error } = await supabase.auth.exchangeCodeForSession(code)
         if (!error) {
             // Check if this is a recovery (reset password) flow
-            const { searchParams: params } = new URL(request.url)
-            const type = params.get('type')
+            const type = searchParams.get('type')
             const finalRedirect = type === 'recovery' ? '/reset-password' : next
 
             const forwardedHost = request.headers.get('x-forwarded-host')

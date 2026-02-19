@@ -6,6 +6,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { AudioProvider } from "@/components/player/audio-provider";
 import { PlayerBar } from "@/components/player/player-bar";
 import { SkipNav } from "@/components/layout/skip-nav";
+import { FloatingChat } from "@/components/chat/floating-chat";
 
 
 const geistSans = Geist({
@@ -79,6 +80,7 @@ export default function RootLayout({
           </div>
           <AudioProvider />
           <PlayerBar />
+          <FloatingChat />
           <Toaster />
         </Providers>
       </body>

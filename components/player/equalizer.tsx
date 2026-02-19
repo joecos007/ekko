@@ -63,6 +63,7 @@ export function Equalizer({ open, onClose }: EqualizerProps) {
                     <div className="flex items-center gap-3">
                         <SlidersHorizontal className="w-5 h-5 text-ekko-400" />
                         <h2 className="text-lg font-bold text-white">Equalizer</h2>
+                        <span className="text-[10px] font-black bg-ekko-500 text-black px-1.5 py-0.5 rounded-none uppercase tracking-tighter">Coming Soon</span>
                     </div>
                     <div className="flex items-center gap-2">
                         <Button

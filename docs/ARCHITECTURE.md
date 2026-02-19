@@ -51,5 +51,5 @@ EKKO is a next-generation social audio streaming platform built with modern web 
 
 ## Contribution Guidelines
 - Ensure all new components use `geist-sans` or `geist-mono` fonts.
-- maintain the comprehensive color system defined in `globals.css`.
+- Maintain the comprehensive color system defined in `globals.css`.
 - Run linting before committing.

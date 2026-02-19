@@ -223,22 +223,8 @@ export const useVibeStore = create<VibeState>((set, get) => ({
     subscribeToVibes: (songId) => {
         const { activeChannel, retryTimeout } = get()
         const supabase = createClient()
-        const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(songId)
 
-        if (!isUUID) {
-            if (activeChannel) {
-                supabase.removeChannel(activeChannel)
-                set({ activeChannel: null })
-            }
-            return
-        }
-
-        if (typeof window !== 'undefined' && !navigator.onLine) {
-            console.warn('[VibeStore] Offline: realtime subscription skipped.')
-            return
-        }
-
-        // Cleanup existing
+        // ALWAYS cleanup existing first
         if (retryTimeout) {
             clearTimeout(retryTimeout)
             set({ retryTimeout: null })
@@ -246,6 +232,14 @@ export const useVibeStore = create<VibeState>((set, get) => ({
         if (activeChannel) {
             supabase.removeChannel(activeChannel)
             set({ activeChannel: null })
+        }
+
+        const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(songId)
+        if (!isUUID) return
+
+        if (typeof window !== 'undefined' && !navigator.onLine) {
+            console.warn('[VibeStore] Offline: realtime subscription skipped.')
+            return
         }
 
         let retryCount = 0

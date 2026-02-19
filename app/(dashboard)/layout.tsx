@@ -5,8 +5,6 @@ import { Sidebar } from "@/components/layout/sidebar";
 import { Header } from "@/components/layout/header";
 import { MobileNav } from "@/components/layout/mobile-nav";
 import { ScrollProgress } from "@/components/ui/scroll-progress";
-import { FloatingChat } from "@/components/chat/floating-chat";
-
 import { ClientOnly } from "@/components/ui/client-only";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import { PageTransition } from "@/components/layout/page-transition";
@@ -47,7 +45,6 @@ export default function DashboardLayout({
                 </main>
             </div>
             <MobileNav />
-            <FloatingChat />
         </>
     );
 }

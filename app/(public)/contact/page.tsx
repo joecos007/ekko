@@ -13,11 +13,30 @@ export default function ContactPage() {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         setLoading(true)
-        // Simulate sending
-        await new Promise(resolve => setTimeout(resolve, 1000))
-        setSubmitted(true)
-        setLoading(false)
-        toast.success('Message sent! We\'ll get back to you soon.')
+
+        try {
+            const formData = new FormData(e.currentTarget)
+            const data = {
+                name: formData.get('id="name"') || (document.getElementById('name') as HTMLInputElement).value,
+                email: formData.get('id="email"') || (document.getElementById('email') as HTMLInputElement).value,
+                message: formData.get('id="message"') || (document.getElementById('message') as HTMLTextAreaElement).value,
+            }
+
+            const response = await fetch('/api/contact', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data),
+            })
+
+            if (!response.ok) throw new Error('Failed to send message')
+
+            setSubmitted(true)
+            toast.success('Message sent! We\'ll get back to you soon.')
+        } catch (error) {
+            toast.error('Something went wrong. Please try again.')
+        } finally {
+            setLoading(false)
+        }
     }
 
     return (

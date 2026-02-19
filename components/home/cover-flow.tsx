@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from 'framer-motion'
+import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from 'motion/react'
 import { ChevronLeft, ChevronRight, Play } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import Image from 'next/image'
@@ -132,7 +132,7 @@ export function CoverFlow() {
                                 </div>
 
                                 {/* Reflection */}
-                                <div className="absolute top-full left-0 right-0 h-full mt-4 scale-y-[-1] opacity-30 pointer-events-none mask-image-gradient">
+                                <div className="absolute top-full left-0 right-0 h-full mt-4 scale-y-[-1] opacity-30 pointer-events-none [mask-image:linear-gradient(to_bottom,black,transparent)]">
                                     <img
                                         src={album.cover}
                                         className="w-full h-full object-cover rounded-none blur-sm"

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { createClient } from "@/utils/supabase/client"
 import { Loader2, Radio, Music, Sparkles } from "lucide-react"
-import { motion, AnimatePresence } from "framer-motion"
+import { motion, AnimatePresence } from "motion/react"
 import Image from "next/image"
 import { usePlayer } from "@/store/player-store" // Import player store for local metadata
 
@@ -160,7 +160,7 @@ export function VibeStatsView() {
         loadStats()
 
         return () => { isMounted = false }
-    }, [queue])
+    }, [])
 
     if (isLoading) {
         return (

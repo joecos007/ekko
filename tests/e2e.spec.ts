@@ -1,5 +1,8 @@
 import { test, expect } from '@playwright/test';
 
+const EMAIL = process.env.TEST_USER_EMAIL!;
+const PASSWORD = process.env.TEST_USER_PASSWORD!;
+
 const login = async (page: any) => {
     await page.goto('/login');
 
@@ -8,13 +11,13 @@ const login = async (page: any) => {
 
     // pressSequentially is more robust than fill() on Mobile Safari
     await emailInput.click();
-    await emailInput.pressSequentially('admin@ekko.app', { delay: 50 });
-    await expect(emailInput).toHaveValue('admin@ekko.app');
+    await emailInput.pressSequentially(EMAIL, { delay: 50 });
+    await expect(emailInput).toHaveValue(EMAIL);
 
     const passwordInput = page.locator('input[type="password"]');
     await passwordInput.click();
-    await passwordInput.pressSequentially('Test@2026', { delay: 50 });
-    await expect(passwordInput).toHaveValue('Test@2026');
+    await passwordInput.pressSequentially(PASSWORD, { delay: 50 });
+    await expect(passwordInput).toHaveValue(PASSWORD);
 
     await Promise.all([
         page.waitForURL(/\/(home)?$/, { timeout: 30_000 }),

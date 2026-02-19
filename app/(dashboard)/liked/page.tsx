@@ -1,6 +1,6 @@
 'use client'
 
-import { useQuery } from "@tanstack/react-query"
+import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { createClient } from "@/utils/supabase/client"
 import { usePlayer } from "@/store/player-store"
 import { Button } from "@/components/ui/button"
@@ -47,10 +47,14 @@ export default function LikedSongsPage() {
         }
     })
 
+    const queryClient = useQueryClient()
+
     const handleToggleLike = async (e: React.MouseEvent, songId: string) => {
         e.stopPropagation()
         try {
             await toggleLike.mutateAsync(songId)
+            // Invalidate the song-objects list so removed songs disappear immediately
+            queryClient.invalidateQueries({ queryKey: ['liked-songs-objects'] })
         } catch (error) {
             console.error(error)
         }
@@ -132,7 +136,10 @@ export default function LikedSongsPage() {
                                     onClick={(e) => handleToggleLike(e, song.id)}
                                     className="p-2 rounded-full hover:bg-white/10 transition-colors"
                                 >
-                                    <Heart className="w-4 h-4 fill-ekko-400 text-ekko-400" />
+                                    <Heart className={`w-4 h-4 transition-colors ${isLiked(song.id)
+                                            ? 'fill-ekko-400 text-ekko-400'
+                                            : 'fill-none text-neutral-500 hover:text-ekko-400'
+                                        }`} />
                                 </button>
                                 <div onClick={(e) => e.stopPropagation()}>
                                     <MediaItemActionMenu
@@ -163,7 +170,10 @@ export default function LikedSongsPage() {
                                     onClick={(e) => handleToggleLike(e, song.id)}
                                     className="p-2 rounded-full hover:bg-white/10 transition-colors"
                                 >
-                                    <Heart className="w-4 h-4 fill-ekko-400 text-ekko-400" />
+                                    <Heart className={`w-4 h-4 transition-colors ${isLiked(song.id)
+                                            ? 'fill-ekko-400 text-ekko-400'
+                                            : 'fill-none text-neutral-500 hover:text-ekko-400'
+                                        }`} />
                                 </button>
                                 <div onClick={(e) => e.stopPropagation()}>
                                     <MediaItemActionMenu

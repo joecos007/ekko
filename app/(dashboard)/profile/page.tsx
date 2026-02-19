@@ -75,6 +75,11 @@ export default function ProfilePage() {
     }
 
     const updateProfile = async () => {
+        if (!user) {
+            toast.error('Session expired. Please sign in again.')
+            router.push('/login')
+            return
+        }
         try {
             setLoading(true)
             const { error } = await supabase
@@ -96,6 +101,11 @@ export default function ProfilePage() {
     }
 
     const uploadAvatar = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (!user) {
+            toast.error('Session expired. Please sign in again.')
+            router.push('/login')
+            return
+        }
         try {
             setUploading(true)
             if (!event.target.files || event.target.files.length === 0) {

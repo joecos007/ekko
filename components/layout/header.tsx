@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button"
 import { createClient } from "@/utils/supabase/client"
 import { useUser } from "@/hooks/use-user"
-import { ChevronLeft, ChevronRight, Search, Heart, Settings } from "lucide-react"
+import { Search } from "lucide-react"
 import { EkkoLogo } from "@/components/brand/ekko-logo"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
@@ -17,16 +17,26 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { LogOut, User as UserSettings } from "lucide-react"
+import { LogOut, User as UserSettings, MessageCircle } from "lucide-react"
 import { toast } from "sonner"
+import { useChatUI } from "@/store/chat-ui-store"
+
+function getGreeting() {
+    const h = new Date().getHours()
+    if (h < 12) return 'Good Morning'
+    if (h < 17) return 'Good Afternoon'
+    return 'Good Evening'
+}
 
 export function Header() {
     const [supabase] = useState(() => createClient())
     const { user } = useUser()
     const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
-    const [greeting, setGreeting] = useState('Welcome')
+    // Compute greeting once at mount time (no extra render cycle)
+    const [greeting] = useState(getGreeting)
     const [userName, setUserName] = useState('')
     const router = useRouter()
+    const { open: openChat } = useChatUI()
 
     useEffect(() => {
         const getProfile = async () => {
@@ -49,16 +59,6 @@ export function Header() {
         getProfile()
     }, [user, supabase])
 
-    useEffect(() => {
-        const h = new Date().getHours()
-        if (h < 12) {
-            setGreeting('Good Morning')
-        } else if (h < 17) {
-            setGreeting('Good Afternoon')
-        } else {
-            setGreeting('Good Evening')
-        }
-    }, [])
 
     const handleSignOut = async () => {
         try {
@@ -86,13 +86,22 @@ export function Header() {
 
             {/* Central Search Bar */}
             <div className="flex-1 max-w-xl mx-4 relative hidden md:block">
-                <div className="relative group">
+                <form
+                    onSubmit={(e) => {
+                        e.preventDefault()
+                        const q = new FormData(e.currentTarget).get('q')?.toString().trim()
+                        if (q) router.push(`/search?q=${encodeURIComponent(q)}`)
+                        else router.push('/search')
+                    }}
+                    className="relative group"
+                >
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-500 group-focus-within:text-white transition-colors" />
                     <Input
+                        name="q"
                         placeholder="Search for a song"
                         className="w-full bg-surface-2 border-transparent focus:border-white/10 rounded-none h-12 pl-12 text-base placeholder:text-neutral-500 text-white transition-all shadow-none focus-visible:ring-0 focus-visible:bg-surface-3"
                     />
-                </div>
+                </form>
             </div>
 
             <div className="flex items-center justify-end gap-3 w-1/3">
@@ -121,6 +130,10 @@ export function Header() {
                                 <DropdownMenuItem onClick={() => router.push('/profile')}>
                                     <UserSettings className="mr-2 h-4 w-4" />
                                     Profile
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={openChat}>
+                                    <MessageCircle className="mr-2 h-4 w-4" />
+                                    Community Chat
                                 </DropdownMenuItem>
                                 <DropdownMenuSeparator className="bg-white/5" />
                                 <DropdownMenuItem onClick={handleSignOut} className="text-red-400 focus:text-red-400 focus:bg-red-500/10">

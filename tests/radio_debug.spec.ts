@@ -1,13 +1,16 @@
 import { test, expect } from '@playwright/test';
 
+const EMAIL = process.env.TEST_USER_EMAIL!;
+const PASSWORD = process.env.TEST_USER_PASSWORD!;
+
 test('analyze radio transition performance', async ({ page }) => {
     console.log('Starting Radio Performance Test...');
 
     // 1. Login first
     await page.goto('http://localhost:3000/login');
     // Use robust locators matching complete-workflow
-    await page.locator('input[type="email"], input[name="email"]').first().fill('admin@ekko.app');
-    await page.locator('input[type="password"], input[name="password"]').first().fill('Test@2026');
+    await page.locator('input[type="email"], input[name="email"]').first().fill(EMAIL);
+    await page.locator('input[type="password"], input[name="password"]').first().fill(PASSWORD);
     await page.locator('button[type="submit"], button:has-text("Sign In"), button:has-text("Login")').first().click();
     // Increase timeout for mobile browsers which can be slower
     await page.waitForURL('**/home', { timeout: 60000 });

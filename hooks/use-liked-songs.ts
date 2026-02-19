@@ -2,18 +2,22 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { createClient } from '@/utils/supabase/client'
+import { useUser } from '@/hooks/use-user'
 import { toast } from 'sonner'
 
 export function useLikedSongs() {
     const queryClient = useQueryClient()
     const supabase = createClient()
+    const { user } = useUser()
 
     const { data: likedSongs, isLoading } = useQuery({
-        queryKey: ['liked-songs'],
+        queryKey: ['liked-songs', user?.id],
+        enabled: !!user?.id,
         queryFn: async () => {
             const { data, error } = await supabase
                 .from('liked_songs')
                 .select('song_id')
+                .eq('user_id', user!.id)
 
             if (error) throw error
             return new Set(data.map((item: any) => item.song_id))

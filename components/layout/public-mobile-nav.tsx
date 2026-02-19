@@ -28,15 +28,23 @@ export function PublicMobileNav() {
                 size="icon"
                 className="relative z-[100] text-white hover:bg-white/10"
                 onClick={() => setIsOpen(!isOpen)}
+                aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
+                aria-expanded={isOpen}
+                aria-controls="public-mobile-menu"
             >
                 {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </Button>
 
             {/* Overlay Menu */}
-            <div className={cn(
-                "fixed inset-0 bg-black/98 z-[99] flex flex-col items-center justify-center gap-8 transition-all duration-300 ease-in-out",
-                isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
-            )}>
+            <div
+                id="public-mobile-menu"
+                role="dialog"
+                aria-modal="true"
+                aria-label="Navigation menu"
+                className={cn(
+                    "fixed inset-0 bg-black/98 z-[99] flex flex-col items-center justify-center gap-8 transition-all duration-300 ease-in-out",
+                    isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+                )}>
                 <nav className="flex flex-col items-center gap-4 w-full px-10">
                     <Link href="/" onClick={() => setIsOpen(false)} className="w-full">
                         <Button

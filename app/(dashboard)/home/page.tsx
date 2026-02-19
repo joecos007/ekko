@@ -5,7 +5,7 @@ import { createClient } from "@/utils/supabase/client"
 import { usePlayer } from "@/store/player-store"
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
-import { Play, Star, Coffee, Flower2, Headphones, Zap, Music, Pause, Heart, Radio, RotateCw, Sparkles, User } from "lucide-react"
+import { Play, Star, Coffee, Flower2, Headphones, Music, Pause, Heart, Radio, Sparkles, Zap } from "lucide-react"
 import { useEffect, useState } from "react"
 import { MediaItemActionMenu } from "@/components/media/media-item-action-menu"
 import { getCoverArt, PLAYLIST_COVERS } from "@/lib/cover-art"
@@ -177,9 +177,21 @@ export default function Home() {
     }
   }, [dbSongs])
 
-  const recommendedSongs = allSongs.slice(0, 6)
-  const newReleases = allSongs.slice(0, 8)
-  const recentSongs = allSongs.slice(8, 14)
+  // Filter songs based on category
+  const filteredSongs = allSongs.filter(song => {
+    if (selectedCategory === "All") return true;
+
+    // Deterministic mock filtering since we don't have a 'mood' field in DB yet
+    const hash = song.title.length + (song.artist?.length || 0);
+    const cat = ["Relax", "Sad", "Party", "Romance", "Energize"][hash % 5];
+    return cat === selectedCategory;
+  });
+
+  const displaySongs = selectedCategory === "All" ? allSongs : filteredSongs;
+
+  const recommendedSongs = displaySongs.slice(0, 6)
+  const newReleases = displaySongs.slice(0, 8)
+  const recentSongs = displaySongs.slice(8, 14)
 
   return (
     <div className="p-8 pt-6 font-geist-sans relative min-h-full pb-24">
@@ -204,7 +216,7 @@ export default function Home() {
         <SongRow title="Recommended for You" songs={recommendedSongs} />
         <SongRow title="New Releases" songs={newReleases} />
         <SongRow title="Jump Back In" songs={recentSongs} />
-        <SongRow title="Team Ekko Hits" songs={allSongs.filter(s => s.artist.includes("Ekko"))} />
+        <SongRow title="Team Ekko Hits" songs={allSongs.filter(s => s.artist?.includes("Ekko"))} />
       </div>
 
       {/* ═══════════════════════════════════════════════════ */}

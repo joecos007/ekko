@@ -8,7 +8,7 @@ import { VelocityScroll } from "@/components/ui/velocity-scroll";
 import { Users, Radio, Zap, Disc, Mic2, Globe, Sparkles, ArrowRight } from "lucide-react";
 import { AuroraBackground } from "@/components/auth/aurora-background";
 import { BentoGrid, BentoCard } from "@/components/ui/bento-grid";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
 import { RetroGrid } from "@/components/ui/retro-grid";
 

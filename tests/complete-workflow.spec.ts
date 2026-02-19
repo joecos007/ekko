@@ -1,5 +1,8 @@
 import { test, expect } from '@playwright/test'
 
+const EMAIL = process.env.TEST_USER_EMAIL!;
+const PASSWORD = process.env.TEST_USER_PASSWORD!;
+
 /**
  * Comprehensive E2E Test Suite for EKKO AI Music Platform
  * Tests the complete user workflow from landing to dashboard
@@ -54,10 +57,10 @@ test.describe('EKKO Complete User Workflow', () => {
             console.log('Filling login form...')
             // Try standard inputs first, then fallback to placeholders/labels
             const emailInput = page.locator('input[type="email"], input[name="email"], input[placeholder*="email" i]').first()
-            await emailInput.fill('admin@ekko.app')
+            await emailInput.fill(EMAIL)
 
             const passwordInput = page.locator('input[type="password"], input[name="password"], input[placeholder*="password" i]').first()
-            await passwordInput.fill('Test@2026')
+            await passwordInput.fill(PASSWORD)
 
             // Submit
             const submitBtn = page.locator('button[type="submit"], button:has-text("Sign In"), button:has-text("Login")').first()
@@ -165,7 +168,7 @@ test.describe('EKKO Complete User Workflow', () => {
             await page.waitForTimeout(2000)
 
             // The carousel nav arrows are hidden until hover. Hover the carousel area first.
-            const carouselContainer = page.locator('.rounded-3xl.overflow-hidden.group').first()
+            const carouselContainer = page.getByTestId('featured-carousel').first()
             if (await carouselContainer.isVisible({ timeout: 5000 })) {
                 await carouselContainer.hover()
                 await page.waitForTimeout(500)
@@ -227,8 +230,8 @@ test.describe('EKKO Complete User Workflow', () => {
     test('should logout successfully', async ({ page }) => {
         // Login first
         await page.goto('http://localhost:3000/login')
-        await page.locator('input[type="email"], input[name="email"]').first().fill('admin@ekko.app')
-        await page.locator('input[type="password"], input[name="password"]').first().fill('Test@2026')
+        await page.locator('input[type="email"], input[name="email"]').first().fill(EMAIL)
+        await page.locator('input[type="password"], input[name="password"]').first().fill(PASSWORD)
 
         await page.locator('button[type="submit"], button:has-text("Sign In"), button:has-text("Login")').first().click()
         await page.waitForURL('**/home', { timeout: 60000 })

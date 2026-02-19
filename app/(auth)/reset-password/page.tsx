@@ -16,7 +16,7 @@ import { MagicCard } from '@/components/ui/magic-card';
 import { RetroGrid } from '@/components/ui/retro-grid';
 import { DotPattern } from '@/components/ui/dot-pattern';
 import { BorderBeam } from '@/components/ui/border-beam';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 
 const resetSchema = z.object({
     password: z.string().min(6, 'Password must be at least 6 characters'),
@@ -38,15 +38,25 @@ export default function ResetPasswordPage() {
     // Ensure session is available (Supabase sets it from the code exchange)
     useEffect(() => {
         const checkSession = async () => {
-            const { data: { session } } = await supabase.auth.getSession();
-            if (!session) {
-                // If no session, they might have landed here without clicking a link
-                // or the session expired.
-                // We'll let them try, but updateUser will fail if no session.
+            try {
+                const supabaseClient = createClient();
+                const { data: { session } } = await supabaseClient.auth.getSession();
+
+                // Check if we have a session and if it's a recovery session
+                const isRecovery = session?.user?.amr?.some((m: any) => m.method === 'recovery' || m === 'recovery');
+
+                if (!session || !isRecovery) {
+                    toast.error('Please use the password reset link sent to your email.');
+                    router.push('/forgot-password');
+                }
+            } catch (err: unknown) {
+                if (err instanceof Error && err.name === 'AbortError') return;
+                router.push('/forgot-password');
             }
         };
         checkSession();
-    }, [supabase.auth]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const { register, handleSubmit, formState: { errors } } = useForm<ResetForm>({
         resolver: zodResolver(resetSchema),

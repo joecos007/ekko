@@ -3,7 +3,7 @@
 import React from "react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
-import { motion } from "framer-motion"
+import { motion } from "motion/react"
 
 interface PremiumButtonProps {
     children: React.ReactNode
@@ -35,7 +35,7 @@ export function PremiumButton({
                 "transition-all duration-300",
                 "overflow-hidden",
                 "before:absolute before:inset-0",
-                "before:bg-gradient-to-r before:from-ekko-500 via-ekko-400 to-ekko-300",
+                "before:bg-gradient-to-r before:from-ekko-500 before:via-ekko-400 before:to-ekko-300",
                 "before:opacity-0 hover:before:opacity-100",
                 "before:transition-opacity before:duration-300",
                 className

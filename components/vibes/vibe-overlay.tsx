@@ -3,7 +3,7 @@
 import { usePlayer } from "@/store/player-store"
 import { useVibeStore, Vibe } from "@/store/vibe-store"
 import { useEffect, useState, useRef } from "react"
-import { AnimatePresence, motion } from "framer-motion"
+import { AnimatePresence, motion } from "motion/react"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { Howl } from "howler"
 
