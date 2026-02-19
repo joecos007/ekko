@@ -16,7 +16,7 @@ import { MagicCard } from '@/components/ui/magic-card';
 import { RetroGrid } from '@/components/ui/retro-grid';
 import { DotPattern } from '@/components/ui/dot-pattern';
 import { BorderBeam } from '@/components/ui/border-beam';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 
 const signupSchema = z.object({
     fullName: z.string().min(2, 'Name must be at least 2 characters'),
@@ -60,7 +60,7 @@ export default function SignupPage() {
             email: data.email,
             password: data.password,
             options: {
-                emailRedirectTo: `${location.origin}/auth/callback`,
+                emailRedirectTo: `${window.location.origin}/auth/callback`,
                 data: { full_name: data.fullName },
             },
         });
@@ -371,7 +371,7 @@ export default function SignupPage() {
                                                 onChange={(e) => handleOtpChange(index, e.target.value)}
                                                 onKeyDown={(e) => handleOtpKeyDown(index, e)}
                                                 onPaste={index === 0 ? handleOtpPaste : undefined}
-                                                className="w-11 h-13 sm:w-12 sm:h-14 text-center text-xl font-bold bg-white/5 border border-white/10 rounded-none text-white focus:outline-none focus:border-ekko-500 focus:ring-2 focus:ring-ekko-500/20 transition-all placeholder:text-neutral-700"
+                                                className="w-11 h-14 sm:w-12 sm:h-14 text-center text-xl font-bold bg-white/5 border border-white/10 rounded-none text-white focus:outline-none focus:border-ekko-500 focus:ring-2 focus:ring-ekko-500/20 transition-all placeholder:text-neutral-700"
                                                 placeholder="·"
                                                 autoFocus={index === 0}
                                             />

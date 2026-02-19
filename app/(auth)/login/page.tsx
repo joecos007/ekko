@@ -10,7 +10,7 @@ import { Loader2, Mail, Lock, Eye, EyeOff, ArrowLeft, Key, MessageSquare, CheckC
 import { toast } from 'sonner';
 import { AuroraBackground } from '@/components/auth/aurora-background';
 import { EkkoLogo } from '@/components/brand/ekko-logo';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -388,7 +388,7 @@ export default function LoginPage() {
                                                 onChange={(e) => handleOtpChange(index, e.target.value)}
                                                 onKeyDown={(e) => handleOtpKeyDown(index, e)}
                                                 onPaste={index === 0 ? handleOtpPaste : undefined}
-                                                className="w-11 h-13 text-center text-xl font-bold bg-white/5 border border-white/10 rounded-none text-white focus:outline-none focus:border-ekko-500 focus:ring-2 focus:ring-ekko-500/20 transition-all placeholder:text-neutral-700"
+                                                className="w-11 h-14 text-center text-xl font-bold bg-white/5 border border-white/10 rounded-none text-white focus:outline-none focus:border-ekko-500 focus:ring-2 focus:ring-ekko-500/20 transition-all placeholder:text-neutral-700"
                                                 placeholder="·"
                                                 autoFocus={index === 0}
                                             />
