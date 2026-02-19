@@ -1,7 +1,8 @@
 import { test, expect } from '@playwright/test'
 
-const EMAIL = process.env.TEST_USER_EMAIL!;
-const PASSWORD = process.env.TEST_USER_PASSWORD!;
+const EMAIL = process.env.TEST_USER_EMAIL;
+const PASSWORD = process.env.TEST_USER_PASSWORD;
+const HAS_CREDENTIALS = !!(EMAIL && PASSWORD);
 
 /**
  * Comprehensive E2E Test Suite for EKKO AI Music Platform
@@ -10,6 +11,7 @@ const PASSWORD = process.env.TEST_USER_PASSWORD!;
 
 test.describe('EKKO Complete User Workflow', () => {
     test('should complete full user journey from landing to dashboard', async ({ page }) => {
+        test.skip(!HAS_CREDENTIALS, 'Skipped: TEST_USER_EMAIL / TEST_USER_PASSWORD not set')
         test.setTimeout(120_000)
         // ══════════════════════════════════════════════════════
         // 1. Landing Page
@@ -57,10 +59,10 @@ test.describe('EKKO Complete User Workflow', () => {
             console.log('Filling login form...')
             // Try standard inputs first, then fallback to placeholders/labels
             const emailInput = page.locator('input[type="email"], input[name="email"], input[placeholder*="email" i]').first()
-            await emailInput.fill(EMAIL)
+            await emailInput.fill(EMAIL!)
 
             const passwordInput = page.locator('input[type="password"], input[name="password"], input[placeholder*="password" i]').first()
-            await passwordInput.fill(PASSWORD)
+            await passwordInput.fill(PASSWORD!)
 
             // Submit
             const submitBtn = page.locator('button[type="submit"], button:has-text("Sign In"), button:has-text("Login")').first()
@@ -228,10 +230,11 @@ test.describe('EKKO Complete User Workflow', () => {
     // Separate test for logout
     // ══════════════════════════════════════════════════════
     test('should logout successfully', async ({ page }) => {
+        test.skip(!HAS_CREDENTIALS, 'Skipped: TEST_USER_EMAIL / TEST_USER_PASSWORD not set')
         // Login first
         await page.goto('http://localhost:3000/login')
-        await page.locator('input[type="email"], input[name="email"]').first().fill(EMAIL)
-        await page.locator('input[type="password"], input[name="password"]').first().fill(PASSWORD)
+        await page.locator('input[type="email"], input[name="email"]').first().fill(EMAIL!)
+        await page.locator('input[type="password"], input[name="password"]').first().fill(PASSWORD!)
 
         await page.locator('button[type="submit"], button:has-text("Sign In"), button:has-text("Login")').first().click()
         await page.waitForURL('**/home', { timeout: 60000 })
