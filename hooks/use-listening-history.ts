@@ -31,11 +31,8 @@ function saveHistory(entries: HistoryEntry[]) {
 }
 
 export function useListeningHistory() {
-    const [history, setHistory] = useState<HistoryEntry[]>([])
-
-    useEffect(() => {
-        setHistory(getHistory())
-    }, [])
+    // Lazy initializer: reads localStorage once at mount with no extra render
+    const [history, setHistory] = useState<HistoryEntry[]>(getHistory)
 
     const addToHistory = useCallback((entry: Omit<HistoryEntry, 'playedAt'>) => {
         const newEntry: HistoryEntry = { ...entry, playedAt: Date.now() }

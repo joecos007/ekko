@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { createClient } from "@/utils/supabase/client"
 import { Loader2, Radio, Music, Sparkles } from "lucide-react"
 import { motion, AnimatePresence } from "motion/react"
@@ -24,10 +24,11 @@ export function VibeStatsView() {
     const [stats, setStats] = useState<AggregatedVibe[]>([])
     const [isLoading, setIsLoading] = useState(true)
 
-    // Access local queue directly to resolve metadata for local songs
-    // We use getState() inside the effect or just use the hook, hook is safer for reactivity but here we just need a snapshot on load usually.
-    // However, if the user navigates here, the store should be populated.
+    // Capture queue in a ref so the effect reads the latest value without
+    // re-running on every playback state change (stats are loaded once on mount)
     const { queue } = usePlayer()
+    const queueRef = useRef(queue)
+    useEffect(() => { queueRef.current = queue }, [queue])
 
     useEffect(() => {
         let isMounted = true
@@ -126,7 +127,7 @@ export function VibeStatsView() {
                 aggregator.forEach((agg) => {
                     if (agg.song_title === "Unknown Song" && agg.song_id !== "unknown") {
                         // Try to find in local queue
-                        const localSong = queue.find(s => s.id === agg.song_id)
+                        const localSong = queueRef.current.find(s => s.id === agg.song_id)
                         if (localSong) {
                             agg.song_title = localSong.title
                             agg.song_artist = localSong.artist

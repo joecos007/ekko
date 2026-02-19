@@ -35,7 +35,7 @@ test('analyze radio transition performance', async ({ page }) => {
     const pauseBtn = page.locator('button[aria-label="Pause"]');
     try {
         await expect(pauseBtn).toBeVisible({ timeout: 5000 });
-    } catch (e) {
+    } catch (_e) {
         console.log('Playback didnt start immediately, trying to click Play button explicitly...');
         // Try finding a specific play button within the row or the main player
         await trackRow.click({ force: true });

@@ -76,13 +76,9 @@ export function DotPattern({
   if (width <= 0) width = 16
   if (height <= 0) height = 16
 
-  const [mounted, setMounted] = useState(false)
+  const [mounted] = useState(() => typeof window !== 'undefined')
   const id = useId()
   const containerRef = useRef<SVGSVGElement>(null)
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 })
   const [dots, setDots] = useState<{ x: number; y: number; delay: number; duration: number }[]>([])
 
