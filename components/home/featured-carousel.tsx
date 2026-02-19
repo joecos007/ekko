@@ -24,7 +24,7 @@ const FEATURED_SLIDES: FeaturedSlide[] = [
         subtitle: 'Featured Artist',
         description: 'Original Filipino music — soulful vibes from Tiaong, Quezon',
         imageUrl: '/song-cover/mga-isla-sa-gitna-natin.png',
-        accentColor: 'from-blue-600/90 via-blue-900/70',
+        accentColor: 'from-ekko-700/90 via-ekko-900/70',
         stats: [
             { label: 'Tracks', value: '10' },
             { label: 'Listeners', value: '1.2K' },
@@ -37,7 +37,7 @@ const FEATURED_SLIDES: FeaturedSlide[] = [
         subtitle: 'Curated Playlist',
         description: 'The best of independent Filipino music, updated weekly',
         imageUrl: '/playlist-daily-mix.png',
-        accentColor: 'from-purple-600/90 via-indigo-900/70',
+        accentColor: 'from-ekko-600/90 via-ekko-800/70',
         stats: [
             { label: 'Songs', value: '20' },
             { label: 'Duration', value: '1hr 30m' },
@@ -50,7 +50,7 @@ const FEATURED_SLIDES: FeaturedSlide[] = [
         subtitle: 'Made For You',
         description: 'A personalized blend based on your listening habits',
         imageUrl: '/playlist-discover.png',
-        accentColor: 'from-emerald-600/90 via-teal-900/70',
+        accentColor: 'from-ekko-500/90 via-ekko-700/70',
         stats: [
             { label: 'Fresh', value: '5 new' },
             { label: 'Updated', value: 'Today' },
@@ -92,7 +92,7 @@ export function FeaturedCarousel() {
 
     return (
         <div
-            className="relative w-full h-[50vh] min-h-[400px] md:h-96 rounded-3xl overflow-hidden mb-8 md:mb-12 group shadow-2xl"
+            className="relative w-full h-[50vh] min-h-[400px] md:h-96 rounded-none overflow-hidden mb-8 md:mb-12 group shadow-2xl"
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
         >
@@ -123,7 +123,7 @@ export function FeaturedCarousel() {
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20 z-[1]" />
 
             {/* Ambient Glow */}
-            <div className="absolute -bottom-20 -left-20 w-80 h-80 bg-blue-500/15 blur-[120px] rounded-full z-[1] animate-pulse-glow" />
+            <div className="absolute -bottom-20 -left-20 w-80 h-80 bg-ekko-500/15 blur-[120px] rounded-full z-[1] animate-pulse-glow" />
 
             {/* Content */}
             <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-12 z-10">
@@ -177,8 +177,8 @@ export function FeaturedCarousel() {
                 <ChevronRight className="w-5 h-5" />
             </button>
 
-            {/* Dot Navigation */}
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2">
+            {/* Dot Navigation - Subtle & Elegant */}
+            <div className="absolute bottom-4 right-6 z-20 flex items-center gap-2">
                 {FEATURED_SLIDES.map((_, i) => (
                     <button
                         key={i}
@@ -186,8 +186,8 @@ export function FeaturedCarousel() {
                         aria-label={`Go to slide ${i + 1}`}
                         aria-current={i === currentSlide ? 'true' : undefined}
                         className={`rounded-full transition-all duration-500 ${i === currentSlide
-                            ? 'w-8 h-2.5 bg-white shadow-[0_0_10px_rgba(255,255,255,0.5)]'
-                            : 'w-2.5 h-2.5 bg-white/30 hover:bg-white/50'
+                            ? 'w-8 h-1.5 bg-white/90 shadow-[0_0_12px_rgba(255,255,255,0.6)]'
+                            : 'w-1.5 h-1.5 bg-white/30 hover:bg-white/50 hover:scale-110'
                             }`}
                     />
                 ))}

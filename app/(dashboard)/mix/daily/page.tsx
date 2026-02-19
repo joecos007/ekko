@@ -74,7 +74,7 @@ export default function DailyMixPage() {
         <div className="p-8 pt-0 min-h-full font-geist-mono">
             {/* Header */}
             <div className="flex items-end gap-6 mb-8 mt-4">
-                <div className="w-52 h-52 relative shadow-xl rounded-sm overflow-hidden group">
+                <div className="w-52 h-52 relative shadow-xl rounded-none overflow-hidden group">
                     <Image
                         src={PLAYLIST_COVERS.dailyMix}
                         alt="Daily Mix 1"
@@ -85,7 +85,7 @@ export default function DailyMixPage() {
                     <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors" />
                 </div>
                 <div className="flex flex-col gap-2">
-                    <span className="text-sm font-bold uppercase tracking-widest text-emerald-400">Made For You</span>
+                    <span className="text-sm font-bold uppercase tracking-widest text-ekko-400">Made For You</span>
                     <h1 className="text-7xl font-bold tracking-tighter text-white">Daily Mix 1</h1>
                     <p className="text-sm text-neutral-400 mt-2 font-medium">
                         A mix of news releases and deep cuts, updated daily.
@@ -100,10 +100,10 @@ export default function DailyMixPage() {
                 {songsWithUrls && songsWithUrls.length > 0 && (
                     <Button
                         size="icon"
-                        className="w-14 h-14 rounded-full bg-neon-teal hover:bg-emerald-400 text-black shadow-lg hover:scale-105 transition-transform"
+                        className="w-14 h-14 rounded-full bg-ekko-500 hover:bg-ekko-400 text-white shadow-lg hover:scale-105 transition-transform"
                         onClick={() => songsWithUrls && setQueue(songsWithUrls)}
                     >
-                        <Play className="w-6 h-6 fill-black ml-1" />
+                        <Play className="w-6 h-6 fill-white ml-1" />
                     </Button>
                 )}
             </div>
@@ -122,22 +122,22 @@ export default function DailyMixPage() {
                     {songsWithUrls?.map((song: any, i: number) => (
                         <div
                             key={song.id}
-                            className={`grid grid-cols-[16px_40px_1fr_1fr_1fr] gap-4 px-4 py-2 hover:bg-white/5 rounded-md group cursor-pointer items-center transition-colors ${song.isSpecial ? 'bg-yellow-500/10 border border-yellow-500/20' : ''}`}
+                            className={`grid grid-cols-[16px_40px_1fr_1fr_1fr] gap-4 px-4 py-2 hover:bg-white/5 rounded-none group cursor-pointer items-center transition-colors ${song.isSpecial ? 'bg-ekko-500/10 border border-ekko-500/20' : ''}`}
                             onClick={() => songsWithUrls && setQueue(songsWithUrls, i)}
                         >
                             <span className="text-neutral-400 flex items-center justify-center">
-                                <span className={`group-hover:hidden text-sm font-mono ${song.isSpecial ? 'text-yellow-500' : ''}`}>
+                                <span className={`group-hover:hidden text-sm font-mono ${song.isSpecial ? 'text-ekko-400' : ''}`}>
                                     {song.isSpecial ? '⭐' : i + 1}
                                 </span>
-                                <Play className={`w-4 h-4 hidden group-hover:block ${song.isSpecial ? 'fill-yellow-500' : 'fill-white'}`} />
+                                <Play className={`w-4 h-4 hidden group-hover:block ${song.isSpecial ? 'fill-ekko-400' : 'fill-white'}`} />
                             </span>
 
-                            <div className="relative w-10 h-10 overflow-hidden rounded-sm bg-neutral-800">
+                            <div className="relative w-10 h-10 overflow-hidden rounded-none bg-neutral-800">
                                 <Image src={song.coverUrl} alt={song.title} fill className="object-cover" unoptimized />
                             </div>
 
                             <div className="flex flex-col min-w-0">
-                                <span className={`font-medium truncate ${song.isSpecial ? 'text-yellow-400' : 'text-white'}`}>{song.title}</span>
+                                <span className={`font-medium truncate ${song.isSpecial ? 'text-ekko-300' : 'text-white'}`}>{song.title}</span>
                             </div>
                             <div className="flex flex-col min-w-0">
                                 <span className="text-neutral-400 text-sm truncate">{song.artist}</span>

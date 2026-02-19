@@ -35,15 +35,19 @@ export async function GET(request: Request) {
         )
         const { error } = await supabase.auth.exchangeCodeForSession(code)
         if (!error) {
-            const forwardedHost = request.headers.get('x-forwarded-host') // original origin before load balancer
+            // Check if this is a recovery (reset password) flow
+            const { searchParams: params } = new URL(request.url)
+            const type = params.get('type')
+            const finalRedirect = type === 'recovery' ? '/reset-password' : next
+
+            const forwardedHost = request.headers.get('x-forwarded-host')
             const isLocalEnv = process.env.NODE_ENV === 'development'
             if (isLocalEnv) {
-                // we can be sure that there is no load balancer in between, so no need to watch for X-Forwarded-Host
-                return NextResponse.redirect(`${origin}${next}`)
+                return NextResponse.redirect(`${origin}${finalRedirect}`)
             } else if (forwardedHost) {
-                return NextResponse.redirect(`https://${forwardedHost}${next}`)
+                return NextResponse.redirect(`https://${forwardedHost}${finalRedirect}`)
             } else {
-                return NextResponse.redirect(`${origin}${next}`)
+                return NextResponse.redirect(`${origin}${finalRedirect}`)
             }
         }
     }

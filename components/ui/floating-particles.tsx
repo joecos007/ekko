@@ -55,7 +55,7 @@ export function FloatingParticles({ count = 15 }: { count?: number }) {
                             </svg>
                         ) : (
                             <div
-                                className="rounded-full bg-gradient-to-br from-primary/50 to-purple-500/50 blur-sm"
+                                className="rounded-full bg-gradient-to-br from-primary/50 to-ekko-500/50 blur-sm"
                                 style={{
                                     width: particle.size,
                                     height: particle.size,

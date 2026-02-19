@@ -1,6 +1,6 @@
 # EKKO - Music for the Soul
 
-![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/joecos007/ekko?utm_source=oss&utm_medium=github&utm_campaign=joecos007%2Fekko&labelColor=171717&color=FF570A&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+Reviews)
+[![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/joecos007/ekko?utm_source=oss&utm_medium=github&utm_campaign=joecos007%2Fekko&labelColor=171717&color=FF570A&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+Reviews)](https://coderabbit.ai)
 
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 

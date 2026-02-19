@@ -65,34 +65,34 @@ export function MenuDrawer({ children }: MenuDrawerProps) {
                     </DrawerClose>
 
                     {/* Brand */}
-                    <Link href="/" onClick={() => setOpen(false)} className="flex items-center gap-2 mb-8 mt-2 group cursor-pointer">
+                    <Link href="/home" onClick={() => setOpen(false)} className="flex items-center gap-2 mb-8 mt-2 group cursor-pointer">
                         <div className="relative">
                             <div className="absolute inset-0 bg-primary/20 blur-md rounded-full group-hover:bg-primary/40 transition-all" />
                             <Disc className="w-8 h-8 text-primary relative z-10 animate-spin-slow" />
                         </div>
-                        <span className="text-4xl font-black tracking-tighter bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent drop-shadow-[0_0_15px_rgba(168,85,247,0.5)]">EKKO</span>
+                        <span className="text-4xl font-black tracking-tighter bg-gradient-to-r from-ekko-300 via-ekko-400 to-ekko-200 bg-clip-text text-transparent drop-shadow-[0_0_15px_rgba(99,102,241,0.5)]">EKKO</span>
                     </Link>
 
                     <div className="flex-1 overflow-y-auto space-y-8 pr-2">
                         {/* Main Nav */}
                         <div className="flex flex-col gap-2">
-                            <Link href="/" className="flex items-center gap-4 text-xl font-bold text-neutral-400 hover:text-white transition-colors p-2 hover:bg-white/5 rounded-lg">
+                            <Link href="/home" onClick={() => setOpen(false)} className="flex items-center gap-4 text-xl font-bold text-neutral-400 hover:text-white transition-colors p-2 hover:bg-white/5 rounded-none">
                                 <Home className="w-6 h-6" /> Home
                             </Link>
-                            <Link href="/search" className="flex items-center gap-4 text-xl font-bold text-neutral-400 hover:text-white transition-colors p-2 hover:bg-white/5 rounded-lg">
+                            <Link href="/search" onClick={() => setOpen(false)} className="flex items-center gap-4 text-xl font-bold text-neutral-400 hover:text-white transition-colors p-2 hover:bg-white/5 rounded-none">
                                 <Search className="w-6 h-6" /> Search
                             </Link>
-                            <Link href="/vibes" className="flex items-center gap-4 text-xl font-bold text-neutral-400 hover:text-white transition-colors p-2 hover:bg-white/5 rounded-lg">
+                            <Link href="/vibes" onClick={() => setOpen(false)} className="flex items-center gap-4 text-xl font-bold text-neutral-400 hover:text-white transition-colors p-2 hover:bg-white/5 rounded-none">
                                 <Sparkles className="w-6 h-6" /> Community Vibes
                             </Link>
-                            <Link href="/library" className="flex items-center gap-4 text-xl font-bold text-neutral-400 hover:text-white transition-colors p-2 hover:bg-white/5 rounded-lg">
+                            <Link href="/library" onClick={() => setOpen(false)} className="flex items-center gap-4 text-xl font-bold text-neutral-400 hover:text-white transition-colors p-2 hover:bg-white/5 rounded-none">
                                 <Library className="w-6 h-6" /> Your Library
                             </Link>
-                            <Link href="/profile" className="flex items-center gap-4 text-xl font-bold text-neutral-400 hover:text-white transition-colors p-2 hover:bg-white/5 rounded-lg">
+                            <Link href="/profile" onClick={() => setOpen(false)} className="flex items-center gap-4 text-xl font-bold text-neutral-400 hover:text-white transition-colors p-2 hover:bg-white/5 rounded-none">
                                 <User className="w-6 h-6" /> Profile
                             </Link>
                             <TeamStoryDialog>
-                                <button className="w-full flex items-center gap-4 text-xl font-bold text-neutral-400 hover:text-white transition-colors p-2 hover:bg-white/5 rounded-lg text-left">
+                                <button className="w-full flex items-center gap-4 text-xl font-bold text-neutral-400 hover:text-white transition-colors p-2 hover:bg-white/5 rounded-none text-left">
                                     <div className="w-6 h-6 flex items-center justify-center">
                                         <span className="text-sm font-bold border border-current rounded-full w-5 h-5 flex items-center justify-center">?</span>
                                     </div>
@@ -103,9 +103,9 @@ export function MenuDrawer({ children }: MenuDrawerProps) {
 
                         {/* Your Music */}
                         <div>
-                            <div className="px-2 text-[10px] font-black text-blue-400/50 uppercase tracking-[0.2em] mb-4">Your Music</div>
-                            <Link href="/liked" className="flex items-center gap-4 text-lg font-medium text-neutral-300 hover:text-white transition-colors p-2 hover:bg-white/5 rounded-lg group">
-                                <div className="w-6 h-6 flex items-center justify-center bg-gradient-to-br from-blue-600 to-indigo-600 rounded-[6px] shadow-lg shadow-blue-600/20 group-hover:scale-110 transition-transform">
+                            <div className="px-2 text-[10px] font-black text-ekko-400/50 uppercase tracking-[0.2em] mb-4">Your Music</div>
+                            <Link href="/liked" onClick={() => setOpen(false)} className="flex items-center gap-4 text-lg font-medium text-neutral-300 hover:text-white transition-colors p-2 hover:bg-white/5 rounded-none group">
+                                <div className="w-6 h-6 flex items-center justify-center bg-gradient-to-br from-ekko-600 to-ekko-500 rounded-[6px] shadow-lg shadow-ekko-500/20 group-hover:scale-110 transition-transform">
                                     <Heart className="w-3.5 h-3.5 text-white fill-white" />
                                 </div>
                                 Liked Songs
@@ -114,10 +114,10 @@ export function MenuDrawer({ children }: MenuDrawerProps) {
 
                         {/* Playlists */}
                         <div>
-                            <div className="px-2 text-[10px] font-black text-blue-400/50 uppercase tracking-[0.2em] mb-4">Playlists</div>
+                            <div className="px-2 text-[10px] font-black text-ekko-400/50 uppercase tracking-[0.2em] mb-4">Playlists</div>
                             <div className="flex flex-col gap-1">
                                 {playlists?.map(playlist => (
-                                    <Link key={playlist.id} href={`/playlist/${playlist.id}`} className="text-lg font-medium text-neutral-400 hover:text-white transition-colors p-2 hover:bg-white/5 rounded-lg truncate">
+                                    <Link key={playlist.id} href={`/playlist/${playlist.id}`} onClick={() => setOpen(false)} className="text-lg font-medium text-neutral-400 hover:text-white transition-colors p-2 hover:bg-white/5 rounded-none truncate">
                                         {playlist.title}
                                     </Link>
                                 ))}
@@ -131,15 +131,15 @@ export function MenuDrawer({ children }: MenuDrawerProps) {
                     <div className="mt-6 pt-6 border-t border-white/5">
                         <Button
                             variant="ghost"
-                            className="w-full justify-start gap-4 text-red-400 hover:text-red-300 hover:bg-red-500/10"
+                            className="w-full justify-start gap-4 text-ekko-400 hover:text-ekko-300 hover:bg-ekko-500/10"
                             onClick={handleLogout}
                         >
                             <LogOut className="w-5 h-5" />
                             Log Out
                         </Button>
                         <div className="mt-4 flex gap-4 text-neutral-600 text-[10px] justify-center">
-                            <Link href="/terms" onClick={() => setOpen(false)}>Terms</Link>
-                            <Link href="/privacy" onClick={() => setOpen(false)}>Privacy</Link>
+                            <Link href="/legal/terms" onClick={() => setOpen(false)}>Terms</Link>
+                            <Link href="/legal/privacy" onClick={() => setOpen(false)}>Privacy</Link>
                             <span>v1.0.0</span>
                         </div>
                     </div>

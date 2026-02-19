@@ -43,8 +43,8 @@ export function TrendingSection({ songs }: { songs: any[] }) {
         <section className="mb-12 relative z-10">
             <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-black tracking-tight text-white/90 flex items-center gap-3">
-                    <span className="bg-orange-500 w-1.5 h-6 rounded-full" />
-                    <TrendingUp className="w-5 h-5 text-orange-400" />
+                    <span className="bg-ekko-500 w-1.5 h-6 rounded-full" />
+                    <TrendingUp className="w-5 h-5 text-ekko-400" />
                     Trending Now
                 </h2>
                 <span className="text-xs font-bold text-white/30 uppercase tracking-widest">
@@ -52,16 +52,16 @@ export function TrendingSection({ songs }: { songs: any[] }) {
                 </span>
             </div>
 
-            <div className="glass-card rounded-2xl border border-white/5 overflow-hidden">
+            <div className="glass-card rounded-none border border-white/5 overflow-hidden">
                 {trendingSongs.map((song, i) => {
                     const isCurrentlyPlaying = isPlaying && currentSong?.id === song.id
-                    const rankColors = ['text-orange-400', 'text-white/80', 'text-white/60', 'text-white/40', 'text-white/30']
+                    const rankColors = ['text-ekko-400', 'text-white/80', 'text-white/60', 'text-white/40', 'text-white/30']
 
                     return (
                         <div
                             key={song.id}
                             className={`group flex items-center gap-3 md:gap-4 px-4 py-3 md:px-5 md:py-3.5 cursor-pointer transition-all duration-300 hover:bg-white/5 ${i < trendingSongs.length - 1 ? 'border-b border-white/5' : ''
-                                } ${isCurrentlyPlaying ? 'bg-blue-600/10 border-l-2 border-l-blue-500' : ''}`}
+                                } ${isCurrentlyPlaying ? 'bg-ekko-500/10 border-l-2 border-l-ekko-500' : ''}`}
                             onClick={() => setQueue(songs, songs.findIndex(s => s.id === song.id))}
                         >
                             {/* Rank Number */}
@@ -74,12 +74,12 @@ export function TrendingSection({ songs }: { songs: any[] }) {
                             {/* Trend Indicator */}
                             <div className="w-5 flex-shrink-0">
                                 {i < 3 && (
-                                    <TrendingUp className={`w-4 h-4 ${i === 0 ? 'text-orange-400' : 'text-emerald-400'}`} />
+                                    <TrendingUp className={`w-4 h-4 ${i === 0 ? 'text-ekko-400' : 'text-ekko-300'}`} />
                                 )}
                             </div>
 
                             {/* Album Art */}
-                            <div className="relative w-12 h-12 rounded-lg overflow-hidden bg-neutral-900 flex-shrink-0 shadow-lg">
+                            <div className="relative w-12 h-12 rounded-none overflow-hidden bg-neutral-900 flex-shrink-0 shadow-lg">
                                 <Image
                                     src={song.coverUrl}
                                     alt={song.title}
@@ -99,7 +99,7 @@ export function TrendingSection({ songs }: { songs: any[] }) {
 
                             {/* Song Info */}
                             <div className="flex-1 min-w-0">
-                                <h4 className={`font-bold text-sm truncate ${isCurrentlyPlaying ? 'text-blue-400' : 'text-white/90'}`}>
+                                <h4 className={`font-bold text-sm truncate ${isCurrentlyPlaying ? 'text-ekko-400' : 'text-white/90'}`}>
                                     {song.title}
                                 </h4>
                                 <p className="text-xs text-white/40 truncate font-medium">

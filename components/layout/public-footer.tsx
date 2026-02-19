@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Disc } from "lucide-react";
+import { EkkoLogo } from "@/components/brand/ekko-logo";
 import { DotPattern } from "@/components/ui/dot-pattern";
 import { cn } from "@/lib/utils";
 
@@ -20,11 +20,8 @@ export function PublicFooter() {
 
             <div className="relative z-10 max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start gap-12 mb-20">
                 <div>
-                    <div className="flex items-center gap-3 mb-6">
-                        <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-                            <Disc className="w-4 h-4 text-white animate-spin-slow" />
-                        </div>
-                        <span className="font-bold tracking-tighter text-2xl text-white">EKKO</span>
+                    <div className="mb-6">
+                        <EkkoLogo size="md" animated={false} />
                     </div>
                     <p className="max-w-xs text-neutral-400 text-sm leading-relaxed">
                         Redefining the future of audio streaming through AI-driven curation and community connection.
@@ -61,8 +58,8 @@ export function PublicFooter() {
             <div className="relative z-10 max-w-7xl mx-auto pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center text-xs text-neutral-500 font-mono">
                 <p>© 2026 EKKO SYSTEMS INC. ALL RIGHTS RESERVED.</p>
                 <div className="flex gap-4 mt-4 md:mt-0">
-                    <span>SYSTEM STATUS: <span className="text-green-500">OPERATIONAL</span></span>
-                    <span>V2.0.4-BETA</span>
+                    <span>SYSTEM STATUS: <span className="text-ekko-400">OPERATIONAL</span></span>
+                    <span>V1.0.0</span>
                 </div>
             </div>
         </footer>

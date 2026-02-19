@@ -65,6 +65,27 @@ const config = {
                 "neon-teal": "#14F195",
                 "neon-purple": "#9945FF",
                 "neon-pink": "#FF6B9D",
+                "ekko": {
+                    DEFAULT: "#6366F1",
+                    50: "#EEF2FF",
+                    100: "#E0E7FF",
+                    200: "#C7D2FE",
+                    300: "#A5B4FC",
+                    400: "#818CF8",
+                    500: "#6366F1",
+                    600: "#4F46E5",
+                    700: "#4338CA",
+                    800: "#3730A3",
+                    900: "#312E81",
+                    950: "#1E1B4B",
+                },
+                "surface": {
+                    DEFAULT: "#0A0A0A",
+                    1: "#0A0A0A",
+                    2: "#121212",
+                    3: "#171717",
+                    4: "#202020",
+                },
             },
             keyframes: {
                 "accordion-down": {

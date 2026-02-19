@@ -37,13 +37,33 @@ export function PublicMobileNav() {
                 "fixed inset-0 bg-black/98 z-[99] flex flex-col items-center justify-center gap-8 transition-all duration-300 ease-in-out",
                 isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
             )}>
-                <nav className="flex flex-col items-center gap-6 w-full px-8">
-                    <span className="text-sm font-medium text-neutral-500 uppercase tracking-widest mb-4">Menu</span>
+                <nav className="flex flex-col items-center gap-4 w-full px-10">
+                    <Link href="/" onClick={() => setIsOpen(false)} className="w-full">
+                        <Button
+                            variant="ghost"
+                            className="w-full text-lg h-12 font-bold text-neutral-400 hover:text-white transition-all active:scale-95"
+                        >
+                            Home
+                        </Button>
+                    </Link>
+                    <Link href="/team" onClick={() => setIsOpen(false)} className="w-full">
+                        <Button
+                            variant="ghost"
+                            className="w-full text-lg h-12 font-bold text-neutral-400 hover:text-white transition-all active:scale-95"
+                        >
+                            Our Team
+                        </Button>
+                    </Link>
+
+                    <div className="flex flex-col items-center my-4 w-full">
+                        <span className="text-[10px] font-black text-neutral-600 uppercase tracking-[0.4em]">Membership</span>
+                        <div className="h-[1px] w-8 bg-neutral-800 mt-2" />
+                    </div>
 
                     <Link href="/login" onClick={() => setIsOpen(false)} className="w-full">
                         <Button
-                            variant="ghost"
-                            className="w-full text-2xl h-14 font-bold text-neutral-300 hover:text-white"
+                            variant="outline"
+                            className="w-full text-lg h-12 rounded-none font-semibold tracking-wide uppercase text-white border-white/20 hover:bg-white/5 transition-all active:scale-95"
                         >
                             Login
                         </Button>
@@ -51,7 +71,7 @@ export function PublicMobileNav() {
 
                     <Link href="/signup" onClick={() => setIsOpen(false)} className="w-full">
                         <Button
-                            className="w-full text-xl h-16 rounded-full font-bold bg-white text-black hover:bg-neutral-200 shadow-[0_0_20px_rgba(255,255,255,0.2)]"
+                            className="w-full text-lg h-14 rounded-none font-semibold tracking-wide uppercase bg-white text-black hover:bg-neutral-200 shadow-[0_0_30px_rgba(255,255,255,0.1)] active:scale-95 transition-all"
                         >
                             Get Started
                         </Button>

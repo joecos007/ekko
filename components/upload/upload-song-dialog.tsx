@@ -338,7 +338,7 @@ export function UploadSongDialog({ children }: UploadSongDialogProps) {
             <DialogTrigger asChild>
                 {children}
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[500px] bg-neutral-900 border-neutral-800 text-white max-h-[90vh] overflow-y-auto scrollbar-thin scrollbar-thumb-neutral-700 scrollbar-track-transparent">
+            <DialogContent className="sm:max-w-[500px] bg-surface-2/95 backdrop-blur-xl border-white/5 text-white max-h-[90vh] overflow-y-auto scrollbar-thin scrollbar-thumb-neutral-700 scrollbar-track-transparent">
                 <DialogHeader>
                     <DialogTitle>Upload Song</DialogTitle>
                     <DialogDescription>
@@ -350,14 +350,14 @@ export function UploadSongDialog({ children }: UploadSongDialogProps) {
 
                     {/* Song Upload Area */}
                     <div className={`
-                relative border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center transition-colors cursor-pointer group
-                ${isSongDragActive ? 'border-green-500 bg-green-500/10' : 'border-neutral-700 hover:border-neutral-500 bg-neutral-800/50'}
-                ${songFile ? 'border-green-500/50 bg-green-500/5' : ''}
+                relative border-2 border-dashed rounded-none p-6 flex flex-col items-center justify-center transition-colors cursor-pointer group
+                ${isSongDragActive ? 'border-neon-teal bg-neon-teal/10' : 'border-neutral-700 hover:border-neutral-500 bg-neutral-800/50'}
+                ${songFile ? 'border-neon-teal/50 bg-neon-teal/5' : ''}
             `} {...getSongRootProps()}>
                         <input {...getSongInputProps()} />
                         {songFile ? (
                             <div className="flex flex-col items-center">
-                                <Music className="w-10 h-10 text-green-500 mb-2" />
+                                <Music className="w-10 h-10 text-neon-teal mb-2" />
                                 <p className="text-sm font-medium text-white text-center break-all px-4">{songFile.name}</p>
                                 <p className="text-xs text-neutral-400 mt-1">{(songFile.size / 1024 / 1024).toFixed(2)} MB</p>
                             </div>
@@ -369,7 +369,7 @@ export function UploadSongDialog({ children }: UploadSongDialogProps) {
                             </div>
                         )}
                         {songFile && (
-                            <button type="button" onClick={(e) => { e.stopPropagation(); setValue('song', null); }} className="absolute top-2 right-2 p-1 rounded-full hover:bg-neutral-700 text-neutral-400 hover:text-white">
+                            <button type="button" onClick={(e) => { e.stopPropagation(); setValue('song', null); }} className="absolute top-2 right-2 p-1 rounded-none hover:bg-neutral-700 text-neutral-400 hover:text-white">
                                 <X className="w-4 h-4" />
                             </button>
                         )}
@@ -383,7 +383,7 @@ export function UploadSongDialog({ children }: UploadSongDialogProps) {
                                 disabled={isLoading}
                                 {...register('title', { required: true })}
                                 placeholder="Song Title"
-                                className={`bg-neutral-800/50 border-neutral-700 focus:border-green-500 focus:ring-green-500/20 text-white placeholder:text-neutral-500 pr-10 ${duplicateWarning ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20' : ''}`}
+                                className={`bg-neutral-800/50 border-neutral-700 focus:border-ekko-500 focus:ring-ekko-500/20 text-white placeholder:text-neutral-500 pr-10 ${duplicateWarning ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20' : ''}`}
                             />
                             <div className="absolute right-3 top-1/2 -translate-y-1/2">
                                 {isCheckingDuplicate ? (
@@ -391,7 +391,7 @@ export function UploadSongDialog({ children }: UploadSongDialogProps) {
                                 ) : duplicateWarning ? (
                                     <AlertCircle className="w-4 h-4 text-red-500" />
                                 ) : title && title.length > 2 ? (
-                                    <CheckCircle2 className="w-4 h-4 text-green-500" />
+                                    <CheckCircle2 className="w-4 h-4 text-neon-teal" />
                                 ) : null}
                             </div>
                         </div>
@@ -407,15 +407,15 @@ export function UploadSongDialog({ children }: UploadSongDialogProps) {
                             disabled={isLoading}
                             {...register('author', { required: true })}
                             placeholder="Artist Name"
-                            className="bg-neutral-800/50 border-neutral-700 focus:border-green-500 focus:ring-green-500/20 text-white placeholder:text-neutral-500"
+                            className="bg-neutral-800/50 border-neutral-700 focus:border-ekko-500 focus:ring-ekko-500/20 text-white placeholder:text-neutral-500"
                         />
                     </div>
 
                     {/* Image Upload Area */}
                     <div className="flex gap-4">
                         <div className={`
-                    relative w-32 h-32 flex-shrink-0 border-2 border-dashed rounded-lg flex flex-col items-center justify-center transition-colors cursor-pointer group overflow-hidden
-                    ${isImageDragActive ? 'border-green-500 bg-green-500/10' : 'border-neutral-700 hover:border-neutral-500 bg-neutral-800/50'}
+                    relative w-32 h-32 flex-shrink-0 border-2 border-dashed rounded-none flex flex-col items-center justify-center transition-colors cursor-pointer group overflow-hidden
+                    ${isImageDragActive ? 'border-neon-teal bg-neon-teal/10' : 'border-neutral-700 hover:border-neutral-500 bg-neutral-800/50'}
                 `} {...getImageRootProps()}>
                             <input {...getImageInputProps()} />
                             {imageFile ? (
@@ -442,9 +442,9 @@ export function UploadSongDialog({ children }: UploadSongDialogProps) {
                     {/* Enhanced Upload Button / Progress Bar */}
                     <div className="space-y-2">
                         {isLoading && (
-                            <div className="w-full bg-neutral-800 rounded-full h-2 overflow-hidden">
+                            <div className="w-full bg-neutral-800 rounded-none h-2 overflow-hidden">
                                 <div
-                                    className="bg-green-500 h-full transition-all duration-300 ease-out"
+                                    className="bg-neon-teal h-full transition-all duration-300 ease-out"
                                     style={{ width: `${uploadProgress}%` }}
                                 />
                             </div>
@@ -453,7 +453,7 @@ export function UploadSongDialog({ children }: UploadSongDialogProps) {
                         <Button
                             disabled={isLoading || !songFile || !imageFile || !!duplicateWarning || isCheckingDuplicate}
                             type="submit"
-                            className="w-full bg-green-500 hover:bg-green-400 text-black font-bold h-11 relative overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="w-full bg-neon-teal hover:bg-neon-teal/90 text-black font-bold h-11 relative overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             {isLoading ? (
                                 <div className="flex items-center gap-2">

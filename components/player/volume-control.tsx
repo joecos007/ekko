@@ -18,21 +18,21 @@ export function VolumeControl() {
     }
 
     return (
-        <div className="hidden md:flex items-center gap-2 w-full max-w-[120px] justify-end">
+        <div className="hidden md:flex items-center gap-2.5 w-[130px] shrink-0 justify-end">
             <Button
                 variant="ghost"
                 size="icon"
                 onClick={toggleMute}
-                className="h-8 w-8 text-neutral-500 hover:text-white transition-colors"
+                className="h-8 w-8 text-neutral-400 hover:text-white transition-all"
             >
-                {volume === 0 ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+                {volume === 0 ? <VolumeX className="h-[18px] w-[18px]" /> : <Volume2 className="h-[18px] w-[18px]" />}
             </Button>
 
             <Slider
                 value={[volume]}
                 max={1}
                 step={0.01}
-                className="w-20 cursor-pointer"
+                className="w-24 cursor-pointer"
                 onValueChange={(val) => setVolume(val[0])}
             />
         </div>

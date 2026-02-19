@@ -3,6 +3,7 @@
 import { useEffect, useCallback } from 'react'
 import { usePlayer } from '@/store/player-store'
 import { useLikeSong } from '@/hooks/use-like-song'
+import { useRouter } from 'next/navigation'
 
 /**
  * Global keyboard shortcuts for the music player.
@@ -15,8 +16,10 @@ import { useLikeSong } from '@/hooks/use-like-song'
  * - ArrowDown: Volume down (-10%)
  * - M: Mute/Unmute
  * - L: Like current song (placeholder for future)
+ * - Cmd/Ctrl+K: Focus search
  */
 export function useKeyboardShortcuts() {
+    const router = useRouter()
     const {
         isPlaying,
         play,
@@ -94,10 +97,21 @@ export function useKeyboardShortcuts() {
                 }
                 break
 
+            case 'KeyK':
+                if (e.metaKey || e.ctrlKey) {
+                    e.preventDefault()
+                    router.push('/search')
+                    setTimeout(() => {
+                        const searchInput = document.querySelector('input[type="search"], input[placeholder*="Search"], input[placeholder*="search"]') as HTMLInputElement
+                        searchInput?.focus()
+                    }, 300)
+                }
+                break
+
             default:
                 break
         }
-    }, [isPlaying, play, pause, next, prev, volume, setVolume, queue, previousVolume, setPreviousVolume, likeSong])
+    }, [isPlaying, play, pause, next, prev, volume, setVolume, queue, previousVolume, setPreviousVolume, likeSong, router])
 
     useEffect(() => {
         window.addEventListener('keydown', handleKeyDown)

@@ -47,7 +47,7 @@ export function CreatePlaylistDialog() {
                     Create Playlist
                 </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[525px] bg-neutral-900 border-neutral-800 text-white">
+            <DialogContent className="sm:max-w-[525px] bg-surface-2/95 backdrop-blur-xl border-white/5 text-white shadow-2xl">
                 <DialogHeader>
                     <DialogTitle>Create Playlist</DialogTitle>
                     <DialogDescription className="text-neutral-400">

@@ -16,7 +16,7 @@ export function AudioVisualizer({
     barCount = 64,
     barWidth = 4,
     gap = 2,
-    color = "#a855f7" // purple-500
+    color = "#6366F1" // ekko-500
 }: AudioVisualizerProps) {
     const canvasRef = useRef<HTMLCanvasElement>(null)
     const { isPlaying } = usePlayer()

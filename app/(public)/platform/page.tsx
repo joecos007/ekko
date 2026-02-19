@@ -3,7 +3,7 @@ import { Mic2, Zap, Globe, Cpu } from "lucide-react";
 
 export default function PlatformPage() {
     return (
-        <div className="min-h-screen bg-black text-white pt-32 pb-24 px-6 md:px-12 font-geist-sans selection:bg-blue-500 selection:text-white">
+        <div className="min-h-screen bg-black text-white pt-32 pb-24 px-6 md:px-12 font-geist-sans selection:bg-ekko-500/30 selection:text-white">
             {/* Background */}
             <div className="fixed inset-0 z-0 pointer-events-none">
                 <AuroraBackground className="opacity-20" />
@@ -23,9 +23,9 @@ export default function PlatformPage() {
 
                 {/* Architecture Grid */}
                 <div className="grid md:grid-cols-2 gap-8 mb-32">
-                    <div className="p-8 rounded-3xl border border-white/10 bg-neutral-900/50 backdrop-blur-md hover:border-blue-500/30 transition-all group">
-                        <div className="w-12 h-12 bg-blue-500/10 rounded-full flex items-center justify-center mb-6 border border-blue-500/20 group-hover:bg-blue-500/20 transition-all">
-                            <Cpu className="w-6 h-6 text-blue-400" />
+                    <div className="p-8 rounded-none border border-white/10 bg-neutral-900/50 backdrop-blur-md hover:border-ekko-500/30 transition-all group">
+                        <div className="w-12 h-12 bg-ekko-500/10 rounded-full flex items-center justify-center mb-6 border border-ekko-500/20 group-hover:bg-ekko-500/20 transition-all">
+                            <Cpu className="w-6 h-6 text-ekko-400" />
                         </div>
                         <h3 className="text-2xl font-bold mb-4">Neural Audio Synthesis</h3>
                         <p className="text-neutral-400 leading-relaxed">
@@ -33,9 +33,9 @@ export default function PlatformPage() {
                         </p>
                     </div>
 
-                    <div className="p-8 rounded-3xl border border-white/10 bg-neutral-900/50 backdrop-blur-md hover:border-purple-500/30 transition-all group">
-                        <div className="w-12 h-12 bg-purple-500/10 rounded-full flex items-center justify-center mb-6 border border-purple-500/20 group-hover:bg-purple-500/20 transition-all">
-                            <Zap className="w-6 h-6 text-purple-400" />
+                    <div className="p-8 rounded-none border border-white/10 bg-neutral-900/50 backdrop-blur-md hover:border-ekko-500/30 transition-all group">
+                        <div className="w-12 h-12 bg-ekko-500/10 rounded-full flex items-center justify-center mb-6 border border-ekko-500/20 group-hover:bg-ekko-500/20 transition-all">
+                            <Zap className="w-6 h-6 text-ekko-400" />
                         </div>
                         <h3 className="text-2xl font-bold mb-4">Agos Streaming Protocol</h3>
                         <p className="text-neutral-400 leading-relaxed">
@@ -43,9 +43,9 @@ export default function PlatformPage() {
                         </p>
                     </div>
 
-                    <div className="p-8 rounded-3xl border border-white/10 bg-neutral-900/50 backdrop-blur-md hover:border-pink-500/30 transition-all group">
-                        <div className="w-12 h-12 bg-pink-500/10 rounded-full flex items-center justify-center mb-6 border border-pink-500/20 group-hover:bg-pink-500/20 transition-all">
-                            <Globe className="w-6 h-6 text-pink-400" />
+                    <div className="p-8 rounded-none border border-white/10 bg-neutral-900/50 backdrop-blur-md hover:border-ekko-500/30 transition-all group">
+                        <div className="w-12 h-12 bg-ekko-500/10 rounded-full flex items-center justify-center mb-6 border border-ekko-500/20 group-hover:bg-ekko-500/20 transition-all">
+                            <Globe className="w-6 h-6 text-ekko-400" />
                         </div>
                         <h3 className="text-2xl font-bold mb-4">Bayanihan Graph</h3>
                         <p className="text-neutral-400 leading-relaxed">
@@ -53,9 +53,9 @@ export default function PlatformPage() {
                         </p>
                     </div>
 
-                    <div className="p-8 rounded-3xl border border-white/10 bg-neutral-900/50 backdrop-blur-md hover:border-orange-500/30 transition-all group">
-                        <div className="w-12 h-12 bg-orange-500/10 rounded-full flex items-center justify-center mb-6 border border-orange-500/20 group-hover:bg-orange-500/20 transition-all">
-                            <Mic2 className="w-6 h-6 text-orange-400" />
+                    <div className="p-8 rounded-none border border-white/10 bg-neutral-900/50 backdrop-blur-md hover:border-ekko-500/30 transition-all group">
+                        <div className="w-12 h-12 bg-ekko-500/10 rounded-full flex items-center justify-center mb-6 border border-ekko-500/20 group-hover:bg-ekko-500/20 transition-all">
+                            <Mic2 className="w-6 h-6 text-ekko-400" />
                         </div>
                         <h3 className="text-2xl font-bold mb-4">Studio-Grade Tools</h3>
                         <p className="text-neutral-400 leading-relaxed">

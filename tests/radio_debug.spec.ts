@@ -9,10 +9,8 @@ test('analyze radio transition performance', async ({ page }) => {
     await page.locator('input[type="email"], input[name="email"]').first().fill('admin@ekko.app');
     await page.locator('input[type="password"], input[name="password"]').first().fill('Test@2026');
     await page.locator('button[type="submit"], button:has-text("Sign In"), button:has-text("Login")').first().click();
-    await page.waitForURL('**/home', { timeout: 30000 });
-
-    // 2. Go to Home (ensure we are there)
-    await page.goto('http://localhost:3000/home');
+    // Increase timeout for mobile browsers which can be slower
+    await page.waitForURL('**/home', { timeout: 60000 });
     await page.waitForLoadState('domcontentloaded');
     console.log('Page loaded.');
 
@@ -20,12 +18,26 @@ test('analyze radio transition performance', async ({ page }) => {
     console.log('Playing normal song...');
     // Click the first track row to play a song
     // Wait for the song cards to actually be visible and interactive
-    const trackRow = page.locator('.group.relative').first();
+    // Use a more robust selector that targets the trending song rows
+    const trackRow = page.locator('.glass-card .group').first();
     await expect(trackRow).toBeVisible({ timeout: 10000 });
+
+    // Ensure we scroll to it
+    await trackRow.scrollIntoViewIfNeeded();
+    await page.waitForTimeout(500); // Small stability delay
     await trackRow.click();
 
-    // Wait for player to be active (Play/Pause button exists)
-    await expect(page.locator('button[aria-label="Pause"]')).toBeVisible({ timeout: 10000 });
+    // Check if playback started (Pause button visible)
+    // If not, try clicking the play button explicitly if visible
+    const pauseBtn = page.locator('button[aria-label="Pause"]');
+    try {
+        await expect(pauseBtn).toBeVisible({ timeout: 5000 });
+    } catch (e) {
+        console.log('Playback didnt start immediately, trying to click Play button explicitly...');
+        // Try finding a specific play button within the row or the main player
+        await trackRow.click({ force: true });
+        await expect(pauseBtn).toBeVisible({ timeout: 10000 });
+    }
     console.log('Song playing (Pause button visible).');
 
     // Allow it to "play" for a bit

@@ -1,34 +1,38 @@
 import { test, expect } from '@playwright/test';
 
+const login = async (page: any) => {
+    await page.goto('/login');
+
+    const emailInput = page.locator('input[type="email"]');
+    await expect(emailInput).toBeVisible({ timeout: 10_000 });
+
+    // pressSequentially is more robust than fill() on Mobile Safari
+    await emailInput.click();
+    await emailInput.pressSequentially('admin@ekko.app', { delay: 50 });
+    await expect(emailInput).toHaveValue('admin@ekko.app');
+
+    const passwordInput = page.locator('input[type="password"]');
+    await passwordInput.click();
+    await passwordInput.pressSequentially('Test@2026', { delay: 50 });
+    await expect(passwordInput).toHaveValue('Test@2026');
+
+    await Promise.all([
+        page.waitForURL(/\/(home)?$/, { timeout: 30_000 }),
+        page.click('button[type="submit"]'),
+    ]);
+
+    await page.waitForLoadState('networkidle');
+};
+
 test.describe('Ekko E2E Workflow', () => {
     // Enterprise-grade timeout for mobile tests with real auth + data loading
     test.setTimeout(60_000);
 
     test('Login and Navigate Mobile Flow', async ({ page }) => {
         // ─── 1. LOGIN ───────────────────────────────────────────────
-        await page.goto('/login');
-
-        const emailInput = page.locator('input[type="email"]');
-        await expect(emailInput).toBeVisible({ timeout: 10_000 });
-
-        // pressSequentially is more robust than fill() on Mobile Safari
-        await emailInput.click();
-        await emailInput.pressSequentially('admin@ekko.app', { delay: 50 });
-        await expect(emailInput).toHaveValue('admin@ekko.app');
-
-        const passwordInput = page.locator('input[type="password"]');
-        await passwordInput.click();
-        await passwordInput.pressSequentially('Test@2026', { delay: 50 });
-        await expect(passwordInput).toHaveValue('Test@2026');
-
-        await page.click('button[type="submit"]');
+        await login(page);
 
         // ─── 2. HOME PAGE VERIFICATION ──────────────────────────────
-        // Wait for redirect — confirms auth succeeded
-        await expect(page).toHaveURL(/\/(home)?$/, { timeout: 15_000 });
-
-        // Wait for page to settle (auth state, data loading)
-        await page.waitForLoadState('networkidle');
 
         // Featured Carousel heading should be above the fold
         const carouselHeading = page.getByRole('heading', { level: 1 }).first();
@@ -51,16 +55,7 @@ test.describe('Ekko E2E Workflow', () => {
 
     test('Search Functionality', async ({ page }) => {
         // Login first
-        await page.goto('/login');
-        const emailInput = page.locator('input[type="email"]');
-        await expect(emailInput).toBeVisible({ timeout: 10_000 });
-        await emailInput.click();
-        await emailInput.pressSequentially('admin@ekko.app', { delay: 50 });
-        const passwordInput = page.locator('input[type="password"]');
-        await passwordInput.click();
-        await passwordInput.pressSequentially('Test@2026', { delay: 50 });
-        await page.click('button[type="submit"]');
-        await expect(page).toHaveURL(/\/(home)?$/, { timeout: 15_000 });
+        await login(page);
 
         // Navigate to search
         await page.goto('/search');
@@ -70,17 +65,7 @@ test.describe('Ekko E2E Workflow', () => {
 
     test('Responsive Layout Check', async ({ page, isMobile }) => {
         // Login first
-        await page.goto('/login');
-        const emailInput = page.locator('input[type="email"]');
-        await expect(emailInput).toBeVisible({ timeout: 10_000 });
-        await emailInput.click();
-        await emailInput.pressSequentially('admin@ekko.app', { delay: 50 });
-        const passwordInput = page.locator('input[type="password"]');
-        await passwordInput.click();
-        await passwordInput.pressSequentially('Test@2026', { delay: 50 });
-        await page.click('button[type="submit"]');
-        await expect(page).toHaveURL(/\/(home)?$/, { timeout: 15_000 });
-        await page.waitForLoadState('networkidle');
+        await login(page);
 
         if (isMobile) {
             // Mobile should show bottom navigation

@@ -21,7 +21,6 @@ export const BentoGrid = ({
 };
 
 import Link from "next/link";
-// ... imports
 
 export const BentoCard = ({
     className,
@@ -41,7 +40,7 @@ export const BentoCard = ({
     const CardContent = (
         <div
             className={cn(
-                "row-span-1 rounded-xl group/bento hover:shadow-2xl transition duration-500 shadow-input dark:shadow-none p-4 bg-black border border-white/10 justify-between flex flex-col space-y-4 relative overflow-hidden h-full",
+                "row-span-1 rounded-none group/bento hover:shadow-2xl transition duration-500 shadow-input dark:shadow-none p-4 bg-black border border-white/10 justify-between flex flex-col space-y-4 relative overflow-hidden h-full",
                 className
             )}
         >

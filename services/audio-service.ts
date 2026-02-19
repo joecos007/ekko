@@ -10,8 +10,10 @@ class AudioService {
 
     constructor() {
         // Global configuration
-        Howler.autoUnlock = true
-        Howler.html5PoolSize = 10
+        if (typeof window !== 'undefined') {
+            Howler.autoUnlock = true
+            Howler.html5PoolSize = 10
+        }
     }
 
     play(src: string, isLive: boolean, metadata?: { id: string, title: string, artist: string, coverUrl: string }) {

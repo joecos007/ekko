@@ -27,7 +27,7 @@ export function VibeHeatmap() {
             {buckets.map((count, i) => (
                 <div
                     key={i}
-                    className="flex-1 bg-purple-500 blur-[2px] rounded-t-sm transition-all duration-1000"
+                    className="flex-1 bg-ekko-500 blur-[2px] rounded-none transition-all duration-1000"
                     style={{
                         height: `${(count / maxDensity) * 100}%`,
                         opacity: count > 0 ? 0.4 : 0

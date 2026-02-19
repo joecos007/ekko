@@ -110,7 +110,7 @@ export function VibeStatsView() {
                         .in('id', songIds)
 
                     if (songData) {
-                        songData.forEach(song => {
+                        songData.forEach((song: any) => {
                             const agg = aggregator.get(song.id)
                             if (agg) {
                                 agg.song_title = song.title
@@ -165,7 +165,7 @@ export function VibeStatsView() {
     if (isLoading) {
         return (
             <div className="flex h-full items-center justify-center">
-                <Loader2 className="h-8 w-8 animate-spin text-purple-500" />
+                <Loader2 className="h-8 w-8 animate-spin text-ekko-500" />
             </div>
         )
     }
@@ -177,7 +177,7 @@ export function VibeStatsView() {
                 animate={{ opacity: 1, y: 0 }}
                 className="mb-8"
             >
-                <h1 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-purple-200 to-white tracking-tighter">
+                <h1 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-ekko-200 to-white tracking-tighter">
                     Vibe Stream
                 </h1>
                 <p className="text-neutral-400 mt-2">Global community pulse.</p>
@@ -207,7 +207,7 @@ function VibeTile({ stat, index }: { stat: AggregatedVibe, index: number }) {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: index * 0.05 }}
-            className="group relative aspect-square rounded-2xl overflow-hidden bg-neutral-900 cursor-pointer shadow-lg hover:shadow-purple-500/20 transition-transform duration-500 hover:-translate-y-2 hover:z-10"
+            className="group relative aspect-square rounded-none overflow-hidden bg-neutral-900 cursor-pointer shadow-lg hover:shadow-ekko-500/20 transition-transform duration-500 hover:-translate-y-2 hover:z-10"
         >
             {/* Background Image */}
             <div className="absolute inset-0">
@@ -234,11 +234,11 @@ function VibeTile({ stat, index }: { stat: AggregatedVibe, index: number }) {
 
                 {/* Glowing Dominant Emoji */}
                 <div className="relative flex flex-col items-center gap-2">
-                    <div className="text-7xl drop-shadow-[0_0_35px_rgba(168,85,247,0.8)] transform group-hover:scale-110 group-hover:rotate-12 transition-all duration-300 ease-out-back relative z-10">
+                    <div className="text-7xl drop-shadow-[0_0_35px_rgba(99,102,241,0.8)] transform group-hover:scale-110 group-hover:rotate-12 transition-all duration-300 ease-out-back relative z-10">
                         {stat.dominant_emoji}
                     </div>
                     {/* Minimalist Count Badge */}
-                    <span className="text-xs font-black tracking-widest text-purple-200/80 bg-purple-500/10 px-2 py-0.5 rounded-full border border-purple-500/20 backdrop-blur-sm group-hover:bg-purple-500/30 transition-colors">
+                    <span className="text-xs font-black tracking-widest text-ekko-200/80 bg-ekko-500/10 px-2 py-0.5 rounded-none border border-ekko-500/20 backdrop-blur-sm group-hover:bg-ekko-500/30 transition-colors">
                         {stat.total_vibes}
                     </span>
                 </div>
@@ -246,7 +246,7 @@ function VibeTile({ stat, index }: { stat: AggregatedVibe, index: number }) {
                 {/* Optional: Recent Message Tooltip-ish thing on hover */}
                 {stat.recent_message && (
                     <div className="absolute translate-y-20 opacity-0 group-hover:opacity-100 group-hover:translate-y-16 transition-all duration-500 text-center px-4 w-full">
-                        <p className="text-[10px] text-white/90 font-medium bg-black/60 backdrop-blur-md px-3 py-2 rounded-xl border border-white/5 line-clamp-2 shadow-xl italic leading-relaxed">
+                        <p className="text-[10px] text-white/90 font-medium bg-black/60 backdrop-blur-md px-3 py-2 rounded-none border border-white/5 line-clamp-2 shadow-xl italic leading-relaxed">
                             &quot;{stat.recent_message}&quot;
                         </p>
                     </div>
@@ -255,7 +255,7 @@ function VibeTile({ stat, index }: { stat: AggregatedVibe, index: number }) {
 
             {/* Footer Metadata - Initially Hidden or Minimal, reveals on hover */}
             <div className="absolute bottom-0 left-0 right-0 p-4 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
-                <h3 className="text-white font-bold truncate text-lg leading-tight group-hover:text-purple-300 transition-colors drop-shadow-md">
+                <h3 className="text-white font-bold truncate text-lg leading-tight group-hover:text-ekko-300 transition-colors drop-shadow-md">
                     {stat.song_title}
                 </h3>
                 <p className="text-neutral-400 text-xs truncate mt-0.5 group-hover:text-white/80 transition-colors">

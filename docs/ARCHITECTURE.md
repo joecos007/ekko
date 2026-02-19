@@ -4,9 +4,9 @@
 EKKO is a next-generation social audio streaming platform built with modern web technologies. It focuses on high-fidelity audio, real-time social interaction ("Vibes"), and a premium, immersive user interface.
 
 ## Tech Stack
-- **Frontend Framework**: Next.js 16 (App Router)
+- **Frontend Framework**: Next.js 16.x (App Router)
 - **Language**: TypeScript
-- **Styling**: Tailwind CSS 4 with custom animations
+- **Styling**: Tailwind CSS v4 with custom animations
 - **State Management**: Zustand (Player, Vibes)
 - **Data Fetching**: TanStack Query
 - **Backend/Database**: Supabase (PostgreSQL, Auth, Storage, Realtime)

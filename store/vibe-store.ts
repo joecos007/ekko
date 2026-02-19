@@ -80,8 +80,13 @@ export const useVibeStore = create<VibeState>((set, get) => ({
             }
 
             // Handle Network Errors gracefully (e.g. adblockers, offline)
-            if (vibeError.message && (vibeError.message.includes("NetworkError") || vibeError.message.includes("fetch"))) {
-                // Network error — use local fallback
+            if (vibeError.message && (
+                vibeError.message.includes("NetworkError") ||
+                vibeError.message.includes("fetch") ||
+                vibeError.message.includes("AbortError") ||
+                vibeError.code === 'AbortError'
+            )) {
+                // Network error or Aborted — use local fallback if available, or just ignore if aborted
                 try {
                     const localVibesRaw = JSON.parse(localStorage.getItem('ekko_local_vibes') || '[]') as Vibe[]
                     const localVibesForSong = localVibesRaw.filter(v => v.song_id === songId).sort((a, b) => a.timestamp - b.timestamp)
@@ -123,9 +128,9 @@ export const useVibeStore = create<VibeState>((set, get) => ({
             .in('id', userIds)
 
         // 3. Map profiles to vibes
-        const profileMap = new Map(profilesData?.map(p => [p.id, p]) || [])
+        const profileMap = new Map(profilesData?.map((p: any) => [p.id, p]) || [])
 
-        const vibesWithProfiles = vibes.map(v => ({
+        const vibesWithProfiles = vibes.map((v: any) => ({
             ...v,
             profiles: profileMap.get(v.user_id) || { username: 'Unknown', avatar_url: null }
         }))
@@ -217,6 +222,21 @@ export const useVibeStore = create<VibeState>((set, get) => ({
 
     subscribeToVibes: (songId) => {
         const { activeChannel, retryTimeout } = get()
+        const supabase = createClient()
+        const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(songId)
+
+        if (!isUUID) {
+            if (activeChannel) {
+                supabase.removeChannel(activeChannel)
+                set({ activeChannel: null })
+            }
+            return
+        }
+
+        if (typeof window !== 'undefined' && !navigator.onLine) {
+            console.warn('[VibeStore] Offline: realtime subscription skipped.')
+            return
+        }
 
         // Cleanup existing
         if (retryTimeout) {
@@ -224,14 +244,15 @@ export const useVibeStore = create<VibeState>((set, get) => ({
             set({ retryTimeout: null })
         }
         if (activeChannel) {
-            activeChannel.unsubscribe()
+            supabase.removeChannel(activeChannel)
+            set({ activeChannel: null })
         }
 
         let retryCount = 0
-        const MAX_RETRIES = 3
+        const MAX_RETRIES = 5
+        const BASE_DELAY = 3000
 
         const setupSubscription = () => {
-            const supabase = createClient()
             const channel = supabase
                 .channel(`vibes:${songId}`)
                 .on(
@@ -259,7 +280,7 @@ export const useVibeStore = create<VibeState>((set, get) => ({
                         })
                     }
                 )
-                .subscribe((status) => {
+                .subscribe((status: any) => {
                     if (status === 'SUBSCRIBED') {
                         retryCount = 0 // Reset on success
                         const currentTimeout = get().retryTimeout
@@ -269,19 +290,21 @@ export const useVibeStore = create<VibeState>((set, get) => ({
                         }
                     }
                     if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
-                        console.error(`[VibeStore] Channel error: ${status}`)
+                        console.warn(`[VibeStore] Channel error: ${status}`)
 
                         if (retryCount < MAX_RETRIES) {
                             retryCount++
                             const timeout = setTimeout(() => {
                                 // Clean up current channel before retrying
-                                channel.unsubscribe()
+                                supabase.removeChannel(channel)
                                 setupSubscription()
-                            }, 2000 * Math.pow(2, retryCount - 1))
+                            }, BASE_DELAY * Math.pow(2, retryCount - 1))
 
                             set({ retryTimeout: timeout })
                         } else {
-                            console.error("VibeStream: Max retries reached. Realtime updates disabled for this session.")
+                            supabase.removeChannel(channel)
+                            set({ activeChannel: null })
+                            console.warn("[VibeStore] Max retries reached. Realtime updates disabled for this session — vibes will still work via polling.")
                         }
                     }
                 })

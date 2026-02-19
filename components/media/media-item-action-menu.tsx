@@ -13,8 +13,9 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
 import { createClient } from "@/utils/supabase/client"
-import { MoreHorizontal, Plus, ListMusic, User, Heart } from "lucide-react"
+import { MoreHorizontal, Plus, ListMusic, User, Heart, PencilLine } from "lucide-react"
 import { usePlaylists } from "@/hooks/use-playlists"
+import { useLikedSongs } from "@/hooks/use-liked-songs"
 import { toast } from "sonner"
 import { useState } from "react"
 
@@ -34,7 +35,8 @@ export function MediaItemActionMenu({
     playlistId
 }: MediaItemActionMenuProps) {
     const supabase = createClient()
-    const { playlists, addToPlaylist, removeFromPlaylist } = usePlaylists()
+    const { playlists, addToPlaylist, removeFromPlaylist, createPlaylist } = usePlaylists()
+    const { toggleLike, isLiked } = useLikedSongs()
     const [isOpen, setIsOpen] = useState(false)
 
     const handleAddToPlaylist = async (targetPlaylistId: string, playlistTitle: string) => {
@@ -60,38 +62,33 @@ export function MediaItemActionMenu({
         }
     }
 
-    const handleLike = async () => {
+    const handleCreateAndAdd = async () => {
+        const title = window.prompt("Enter playlist name:", `My Playlist #${(playlists?.length || 0) + 1}`)
+        if (!title) return
+
         try {
-            const { data: { user }, error: authError } = await supabase.auth.getUser()
-            if (authError || !user) {
-                toast.error("Please sign in to like songs")
-                setIsOpen(false)
-                return
+            const newPlaylist = await createPlaylist.mutateAsync({ title })
+            if (newPlaylist) {
+                await addToPlaylist.mutateAsync({ playlistId: newPlaylist.id, songId })
+                toast.success(`Created "${title}" and added song`)
             }
-
-            const { error } = await supabase
-                .from('liked_songs')
-                .insert({
-                    song_id: songId,
-                    user_id: user.id
-                })
-
-            if (error) {
-                // duplicate key error means already liked, which is fine
-                if (error.code === '23505') {
-                    toast.info("Already in Liked Songs")
-                } else {
-                    throw error
-                }
-            } else {
-                toast.success("Added to Liked Songs")
-            }
+            setIsOpen(false)
         } catch (error) {
-            toast.error("Failed to add to Liked Songs")
+            toast.error("Failed to create playlist")
+            console.error(error)
+        }
+    }
+
+    const handleToggleLike = async () => {
+        try {
+            await toggleLike.mutateAsync(songId)
+        } catch (error) {
             console.error(error)
         }
         setIsOpen(false)
     }
+
+    const liked = isLiked(songId)
 
     return (
         <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
@@ -102,55 +99,61 @@ export function MediaItemActionMenu({
                     </Button>
                 )}
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56 bg-neutral-900 border-neutral-800 text-white">
-                <DropdownMenuLabel>{songTitle}</DropdownMenuLabel>
-                <DropdownMenuSeparator className="bg-neutral-800" />
+            <DropdownMenuContent align="end" className="w-64 bg-neutral-900/95 backdrop-blur-xl border-white/5 text-white/90 shadow-2xl p-1.5 focus:ring-0">
+                <DropdownMenuLabel className="px-3 py-2 text-xs font-bold uppercase tracking-widest text-neutral-500">
+                    {songTitle}
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator className="bg-white/5 mx-1" />
 
                 <DropdownMenuSub>
-                    <DropdownMenuSubTrigger>
-                        <Plus className="w-4 h-4 mr-2" />
-                        Add to Playlist
+                    <DropdownMenuSubTrigger className="rounded-none focus:bg-white/10">
+                        <Plus className="w-4 h-4 mr-3 text-neutral-400" />
+                        <span className="font-medium">Add to Playlist</span>
                     </DropdownMenuSubTrigger>
-                    <DropdownMenuSubContent className="bg-neutral-900 border-neutral-800 text-white">
-                        <DropdownMenuLabel>Select Playlist</DropdownMenuLabel>
-                        <DropdownMenuSeparator className="bg-neutral-800" />
+                    <DropdownMenuSubContent className="w-56 bg-neutral-900/95 backdrop-blur-xl border-white/5 text-white/90 shadow-2xl p-1.5 focus:ring-0">
+                        <DropdownMenuItem onClick={handleCreateAndAdd} className="bg-white/5 mb-1 rounded-none focus:bg-white/10 group">
+                            <Plus className="w-4 h-4 mr-3 text-ekko-400 group-hover:scale-110 transition-transform" />
+                            <span className="font-bold text-ekko-400">Create New Playlist</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator className="bg-white/5 mx-1 mb-1" />
                         {playlists?.map(playlist => (
                             <DropdownMenuItem
                                 key={playlist.id}
                                 onClick={() => handleAddToPlaylist(playlist.id, playlist.title)}
+                                className="rounded-none focus:bg-white/10"
                             >
-                                <ListMusic className="w-4 h-4 mr-2" />
-                                {playlist.title}
+                                <ListMusic className="w-4 h-4 mr-3 text-neutral-500" />
+                                <span className="truncate">{playlist.title}</span>
                             </DropdownMenuItem>
                         ))}
                         {!playlists?.length && (
-                            <DropdownMenuItem disabled>
-                                No playlists created
+                            <DropdownMenuItem disabled className="text-neutral-500">
+                                No playlists yet
                             </DropdownMenuItem>
                         )}
                     </DropdownMenuSubContent>
                 </DropdownMenuSub>
 
-                <DropdownMenuItem onClick={handleLike}>
-                    <Heart className="w-4 h-4 mr-2" />
-                    Add to Liked Songs
+                <DropdownMenuItem onClick={handleToggleLike} className="rounded-none focus:bg-white/10 group">
+                    <Heart className={`w-4 h-4 mr-3 transition-colors ${liked ? "fill-ekko-400 text-ekko-400" : "text-neutral-400 group-hover:text-ekko-300"}`} />
+                    <span className="font-medium">{liked ? "Remove from Liked" : "Add to Liked Songs"}</span>
                 </DropdownMenuItem>
 
                 {playlistId && (
                     <>
-                        <DropdownMenuSeparator className="bg-neutral-800" />
-                        <DropdownMenuItem onClick={handleRemoveFromPlaylist} className="text-red-500 focus:text-red-500">
-                            <ListMusic className="w-4 h-4 mr-2" />
-                            Remove from this Playlist
+                        <DropdownMenuSeparator className="bg-white/5 mx-1" />
+                        <DropdownMenuItem onClick={handleRemoveFromPlaylist} className="text-ekko-400 rounded-none focus:bg-ekko-500/10 focus:text-ekko-300">
+                            <ListMusic className="w-4 h-4 mr-3" />
+                            <span className="font-medium">Remove from this Playlist</span>
                         </DropdownMenuItem>
                     </>
                 )}
 
-                <DropdownMenuSeparator className="bg-neutral-800" />
+                <DropdownMenuSeparator className="bg-white/5 mx-1" />
 
-                <DropdownMenuItem disabled>
-                    <User className="w-4 h-4 mr-2" />
-                    Go to Artist
+                <DropdownMenuItem disabled className="rounded-none group opacity-50">
+                    <User className="w-4 h-4 mr-3 text-neutral-400" />
+                    <span className="font-medium">Go to Artist</span>
                 </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>

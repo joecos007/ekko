@@ -1,15 +1,16 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { usePlayer } from '@/store/player-store'
 import { useKeyboardShortcuts } from '@/hooks/use-keyboard-shortcuts'
 import { audioService } from '@/services/audio-service'
+import { useListeningHistory } from '@/hooks/use-listening-history'
 
 export function AudioProvider() {
     useKeyboardShortcuts()
+    const { addToHistory } = useListeningHistory()
+    const lastTrackedId = useRef<string | null>(null)
 
-    // Subscribe to store changes manually or via hooks to avoid unnecessary re-renders?
-    // Using hooks is fine for this high-level component.
     const {
         queue, currentIndex, isPlaying, volume, isRadio,
         currentStation, radioMetadata, seekRequest, resetSeekRequest
@@ -36,6 +37,19 @@ export function AudioProvider() {
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentSong?.id, isRadio, currentStation?.id]) // ID checks are stable
+
+    // Track listening history
+    useEffect(() => {
+        if (currentSong && !isRadio && currentSong.id !== lastTrackedId.current) {
+            lastTrackedId.current = currentSong.id
+            addToHistory({
+                songId: currentSong.id,
+                title: currentSong.title,
+                artist: currentSong.artist,
+                coverUrl: currentSong.coverUrl || '',
+            })
+        }
+    }, [currentSong?.id, isRadio, addToHistory])
 
     // 2. Handle Play/Pause Toggle
     useEffect(() => {
