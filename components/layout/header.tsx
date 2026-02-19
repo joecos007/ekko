@@ -32,8 +32,9 @@ export function Header() {
     const [supabase] = useState(() => createClient())
     const { user } = useUser()
     const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
-    // Compute greeting once at mount time (no extra render cycle)
-    const [greeting] = useState(getGreeting)
+    // Start empty to match SSR, then set after mount to avoid hydration mismatch
+    const [greeting, setGreeting] = useState('')
+    useEffect(() => { setGreeting(getGreeting()) }, [])
     const [userName, setUserName] = useState('')
     const router = useRouter()
     const { open: openChat } = useChatUI()
