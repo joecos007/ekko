@@ -6,7 +6,7 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Loader2, Mail, Lock, Eye, EyeOff, ArrowLeft, Key, MessageSquare, CheckCircle2, Shield, Clock } from 'lucide-react';
+import { Loader2, Mail, Lock, Eye, EyeOff, ArrowLeft, Key, CheckCircle2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { AuroraBackground } from '@/components/auth/aurora-background';
 import { EkkoLogo } from '@/components/brand/ekko-logo';
@@ -16,7 +16,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { MagicCard } from '@/components/ui/magic-card';
 import { RetroGrid } from '@/components/ui/retro-grid';
-import { DotPattern } from '@/components/ui/dot-pattern';
 import { SparklesText } from '@/components/ui/sparkles-text';
 import { Ripple } from '@/components/ui/ripple';
 import { NumberTicker } from '@/components/ui/number-ticker';
@@ -43,11 +42,9 @@ export default function LoginPage() {
     const [resendCooldown, setResendCooldown] = useState(0);
     const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
-    const { register, handleSubmit, formState: { errors }, watch, setValue } = useForm<LoginForm>({
+    const { register, handleSubmit, formState: { errors } } = useForm<LoginForm>({
         resolver: zodResolver(loginSchema),
     });
-
-    const watchedEmail = watch('email');
 
     // Cooldown timer
     useEffect(() => {

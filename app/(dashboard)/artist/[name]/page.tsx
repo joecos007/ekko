@@ -13,10 +13,12 @@ import { SongGridSkeleton } from '@/components/ui/skeleton'
 import { MediaItemActionMenu } from '@/components/media/media-item-action-menu'
 import { ShareDialog } from '@/components/share/share-dialog'
 import { cn } from '@/lib/utils'
+import { SLUG_TO_NAME } from '@/lib/artists'
 
 export default function ArtistPage() {
     const params = useParams()
-    const artistName = decodeURIComponent(params.name as string)
+    const slug = params.name as string
+    const artistName = SLUG_TO_NAME[slug] || decodeURIComponent(slug)
     const [supabase] = useState(() => createClient())
     const { setQueue, queue, currentIndex, isPlaying, togglePlay } = usePlayer()
     const [showShare, setShowShare] = useState(false)
@@ -69,15 +71,42 @@ export default function ArtistPage() {
         <div className="relative min-h-full">
             {/* Hero Banner */}
             <div className="relative h-72 md:h-96 overflow-hidden">
+                {/* Banner Image */}
+                {slug && (
+                    <Image
+                        src={`/artists/ghibli/banner-${slug}.png`}
+                        alt={`${artistName} Banner`}
+                        fill
+                        className="object-cover"
+                        priority
+                        unoptimized
+                        onError={(e) => {
+                            // Fallback if banner doesn't exist (only 4 artists have banners)
+                            (e.target as any).style.display = 'none'
+                        }}
+                    />
+                )}
                 <div className="absolute inset-0 bg-gradient-to-b from-ekko-600/20 via-ekko-900/10 to-black" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
 
                 <div className="absolute bottom-0 left-0 right-0 p-8 z-10">
                     <div className="flex items-end gap-6">
-                        <div className="w-32 h-32 md:w-40 md:h-40 rounded-full bg-gradient-to-br from-ekko-500 to-ekko-700 flex items-center justify-center shadow-2xl border-4 border-black shrink-0">
-                            <span className="text-4xl md:text-5xl font-black text-white">
-                                {artistName.charAt(0).toUpperCase()}
-                            </span>
+                        <div className="w-32 h-32 md:w-40 md:h-40 rounded-full bg-gradient-to-br from-ekko-500 to-ekko-700 overflow-hidden shadow-2xl border-4 border-black shrink-0 relative">
+                            {slug ? (
+                                <Image
+                                    src={`/artists/ghibli/profile-${slug}.png`}
+                                    alt={artistName}
+                                    fill
+                                    className="object-cover"
+                                    unoptimized
+                                />
+                            ) : (
+                                <div className="w-full h-full flex items-center justify-center">
+                                    <span className="text-4xl md:text-5xl font-black text-white">
+                                        {artistName.charAt(0).toUpperCase()}
+                                    </span>
+                                </div>
+                            )}
                         </div>
                         <div className="flex-1 min-w-0 pb-2">
                             <p className="text-[10px] font-black uppercase tracking-[0.3em] text-ekko-400 mb-1">Artist</p>

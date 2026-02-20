@@ -1,10 +1,8 @@
 'use client'
 
-import { useState } from 'react'
-import Link from 'next/link'
-import Image from 'next/image'
+
 import { useRouter } from 'next/navigation'
-import { LayoutGrid, Play, Headphones, Music, Mic2, Radio, Sparkles, Zap, Coffee } from 'lucide-react'
+import { LayoutGrid } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { MagicCard } from '@/components/ui/magic-card'
 import { TextAnimate } from '@/components/ui/text-animate'

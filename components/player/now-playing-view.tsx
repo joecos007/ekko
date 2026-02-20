@@ -1,9 +1,7 @@
-'use client'
-
 import { usePlayer } from '@/store/player-store'
 import { Button } from '@/components/ui/button'
 import { Slider } from '@/components/ui/slider'
-import { ChevronDown, MoreHorizontal, Play, Pause, SkipBack, SkipForward, Shuffle, Repeat, ListMusic, Volume2, Heart, Mic2, SlidersHorizontal } from 'lucide-react'
+import { ChevronDown, MoreHorizontal, Play, Pause, SkipBack, SkipForward, Shuffle, Repeat, Heart, Mic2, SlidersHorizontal } from 'lucide-react'
 import Image from 'next/image'
 import { cn } from '@/lib/utils'
 import { useEffect, useState } from 'react'
@@ -15,7 +13,6 @@ import { SleepTimer } from './sleep-timer'
 import { Equalizer } from './equalizer'
 
 import { VibeOverlay } from '@/components/vibes/vibe-overlay'
-import { VibeInput } from '@/components/vibes/vibe-input'
 
 export function NowPlayingView() {
     const {
@@ -44,6 +41,22 @@ export function NowPlayingView() {
     const [showLyrics, setShowLyrics] = useState(false)
     const [showEQ, setShowEQ] = useState(false)
 
+    // Memoize visualizer bars to avoid impure Math.random() in render
+    const [visualizerBars, setVisualizerBars] = useState<{ index: number; height: number; delay: number; duration: number }[]>([])
+
+    useEffect(() => {
+        // eslint-disable-next-line
+        setVisualizerBars(Array.from({ length: 32 }).map((_, i) => ({
+            index: i,
+            // Height target percentage (20-100%)
+            height: Math.random() * 80 + 20,
+            // Staggered delay
+            delay: i * 0.05,
+            // Random duration (0.4-1.0s)
+            duration: 0.4 + Math.random() * 0.6
+        })))
+    }, [])
+
     const song = queue[currentIndex]
     const liked = song ? isLiked(song.id) : false
 
@@ -54,11 +67,10 @@ export function NowPlayingView() {
         coverUrl: radioMetadata.coverUrl
     } : song
 
-    useEffect(() => {
-        if (!isDragging) {
-            setSliderValue([currentTime])
-        }
-    }, [currentTime, isDragging])
+
+
+    // Derived state for slider based on dragging status
+    const effectiveSliderValue = isDragging ? sliderValue : [currentTime]
 
     const formatTime = (seconds: number) => {
         if (seconds === Infinity) return "LIVE"
@@ -180,17 +192,18 @@ export function NowPlayingView() {
 
                 {/* Minimalist Line Visualizer */}
                 <div className="w-full h-12 flex items-center justify-center gap-[3px] mb-8 overflow-hidden">
-                    {[...Array(32)].map((_, i) => (
+                    {visualizerBars.map((bar) => (
                         <div
-                            key={i}
+                            key={bar.index}
                             className={cn(
                                 "w-[2px] bg-white/40 rounded-full transition-all duration-300",
                                 isPlaying ? "animate-audio-line" : "h-1"
                             )}
                             style={{
-                                height: isPlaying ? `${Math.random() * 80 + 20}%` : '4px',
-                                animationDelay: `${i * 0.05}s`,
-                                animationDuration: `${0.4 + Math.random() * 0.6}s`
+                                // Use memoized random values
+                                height: isPlaying ? `${bar.height}%` : '4px',
+                                animationDelay: `${bar.delay}s`,
+                                animationDuration: `${bar.duration}s`
                             }}
                         />
                     ))}
@@ -199,7 +212,7 @@ export function NowPlayingView() {
                 {/* Progress Bar */}
                 <div className="w-full mb-10 group px-2">
                     <Slider
-                        value={sliderValue}
+                        value={effectiveSliderValue}
                         max={duration || 100}
                         step={1}
                         onValueChange={(val) => {

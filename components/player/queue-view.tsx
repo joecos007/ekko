@@ -2,9 +2,9 @@
 
 import { usePlayer } from '@/store/player-store'
 import { Button } from '@/components/ui/button'
-import { ListMusic, Play, X, GripVertical } from 'lucide-react'
+import { ListMusic, Play, X } from 'lucide-react'
 import Image from 'next/image'
-import { cn } from '@/lib/utils'
+
 import { ScrollArea } from '@/components/ui/scroll-area'
 
 interface QueueViewProps {

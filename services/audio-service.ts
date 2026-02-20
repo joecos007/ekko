@@ -1,25 +1,34 @@
 import { Howl, Howler } from 'howler'
 import { usePlayer } from '@/store/player-store'
 
+const MAX_RETRIES = 3
+const LIVE_BUFFER_TIMEOUT_MS = 8000 // Force-play live streams after 8s
+
 class AudioService {
     private sound: Howl | null = null
     private currentTrkId: string | null = null
     private rafId: number | null = null
     private retryCount: number = 0
     private lastProgressUpdate: number = 0
+    private bufferTimeoutId: ReturnType<typeof setTimeout> | null = null
 
     constructor() {
-        // Global configuration
         if (typeof window !== 'undefined') {
             Howler.autoUnlock = true
             Howler.html5PoolSize = 10
         }
     }
 
+    private clearBufferTimeout() {
+        if (this.bufferTimeoutId) {
+            clearTimeout(this.bufferTimeoutId)
+            this.bufferTimeoutId = null
+        }
+    }
+
     play(src: string, isLive: boolean, metadata?: { id: string, title: string, artist: string, coverUrl: string }) {
-        // 1. Check if same track
+        // 1. Check if same track — resume if paused
         if (this.sound && this.currentTrkId === metadata?.id) {
-            // Same track: If paused, resume.
             if (!this.sound.playing()) {
                 this.sound.fade(0, usePlayer.getState().volume, 200)
                 this.sound.play()
@@ -29,30 +38,28 @@ class AudioService {
         }
 
         // 2. New track: Cleanup previous
-        if (this.sound) {
-            this.sound.unload()
-            this.sound = null
-        }
+        this.cleanup()
 
         this.currentTrkId = metadata?.id || 'unknown'
         this.retryCount = 0
         const store = usePlayer.getState()
         store.setIsLoading(true)
 
+        let hasStartedPlaying = false
+
         this.sound = new Howl({
             src: [src],
-            html5: true, // Force HTML5 Audio for streaming/large files
-            preload: true,
-            volume: 0, // Start silent for fade-in
+            html5: true,
+            preload: isLive ? 'metadata' as unknown as boolean : true,
+            volume: 0,
             format: isLive ? ['mp3'] : undefined,
             onplay: () => {
+                hasStartedPlaying = true
+                this.clearBufferTimeout()
                 store.setIsLoading(false)
                 store.setDuration(isLive ? Infinity : this.sound?.duration() || 0)
                 this.startProgressLoop()
-
-                // Fade In
                 this.sound?.fade(0, store.volume, 300)
-
                 this.updateMediaSession(metadata, isLive)
             },
             onend: () => {
@@ -67,26 +74,27 @@ class AudioService {
                 this.stopProgressLoop()
             },
             onload: () => {
-                // Determine if we need to seek (e.g. resumption)
                 if (!isLive && store.currentTime > 0) {
                     this.sound?.seek(store.currentTime)
                 }
-                // If we were supposed to be playing, but aren't (e.g. load finished late), play now
                 if (store.isPlaying && !this.sound?.playing()) {
                     this.sound?.play()
                 }
             },
-            onloaderror: (id, err) => {
+            onloaderror: (_id, err) => {
                 console.warn('[AudioService] Load Error:', err)
-                if (this.retryCount < 1) {
+                this.clearBufferTimeout()
+                if (this.retryCount < MAX_RETRIES) {
                     this.retryCount++
-                    setTimeout(() => this.sound?.load(), 1000)
+                    const delay = Math.min(1000 * Math.pow(2, this.retryCount - 1), 8000)
+                    console.log(`[AudioService] Retry ${this.retryCount}/${MAX_RETRIES} in ${delay}ms`)
+                    setTimeout(() => this.sound?.load(), delay)
                 } else {
                     store.setIsLoading(false)
-                    // Optionally trigger next() or error state
+                    console.error('[AudioService] Max retries reached, giving up.')
                 }
             },
-            onplayerror: (id, err) => {
+            onplayerror: (_id, err) => {
                 console.warn('[AudioService] Play Error:', err)
                 this.sound?.once('unlock', () => {
                     this.sound?.play()
@@ -95,6 +103,20 @@ class AudioService {
         })
 
         this.sound.play()
+
+        // For live streams: force-start after timeout to avoid infinite buffering
+        if (isLive) {
+            this.bufferTimeoutId = setTimeout(() => {
+                if (!hasStartedPlaying && this.sound && !this.sound.playing()) {
+                    console.log('[AudioService] Buffer timeout reached, force-starting playback')
+                    store.setIsLoading(false)
+                    store.setDuration(Infinity)
+                    this.startProgressLoop()
+                    this.sound.fade(0, store.volume, 300)
+                    this.updateMediaSession(metadata, isLive)
+                }
+            }, LIVE_BUFFER_TIMEOUT_MS)
+        }
     }
 
     pause() {
@@ -120,13 +142,22 @@ class AudioService {
         }
     }
 
+    /** Full cleanup of current sound and timers */
+    private cleanup() {
+        this.clearBufferTimeout()
+        this.stopProgressLoop()
+        if (this.sound) {
+            this.sound.unload()
+            this.sound = null
+        }
+    }
+
     private startProgressLoop() {
         if (this.rafId) cancelAnimationFrame(this.rafId)
 
         const loop = () => {
             if (this.sound && this.sound.playing()) {
                 const now = performance.now()
-                // Throttle state updates to ~4Hz (every 250ms)
                 if (now - this.lastProgressUpdate >= 250) {
                     const seek = this.sound.seek()
                     usePlayer.getState().setCurrentTime(typeof seek === 'number' ? seek : 0)
@@ -145,8 +176,7 @@ class AudioService {
         }
     }
 
-    // Bridge to MediaSession API
-    private updateMediaSession(metadata: any, isLive: boolean) {
+    private updateMediaSession(metadata: { id: string, title: string, artist: string, coverUrl: string } | undefined, isLive: boolean) {
         if ('mediaSession' in navigator && metadata) {
             navigator.mediaSession.metadata = new MediaMetadata({
                 title: metadata.title,

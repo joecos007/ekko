@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from 'motion/react'
+import { motion, AnimatePresence } from 'motion/react'
 import { ChevronLeft, ChevronRight, Play } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import Image from 'next/image'
@@ -124,21 +124,28 @@ export function CoverFlow() {
                             >
                                 {/* Pristine Image Card - No Overlays */}
                                 <div className={`relative w-full h-full rounded-none overflow-hidden shadow-2xl transition-all duration-500 ${isActive ? 'shadow-[0_20px_50px_rgba(0,0,0,0.5)] ring-1 ring-white/10' : ''}`}>
-                                    <img
+                                    <Image
                                         src={album.cover}
                                         alt={album.title}
-                                        className="w-full h-full object-cover"
+                                        fill
+                                        className="object-cover"
+                                        sizes="(max-width: 768px) 35vh, 45vh"
+                                        priority={isActive}
                                     />
                                 </div>
 
                                 {/* Reflection */}
                                 <div className="absolute top-full left-0 right-0 h-full mt-4 scale-y-[-1] opacity-30 pointer-events-none [mask-image:linear-gradient(to_bottom,black,transparent)]">
-                                    <img
-                                        src={album.cover}
-                                        className="w-full h-full object-cover rounded-none blur-sm"
-                                        alt=""
-                                    />
-                                    <div className="absolute inset-0 bg-gradient-to-b from-transparent via-surface-1 to-surface-1" />
+                                    <div className="relative w-full h-full">
+                                        <Image
+                                            src={album.cover}
+                                            alt=""
+                                            fill
+                                            className="object-cover blur-sm"
+                                            sizes="(max-width: 768px) 35vh, 45vh"
+                                        />
+                                        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-surface-1 to-surface-1" />
+                                    </div>
                                 </div>
                             </motion.div>
                         )

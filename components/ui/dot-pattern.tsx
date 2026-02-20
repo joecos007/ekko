@@ -76,7 +76,12 @@ export function DotPattern({
   if (width <= 0) width = 16
   if (height <= 0) height = 16
 
-  const [mounted] = useState(() => typeof window !== 'undefined')
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    const timer = setTimeout(() => setMounted(true), 100)
+    return () => clearTimeout(timer)
+  }, [])
   const id = useId()
   const containerRef = useRef<SVGSVGElement>(null)
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 })

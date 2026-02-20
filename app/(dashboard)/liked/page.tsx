@@ -8,7 +8,7 @@ import { Clock, Play, Heart } from "lucide-react"
 import { MediaItemActionMenu } from "@/components/media/media-item-action-menu"
 import { BackButton } from "@/components/ui/back-button"
 import { useLikedSongs } from "@/hooks/use-liked-songs"
-import { toast } from "sonner"
+
 import { useRouter } from "next/navigation"
 
 export default function LikedSongsPage() {
@@ -137,8 +137,8 @@ export default function LikedSongsPage() {
                                     className="p-2 rounded-full hover:bg-white/10 transition-colors"
                                 >
                                     <Heart className={`w-4 h-4 transition-colors ${isLiked(song.id)
-                                            ? 'fill-ekko-400 text-ekko-400'
-                                            : 'fill-none text-neutral-500 hover:text-ekko-400'
+                                        ? 'fill-ekko-400 text-ekko-400'
+                                        : 'fill-none text-neutral-500 hover:text-ekko-400'
                                         }`} />
                                 </button>
                                 <div onClick={(e) => e.stopPropagation()}>
@@ -171,8 +171,8 @@ export default function LikedSongsPage() {
                                     className="p-2 rounded-full hover:bg-white/10 transition-colors"
                                 >
                                     <Heart className={`w-4 h-4 transition-colors ${isLiked(song.id)
-                                            ? 'fill-ekko-400 text-ekko-400'
-                                            : 'fill-none text-neutral-500 hover:text-ekko-400'
+                                        ? 'fill-ekko-400 text-ekko-400'
+                                        : 'fill-none text-neutral-500 hover:text-ekko-400'
                                         }`} />
                                 </button>
                                 <div onClick={(e) => e.stopPropagation()}>

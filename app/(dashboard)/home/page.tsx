@@ -5,47 +5,36 @@ import { createClient } from "@/utils/supabase/client"
 import { usePlayer } from "@/store/player-store"
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
-import { Play, Star, Coffee, Flower2, Headphones, Music, Pause, Heart, Radio, Sparkles, Zap } from "lucide-react"
+import { Play, Star, Coffee, Flower2, Headphones, Music, Pause, Zap } from "lucide-react"
 import { useEffect, useState } from "react"
+import Link from "next/link"
 import { MediaItemActionMenu } from "@/components/media/media-item-action-menu"
-import { getCoverArt, PLAYLIST_COVERS } from "@/lib/cover-art"
-import { TurntableLoader } from "@/components/ui/turntable-loader"
+import { getCoverArt } from "@/lib/cover-art"
 import { FloatingParticles } from "@/components/ui/floating-particles"
 import { STATIC_SONGS } from "@/lib/static-music"
-import { useRouter } from "next/navigation"
-import dynamic from "next/dynamic"
+import { getArtistLink } from "@/lib/artists"
 
 // Magic UI Components
 import { MagicCard } from "@/components/ui/magic-card"
-import { TextAnimate } from "@/components/ui/text-animate"
-import { HyperText } from "@/components/ui/hyper-text"
 import { SongGridSkeleton } from "@/components/ui/skeleton"
 import { SongContextMenu } from "@/components/media/song-context-menu"
 import { Marquee } from "@/components/ui/marquee"
 
-const TeamStoryDialog = dynamic(
-  () => import("@/components/layout/team-story-dialog").then((mod) => mod.TeamStoryDialog),
-  { ssr: false }
-)
-
 // Legacy Components to Keep/Refactor
-import { TrendingSection } from "@/components/home/trending-section"
-import { RecentlyPlayed } from "@/components/home/recently-played"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { HeroBanner } from '@/components/home/hero-banner'
 import { CategoryPills } from "@/components/home/category-pills"
 import { SongRow } from "@/components/home/song-row"
 
 // Artist Data (Moved from ArtistPills)
 const FEATURED_ARTISTS = [
-  { id: 'a1', name: 'Team Ekko', avatarUrl: '/song-cover/mga-isla-sa-gitna-natin.png', gradient: 'from-ekko-400 to-ekko-600' },
-  { id: 'a2', name: 'Chele', avatarUrl: '/song-cover/groove-ni-chele.png', gradient: 'from-ekko-300 to-ekko-500' },
-  { id: 'a3', name: 'Jai', avatarUrl: '/song-cover/si-jai.png', gradient: 'from-ekko-500 to-ekko-700' },
-  { id: 'a4', name: 'Tiaong Sound', avatarUrl: '/song-cover/dito-sa-tiaong.png', gradient: 'from-ekko-300 to-ekko-600' },
-  { id: 'a5', name: 'Isla Beats', avatarUrl: '/song-cover/sarap-ng-buhay.png', gradient: 'from-ekko-400 to-ekko-500' },
-  { id: 'a6', name: 'Pagsikat', avatarUrl: '/song-cover/sa-muling-pagsikat.png', gradient: 'from-ekko-500 to-ekko-800' },
-  { id: 'a7', name: 'Uwian', avatarUrl: '/song-cover/uwian-na.png', gradient: 'from-ekko-400 to-ekko-700' },
-  { id: 'a8', name: 'Poblacion', avatarUrl: '/song-cover/poblacion-3-groove.jpeg', gradient: 'from-ekko-300 to-ekko-600' },
+  { id: 'a1', name: 'Team Ekko', avatarUrl: '/artists/ghibli/profile-team-ekko.png', gradient: 'from-ekko-400 to-ekko-600' },
+  { id: 'a2', name: 'Chele', avatarUrl: '/artists/ghibli/profile-chele.png', gradient: 'from-ekko-300 to-ekko-500' },
+  { id: 'a3', name: 'Jai', avatarUrl: '/artists/ghibli/profile-jai.png', gradient: 'from-ekko-500 to-ekko-700' },
+  { id: 'a4', name: 'Tiaong Sound', avatarUrl: '/artists/ghibli/profile-tiaong-sound.png', gradient: 'from-ekko-300 to-ekko-600' },
+  { id: 'a5', name: 'Isla Beats', avatarUrl: '/artists/ghibli/profile-isla-beats.png', gradient: 'from-ekko-400 to-ekko-500' },
+  { id: 'a6', name: 'Pagsikat', avatarUrl: '/artists/ghibli/profile-pagsikat.png', gradient: 'from-ekko-500 to-ekko-800' },
+  { id: 'a7', name: 'Uwian', avatarUrl: '/artists/ghibli/profile-uwian.png', gradient: 'from-ekko-400 to-ekko-700' },
+  { id: 'a8', name: 'Poblacion', avatarUrl: '/artists/ghibli/profile-poblacion.png', gradient: 'from-ekko-300 to-ekko-600' },
 ]
 
 const HERO_SLIDES = [
@@ -53,38 +42,148 @@ const HERO_SLIDES = [
     id: 'slide-1',
     title: 'Team Ekko',
     description: 'The heartbeat of Philippine AI music. Innovative, soulful, and uniquely Filipino.',
-    image: '/song-cover/mga-isla-sa-gitna-natin.png',
+    image: '/artists/ghibli/banner-team-ekko.png',
     stats: '12 Albums • 164 Tracks',
-    gradient: 'from-ekko-600 via-ekko-700 to-ekko-900'
+    gradient: 'from-ekko-600 via-ekko-700 to-ekko-900',
+    href: '/artist/team-ekko',
+    vibeScore: '98% Match'
   },
   {
     id: 'slide-2',
     title: 'Chele',
     description: 'Groovy rhythms and smooth melodies from the island. Experience the sound of paradise.',
-    image: '/song-cover/groove-ni-chele.png',
+    image: '/artists/ghibli/banner-chele.png',
     stats: '5 Albums • 42 Tracks',
-    gradient: 'from-ekko-400 via-ekko-500 to-ekko-700'
+    gradient: 'from-ekko-400 via-ekko-500 to-ekko-700',
+    href: '/artist/chele',
+    vibeScore: '95% Match'
   },
   {
     id: 'slide-3',
     title: 'Jai',
     description: 'Modern beats meeting traditional roots. Jai defines the new era of P-Pop.',
-    image: '/song-cover/si-jai.png',
+    image: '/artists/ghibli/banner-jai.png',
     stats: '8 Albums • 56 Tracks',
-    gradient: 'from-ekko-700 via-ekko-800 to-ekko-950'
+    gradient: 'from-ekko-700 via-ekko-800 to-ekko-950',
+    href: '/artist/jai',
+    vibeScore: '92% Match'
   },
   {
     id: 'slide-4',
     title: 'Tiaong Sound',
     description: 'Authentic local vibes reimagined. The soul of Quezon province in every beat.',
-    image: '/song-cover/dito-sa-tiaong.png',
+    image: '/artists/ghibli/banner-tiaong-sound.png',
     stats: '3 Albums • 28 Tracks',
-    gradient: 'from-ekko-300 via-ekko-400 to-ekko-500'
+    gradient: 'from-ekko-300 via-ekko-400 to-ekko-500',
+    href: '/artist/tiaong-sound',
+    vibeScore: '89% Match'
   }
 ]
 
+const INITIAL_GRID_COUNT = 20
+
+function LatestDropsSection({ allSongs, isLoadingReleases, isPlaying, currentSong, togglePlay, setQueue }: {
+  allSongs: any[]; isLoadingReleases: boolean; isPlaying: boolean; currentSong: any; togglePlay: () => void; setQueue: (songs: any[], index: number) => void
+}) {
+  const [showAll, setShowAll] = useState(false)
+  const visibleSongs = showAll ? allSongs : allSongs.slice(0, INITIAL_GRID_COUNT)
+
+  return (
+    <section className="mb-12 relative z-10">
+      <h2 className="text-2xl md:text-3xl font-black mb-6 md:mb-8 tracking-tight text-white/90 drop-shadow-md">
+        Latest Drops
+      </h2>
+
+      {isLoadingReleases ? (
+        <SongGridSkeleton count={10} />
+      ) : (
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
+            {visibleSongs.map((song: any, i: number) => {
+              const CardContent = (
+                <div
+                  role="button"
+                  tabIndex={0}
+                  className="glass-card p-4 rounded-none group cursor-pointer h-full transition-all duration-500 hover:scale-[1.02] hover:bg-white/5 border border-white/5 hover:border-white/10"
+                  onClick={() => setQueue(allSongs, i)}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setQueue(allSongs, i) } }}
+                >
+                  <div className="relative aspect-square w-full mb-4 bg-neutral-900 shadow-2xl overflow-hidden rounded-none">
+                    <Image
+                      src={song.coverUrl}
+                      alt={song.title}
+                      fill
+                      className="object-cover transition-transform duration-700 group-hover:scale-110"
+                      loading={i < 4 ? 'eager' : 'lazy'}
+                      sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 20vw"
+                      unoptimized
+                    />
+
+                    {song.isSpecial && (
+                      <div className="absolute top-0 right-0 bg-ekko-500 text-white text-[10px] uppercase font-black px-3 py-1.5 z-20 rounded-none shadow-lg">
+                        Special
+                      </div>
+                    )}
+
+                    <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors" />
+
+                    <div className="absolute bottom-3 right-3 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 z-10">
+                      <Button size="icon" className={`rounded-full text-white shadow-xl h-12 w-12 border-none ${song.isSpecial ? 'bg-ekko-400 hover:bg-ekko-300' : 'bg-ekko-500 hover:bg-ekko-400'}`}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          if (isPlaying && currentSong?.id === song.id) {
+                            togglePlay()
+                          } else {
+                            setQueue(allSongs, i)
+                          }
+                        }}
+                      >
+                        {isPlaying && currentSong?.id === song.id ? (
+                          <Pause className="fill-white w-5 h-5" />
+                        ) : (
+                          <Play className="fill-white w-5 h-5 ml-1" />
+                        )}
+                      </Button>
+                    </div>
+
+                    <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity z-20" onClick={(e) => e.stopPropagation()}>
+                      <MediaItemActionMenu
+                        songId={song.id}
+                        songTitle={song.title}
+                        className="h-8 w-8 hover:bg-black/50 text-white rounded-full transition-colors"
+                      />
+                    </div>
+                  </div>
+                  <h3 className={`font-bold truncate text-base tracking-tight ${song.isSpecial ? 'text-ekko-400' : 'text-white/90'}`}>{song.title}</h3>
+                  <p className="text-xs text-neutral-400 truncate mt-1 font-medium group-hover:text-neutral-300 transition-colors">{song.artist}</p>
+                </div>
+              )
+
+              return (
+                <SongContextMenu key={song.id} songId={song.id} songTitle={song.title} songIndex={i} songs={allSongs}>
+                  <div className="h-full">{CardContent}</div>
+                </SongContextMenu>
+              )
+            })}
+          </div>
+          {!showAll && allSongs.length > INITIAL_GRID_COUNT && (
+            <div className="flex justify-center mt-8">
+              <Button
+                variant="outline"
+                onClick={() => setShowAll(true)}
+                className="border-white/10 text-white/70 hover:text-white hover:bg-white/5 px-8"
+              >
+                Show All {allSongs.length} Tracks
+              </Button>
+            </div>
+          )}
+        </>
+      )}
+    </section>
+  )
+}
+
 export default function Home() {
-  const router = useRouter()
   const [supabase] = useState(() => createClient())
   const { isPlaying, queue, currentIndex, togglePlay, setQueue } = usePlayer()
   const currentSong = queue[currentIndex]
@@ -194,8 +293,8 @@ export default function Home() {
   const recentSongs = displaySongs.slice(8, 14)
 
   return (
-    <div className="p-8 pt-6 font-geist-sans relative min-h-full pb-24">
-      <FloatingParticles count={25} />
+    <div className="p-4 pt-4 md:p-8 md:pt-6 font-geist-sans relative min-h-full pb-24">
+      <FloatingParticles count={8} />
 
       {/* ═══════════════════════════════════════════════════ */}
       {/* 🎯 HERO SECTION — 3D Cover Flow                     */}
@@ -233,8 +332,9 @@ export default function Home() {
 
           <Marquee pauseOnHover className="[--duration:40s]">
             {FEATURED_ARTISTS.map((artist) => (
-              <div
+              <Link
                 key={artist.id}
+                href={getArtistLink(artist.name)}
                 className="mx-4 flex flex-col items-center gap-4 cursor-pointer group"
               >
                 <div className={`relative w-24 h-24 md:w-32 md:h-32 rounded-full p-1 bg-gradient-to-br ${artist.gradient} group-hover:scale-105 transition-all duration-500 shadow-xl`}>
@@ -244,6 +344,7 @@ export default function Home() {
                       alt={artist.name}
                       fill
                       className="object-cover group-hover:scale-110 transition-transform duration-700"
+                      loading="lazy"
                       unoptimized
                     />
                   </div>
@@ -251,7 +352,7 @@ export default function Home() {
                 <span className="text-sm md:text-base font-bold text-white/80 group-hover:text-white transition-colors tracking-wide uppercase">
                   {artist.name}
                 </span>
-              </div>
+              </Link>
             ))}
           </Marquee>
         </div>
@@ -260,82 +361,14 @@ export default function Home() {
       {/* ═══════════════════════════════════════════════════ */}
       {/* 🎵 LATEST DROPS (Grid)                              */}
       {/* ═══════════════════════════════════════════════════ */}
-      <section className="mb-12 relative z-10">
-        <h2 className="text-3xl font-black mb-8 tracking-tight text-white/90 drop-shadow-md">
-          Latest Drops
-        </h2>
-
-        {isLoadingReleases ? (
-          <SongGridSkeleton count={10} />
-        ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-            {allSongs?.map((song: any, i: number) => {
-              const CardContent = (
-                <div
-                  role="button"
-                  tabIndex={0}
-                  className={`glass-card p-4 rounded-none group cursor-pointer h-full transition-all duration-500 hover:scale-[1.02] hover:bg-white/5 border border-white/5 hover:border-white/10`}
-                  onClick={() => setQueue(allSongs, i)}
-                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setQueue(allSongs, i) } }}
-                >
-                  <div className="relative aspect-square w-full mb-4 bg-neutral-900 shadow-2xl overflow-hidden rounded-none">
-                    <Image
-                      src={song.coverUrl}
-                      alt={song.title}
-                      fill
-                      className="object-cover transition-transform duration-700 group-hover:scale-110"
-                      unoptimized
-                    />
-
-                    {song.isSpecial && (
-                      <div className="absolute top-0 right-0 bg-ekko-500 text-white text-[10px] uppercase font-black px-3 py-1.5 z-20 rounded-none shadow-lg">
-                        Special
-                      </div>
-                    )}
-
-                    <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors" />
-
-                    <div className="absolute bottom-3 right-3 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 z-10">
-                      <Button size="icon" className={`rounded-full text-white shadow-xl h-12 w-12 border-none ${song.isSpecial ? 'bg-ekko-400 hover:bg-ekko-300' : 'bg-ekko-500 hover:bg-ekko-400'}`}
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          if (isPlaying && currentSong?.id === song.id) {
-                            togglePlay()
-                          } else {
-                            setQueue(allSongs, i)
-                          }
-                        }}
-                      >
-                        {isPlaying && currentSong?.id === song.id ? (
-                          <Pause className="fill-white w-5 h-5" />
-                        ) : (
-                          <Play className="fill-white w-5 h-5 ml-1" />
-                        )}
-                      </Button>
-                    </div>
-
-                    <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity z-20" onClick={(e) => e.stopPropagation()}>
-                      <MediaItemActionMenu
-                        songId={song.id}
-                        songTitle={song.title}
-                        className="h-8 w-8 hover:bg-black/50 text-white rounded-full transition-colors"
-                      />
-                    </div>
-                  </div>
-                  <h3 className={`font-bold truncate text-base tracking-tight ${song.isSpecial ? 'text-ekko-400' : 'text-white/90'}`}>{song.title}</h3>
-                  <p className="text-xs text-neutral-400 truncate mt-1 font-medium group-hover:text-neutral-300 transition-colors">{song.artist}</p>
-                </div>
-              )
-
-              return (
-                <SongContextMenu key={song.id} songId={song.id} songTitle={song.title} songIndex={i} songs={allSongs}>
-                  <div className="h-full">{CardContent}</div>
-                </SongContextMenu>
-              )
-            })}
-          </div>
-        )}
-      </section>
+      <LatestDropsSection
+        allSongs={allSongs}
+        isLoadingReleases={isLoadingReleases}
+        isPlaying={isPlaying}
+        currentSong={currentSong}
+        togglePlay={togglePlay}
+        setQueue={setQueue}
+      />
 
       {/* ═══════════════════════════════════════════════════ */}
       {/* 📈 Curated Genres (Using MagicCard)                 */}

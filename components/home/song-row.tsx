@@ -1,12 +1,13 @@
 'use client'
 
 import Image from "next/image"
-import { Play, Pause, MoreHorizontal, Heart } from "lucide-react"
+import Link from "next/link"
+import { Play, Pause } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { usePlayer } from "@/store/player-store"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import { cn } from "@/lib/utils"
-import { MediaItemActionMenu } from "@/components/media/media-item-action-menu"
+import { getArtistLink } from "@/lib/artists"
 
 interface Song {
     id: string
@@ -101,7 +102,13 @@ export function SongRow({ title, songs }: SongRowProps) {
                                     )}>
                                         {song.title}
                                     </h3>
-                                    <p className="text-xs md:text-sm text-neutral-400 truncate hover:underline cursor-pointer">{song.artist}</p>
+                                    <Link
+                                        href={getArtistLink(song.artist)}
+                                        className="text-xs md:text-sm text-neutral-400 truncate hover:text-white hover:underline cursor-pointer block"
+                                        onClick={(e: React.MouseEvent) => e.stopPropagation()}
+                                    >
+                                        {song.artist}
+                                    </Link>
                                 </div>
                             </div>
                         )

@@ -3,7 +3,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { Mic2 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { MagicCard } from '@/components/ui/magic-card'
 import { TextAnimate } from '@/components/ui/text-animate'
 

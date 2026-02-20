@@ -12,8 +12,8 @@ import {
     DropdownMenuSubContent,
 } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
-import { createClient } from "@/utils/supabase/client"
-import { MoreHorizontal, Plus, ListMusic, User, Heart, PencilLine } from "lucide-react"
+
+import { MoreHorizontal, Plus, ListMusic, User, Heart } from "lucide-react"
 import { usePlaylists } from "@/hooks/use-playlists"
 import { useLikedSongs } from "@/hooks/use-liked-songs"
 import { toast } from "sonner"
@@ -34,7 +34,7 @@ export function MediaItemActionMenu({
     className,
     playlistId
 }: MediaItemActionMenuProps) {
-    const supabase = createClient()
+
     const { playlists, addToPlaylist, removeFromPlaylist, createPlaylist } = usePlaylists()
     const { toggleLike, isLiked } = useLikedSongs()
     const [isOpen, setIsOpen] = useState(false)

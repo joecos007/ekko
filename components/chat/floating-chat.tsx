@@ -204,30 +204,29 @@ export function FloatingChat() {
                         </ScrollArea>
                     </div>
 
-                    {/* Input */}
-                    <div className="p-3 bg-black/30 border-t border-white/5 shrink-0">
-                        {isAlone ? (
-                            <p className="text-center text-[10px] text-neutral-600 font-medium py-1 italic">
+                    {/* Input — always visible so users can start conversations */}
+                    <div className="p-3 bg-black/30 border-t border-white/5 shrink-0 space-y-2">
+                        {isAlone && (
+                            <p className="text-center text-[10px] text-neutral-500 font-medium italic">
                                 Start the conversation — others will join soon.
                             </p>
-                        ) : (
-                            <form onSubmit={sendMessage} className="flex gap-2">
-                                <Input
-                                    value={newMessage}
-                                    onChange={(e) => setNewMessage(e.target.value)}
-                                    placeholder="Message the lounge..."
-                                    className="bg-white/5 border-white/10 text-[12px] h-9 rounded-full focus:ring-1 focus:ring-ekko-500/30 px-4"
-                                />
-                                <Button
-                                    type="submit"
-                                    size="icon"
-                                    disabled={!newMessage.trim()}
-                                    className="h-9 w-9 rounded-full bg-ekko-500 hover:bg-ekko-400 transition-colors shrink-0"
-                                >
-                                    <Send className="w-4 h-4" />
-                                </Button>
-                            </form>
                         )}
+                        <form onSubmit={sendMessage} className="flex gap-2">
+                            <Input
+                                value={newMessage}
+                                onChange={(e) => setNewMessage(e.target.value)}
+                                placeholder="Message the lounge..."
+                                className="bg-white/5 border-white/10 text-[12px] h-9 rounded-full focus:ring-1 focus:ring-ekko-500/30 px-4"
+                            />
+                            <Button
+                                type="submit"
+                                size="icon"
+                                disabled={!newMessage.trim()}
+                                className="h-9 w-9 rounded-full bg-ekko-500 hover:bg-ekko-400 transition-colors shrink-0"
+                            >
+                                <Send className="w-4 h-4" />
+                            </Button>
+                        </form>
                     </div>
                 </motion.div>
             )}

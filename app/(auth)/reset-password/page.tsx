@@ -5,16 +5,13 @@ import { createClient } from '@/utils/supabase/client';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import Image from 'next/image';
-import { Loader2, Lock, Eye, EyeOff, Shield, LayoutTemplate, CheckCircle2, ArrowRight } from 'lucide-react';
+import { Loader2, Lock, Eye, EyeOff, Shield, CheckCircle2, ArrowRight } from 'lucide-react';
 import { EkkoLogo } from '@/components/brand/ekko-logo';
 import { toast } from 'sonner';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { MagicCard } from '@/components/ui/magic-card';
-import { RetroGrid } from '@/components/ui/retro-grid';
-import { DotPattern } from '@/components/ui/dot-pattern';
 import { BorderBeam } from '@/components/ui/border-beam';
 import { motion, AnimatePresence } from 'motion/react';
 

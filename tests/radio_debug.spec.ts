@@ -60,7 +60,6 @@ test('analyze radio transition performance', async ({ page }) => {
     // If it goes straight to playing, spinner might be too fast to catch
     // We wait for IS RADIO active state (red button) AND Pause button (playing)
     const playButton = page.locator('button[aria-label="Pause"]');
-    const spinner = page.locator('.animate-spin');
 
     // Functional Check: Must play within 60s (generous timeout for slow networks)
     try {

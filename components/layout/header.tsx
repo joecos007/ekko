@@ -4,11 +4,12 @@ import { useUser } from "@/hooks/use-user"
 import { Search } from "lucide-react"
 import { EkkoLogo } from "@/components/brand/ekko-logo"
 import Link from "next/link"
+import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { Input } from "@/components/ui/input"
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -34,7 +35,11 @@ export function Header() {
     const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
     // Start empty to match SSR, then set after mount to avoid hydration mismatch
     const [greeting, setGreeting] = useState('')
-    useEffect(() => { setGreeting(getGreeting()) }, [])
+    useEffect(() => {
+        // Use timeout to avoid "setState during render" warning and strictly run on client
+        const t = setTimeout(() => setGreeting(getGreeting()), 0)
+        return () => clearTimeout(t)
+    }, [])
     const [userName, setUserName] = useState('')
     const router = useRouter()
     const { open: openChat } = useChatUI()
@@ -113,11 +118,15 @@ export function Header() {
                             <DropdownMenuTrigger asChild>
                                 <Avatar className="h-10 w-10 transition-transform hover:scale-105 border border-white/10 hover:border-white/20 cursor-pointer relative shadow-lg rounded-none">
                                     {avatarUrl || user.user_metadata?.avatar_url ? (
-                                        <img
-                                            src={avatarUrl || user.user_metadata?.avatar_url}
-                                            alt="Profile"
-                                            className="aspect-square h-full w-full object-cover"
-                                        />
+                                        <div className="relative h-full w-full">
+                                            <Image
+                                                src={avatarUrl || user.user_metadata?.avatar_url}
+                                                alt="Profile"
+                                                fill
+                                                className="object-cover"
+                                                unoptimized
+                                            />
+                                        </div>
                                     ) : (
                                         <AvatarFallback className="bg-gradient-to-br from-ekko-500 to-ekko-700 text-white text-xs font-bold rounded-none">
                                             {user.email?.[0]?.toUpperCase() ?? "?"}

@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Play, Heart, MoreVertical } from 'lucide-react'
+import { Heart, MoreVertical, Users } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { ShimmerButton } from '@/components/ui/shimmer-button'
+import { PremiumButton } from '@/components/ui/premium-button'
 import Image from 'next/image'
 
 export interface HeroItem {
@@ -14,6 +14,8 @@ export interface HeroItem {
     image: string
     stats: string
     gradient: string
+    href?: string
+    vibeScore?: string
 }
 
 interface HeroBannerProps {
@@ -86,26 +88,29 @@ export function HeroBanner({ items }: HeroBannerProps) {
                                             </p>
 
                                             <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 w-full">
-                                                <ShimmerButton
+                                                <PremiumButton
+                                                    href={item.href}
                                                     className="rounded-none font-bold h-12 text-sm md:text-base shadow-xl hover:scale-105 transition-all duration-300"
-                                                    background="rgba(255, 255, 255, 1)"
-                                                    shimmerColor="#000000"
-                                                    shimmerSize="0.1em"
-                                                    borderRadius="0px"
+                                                    icon={<Users className="w-5 h-5" />}
                                                 >
-                                                    <span className="flex items-center text-black relative z-10">
-                                                        <Play className="w-5 h-5 fill-current mr-2" />
-                                                        Listen
-                                                    </span>
-                                                </ShimmerButton>
+                                                    View Artist
+                                                </PremiumButton>
                                                 <div className="flex gap-2">
-                                                    <Button size="icon" variant="ghost" className="rounded-none text-white hover:bg-white/10 w-12 h-12 border border-white/5 backdrop-blur-sm">
-                                                        <Heart className="w-5 h-5" />
+                                                    <Button size="icon" variant="ghost" className="rounded-none text-white hover:bg-white/10 w-12 h-12 border border-white/5 backdrop-blur-sm group/btn">
+                                                        <Heart className="w-5 h-5 group-hover/btn:text-ekko-400 transition-colors" />
                                                     </Button>
                                                     <Button size="icon" variant="ghost" className="rounded-none text-white hover:bg-white/10 w-12 h-12 border border-white/5 backdrop-blur-sm">
                                                         <MoreVertical className="w-5 h-5" />
                                                     </Button>
                                                 </div>
+
+                                                {/* Vibe Score Badge */}
+                                                {item.vibeScore && (
+                                                    <div className="hidden md:flex ml-4 items-center gap-2 px-3 py-1.5 rounded-none bg-black/20 border border-white/10 backdrop-blur-md">
+                                                        <span className="w-2 h-2 rounded-full bg-ekko-400 animate-pulse" />
+                                                        <span className="text-xs font-bold text-white/90 tracking-wide">{item.vibeScore}</span>
+                                                    </div>
+                                                )}
                                             </div>
 
                                             <div className="mt-6 pt-4 border-t border-white/5 flex items-center justify-center md:justify-start gap-3 w-full">

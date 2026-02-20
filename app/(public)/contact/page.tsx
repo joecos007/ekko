@@ -32,7 +32,7 @@ export default function ContactPage() {
 
             setSubmitted(true)
             toast.success('Message sent! We\'ll get back to you soon.')
-        } catch (error) {
+        } catch {
             toast.error('Something went wrong. Please try again.')
         } finally {
             setLoading(false)

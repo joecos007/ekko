@@ -24,9 +24,8 @@ export default function DashboardLayout({
                 <ScrollProgress className="top-0" container={mainRef} />
             </ClientOnly>
             <div className="flex min-h-screen bg-mesh relative overflow-hidden">
-                {/* Decorative Background Orbs */}
-                <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-ekko-600/10 blur-[120px] rounded-full animate-float" />
-                <div className="absolute bottom-[10%] right-[-5%] w-[30%] h-[30%] bg-ekko-800/10 blur-[100px] rounded-full animate-float stagger-3" />
+                {/* Subtle background accent — static, no blur for perf */}
+                <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-ekko-600/5 rounded-full" />
                 <DotPattern
                     className="hidden md:block opacity-[0.15] [mask-image:radial-gradient(circle_at_top,white,transparent_70%)]"
                 />

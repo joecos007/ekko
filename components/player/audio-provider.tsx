@@ -49,7 +49,7 @@ export function AudioProvider() {
                 coverUrl: currentSong.coverUrl || '',
             })
         }
-    }, [currentSong?.id, isRadio, addToHistory])
+    }, [currentSong, isRadio, addToHistory])
 
     // 2. Handle Play/Pause Toggle
     useEffect(() => {
