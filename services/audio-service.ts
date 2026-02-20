@@ -104,11 +104,12 @@ class AudioService {
                     console.log(`[AudioService] Retry ${this.retryCount}/${MAX_RETRIES} in ${delay}ms`)
                     setTimeout(() => this.sound?.load(), delay)
                 } else {
-                    store.setIsLoading(false)
-                    if (isLive) {
-                        store.setRadioError('Stream unavailable. Try another station.')
+                    const current = usePlayer.getState()
+                    current.setIsLoading(false)
+                    if (isLive && current.isRadio && current.currentStation?.id === metadata?.id) {
+                        current.setRadioError('Stream unavailable. Try another station.')
                     }
-                    console.error('[AudioService] Max retries reached, giving up.')
+                    console.warn('[AudioService] Max retries reached, giving up.')
                 }
             },
             onplayerror: (_id, err) => {
