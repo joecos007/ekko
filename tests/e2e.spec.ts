@@ -1,34 +1,43 @@
 import { test, expect } from '@playwright/test';
 
+const EMAIL = process.env.TEST_USER_EMAIL;
+const PASSWORD = process.env.TEST_USER_PASSWORD;
+const HAS_CREDENTIALS = !!(EMAIL && PASSWORD);
+
+const login = async (page: any) => {
+    await page.goto('/login');
+
+    const emailInput = page.locator('input[type="email"], input[name="email"], input[placeholder*="email" i]').first();
+    await expect(emailInput).toBeVisible({ timeout: 10_000 });
+
+    await emailInput.fill(EMAIL!);
+    await expect(emailInput).toHaveValue(EMAIL!);
+
+    const passwordInput = page.locator('input[type="password"], input[name="password"], input[placeholder*="password" i]').first();
+    await passwordInput.fill(PASSWORD!);
+    await expect(passwordInput).toHaveValue(PASSWORD!);
+
+    const submitBtn = page.locator('button[type="submit"], button:has-text("Sign In"), button:has-text("Login")').first();
+
+    await Promise.all([
+        page.waitForURL('**/home', { timeout: 60_000 }),
+        submitBtn.click(),
+    ]);
+
+    await page.waitForLoadState('domcontentloaded');
+};
+
 test.describe('Ekko E2E Workflow', () => {
     // Enterprise-grade timeout for mobile tests with real auth + data loading
     test.setTimeout(60_000);
 
     test('Login and Navigate Mobile Flow', async ({ page }) => {
+        test.skip(!HAS_CREDENTIALS, 'Skipped: TEST_USER_EMAIL / TEST_USER_PASSWORD not set');
+
         // ─── 1. LOGIN ───────────────────────────────────────────────
-        await page.goto('/login');
-
-        const emailInput = page.locator('input[type="email"]');
-        await expect(emailInput).toBeVisible({ timeout: 10_000 });
-
-        // pressSequentially is more robust than fill() on Mobile Safari
-        await emailInput.click();
-        await emailInput.pressSequentially('admin@ekko.app', { delay: 50 });
-        await expect(emailInput).toHaveValue('admin@ekko.app');
-
-        const passwordInput = page.locator('input[type="password"]');
-        await passwordInput.click();
-        await passwordInput.pressSequentially('Test@2026', { delay: 50 });
-        await expect(passwordInput).toHaveValue('Test@2026');
-
-        await page.click('button[type="submit"]');
+        await login(page);
 
         // ─── 2. HOME PAGE VERIFICATION ──────────────────────────────
-        // Wait for redirect — confirms auth succeeded
-        await expect(page).toHaveURL(/\/(home)?$/, { timeout: 15_000 });
-
-        // Wait for page to settle (auth state, data loading)
-        await page.waitForLoadState('networkidle');
 
         // Featured Carousel heading should be above the fold
         const carouselHeading = page.getByRole('heading', { level: 1 }).first();
@@ -50,17 +59,10 @@ test.describe('Ekko E2E Workflow', () => {
     });
 
     test('Search Functionality', async ({ page }) => {
+        test.skip(!HAS_CREDENTIALS, 'Skipped: TEST_USER_EMAIL / TEST_USER_PASSWORD not set');
+
         // Login first
-        await page.goto('/login');
-        const emailInput = page.locator('input[type="email"]');
-        await expect(emailInput).toBeVisible({ timeout: 10_000 });
-        await emailInput.click();
-        await emailInput.pressSequentially('admin@ekko.app', { delay: 50 });
-        const passwordInput = page.locator('input[type="password"]');
-        await passwordInput.click();
-        await passwordInput.pressSequentially('Test@2026', { delay: 50 });
-        await page.click('button[type="submit"]');
-        await expect(page).toHaveURL(/\/(home)?$/, { timeout: 15_000 });
+        await login(page);
 
         // Navigate to search
         await page.goto('/search');
@@ -69,18 +71,10 @@ test.describe('Ekko E2E Workflow', () => {
     });
 
     test('Responsive Layout Check', async ({ page, isMobile }) => {
+        test.skip(!HAS_CREDENTIALS, 'Skipped: TEST_USER_EMAIL / TEST_USER_PASSWORD not set');
+
         // Login first
-        await page.goto('/login');
-        const emailInput = page.locator('input[type="email"]');
-        await expect(emailInput).toBeVisible({ timeout: 10_000 });
-        await emailInput.click();
-        await emailInput.pressSequentially('admin@ekko.app', { delay: 50 });
-        const passwordInput = page.locator('input[type="password"]');
-        await passwordInput.click();
-        await passwordInput.pressSequentially('Test@2026', { delay: 50 });
-        await page.click('button[type="submit"]');
-        await expect(page).toHaveURL(/\/(home)?$/, { timeout: 15_000 });
-        await page.waitForLoadState('networkidle');
+        await login(page);
 
         if (isMobile) {
             // Mobile should show bottom navigation

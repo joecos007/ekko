@@ -11,10 +11,14 @@ interface Particle {
     type: "note" | "orb"
 }
 
-export function FloatingParticles({ count = 15 }: { count?: number }) {
+export function FloatingParticles({ count = 8 }: { count?: number }) {
     const [particles, setParticles] = useState<Particle[]>([])
 
     useEffect(() => {
+        // Respect reduced motion preference
+        if (typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            return
+        }
         const timer = setTimeout(() => {
             setParticles(Array.from({ length: count }, (_, i) => ({
                 id: i,
@@ -40,6 +44,7 @@ export function FloatingParticles({ count = 15 }: { count?: number }) {
                         style={{
                             left: `${particle.x}%`,
                             bottom: "-50px",
+                            willChange: "transform",
                             animation: `music-note-float ${particle.duration}s linear ${particle.delay}s infinite`,
                         }}
                     >
@@ -55,7 +60,7 @@ export function FloatingParticles({ count = 15 }: { count?: number }) {
                             </svg>
                         ) : (
                             <div
-                                className="rounded-full bg-gradient-to-br from-primary/50 to-purple-500/50 blur-sm"
+                                className="rounded-full bg-gradient-to-br from-primary/50 to-ekko-500/50 blur-sm"
                                 style={{
                                     width: particle.size,
                                     height: particle.size,

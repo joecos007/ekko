@@ -132,7 +132,7 @@ export function RichTextEditor({ content, onChange, placeholder, className }: Ri
     // }, [content, editor])
 
     return (
-        <div className={cn("border border-white/10 rounded-lg overflow-hidden bg-black/20 focus-within:ring-1 focus-within:ring-primary/50 focus-within:border-primary/50 transition-all", className)}>
+        <div className={cn("border border-white/10 rounded-none overflow-hidden bg-black/20 focus-within:ring-1 focus-within:ring-primary/50 focus-within:border-primary/50 transition-all", className)}>
             <Toolbar editor={editor} />
             <EditorContent editor={editor} />
         </div>

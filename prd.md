@@ -330,9 +330,7 @@ CREATE POLICY "read public songs" ON songs
 ### Automated Testing
 | Type | Tool | Coverage |
 |------|------|----------|
-| Unit | Vitest | Store logic, utils |
-| Component | React Testing Library | UI components |
-| E2E | Playwright | Critical flows |
+| E2E | Playwright | Critical flows, user workflows, visual regression |
 
 ### Manual Testing Checklist
 - [ ] Audio plays on song click

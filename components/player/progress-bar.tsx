@@ -30,8 +30,8 @@ export function ProgressBar() {
     }
 
     return (
-        <div className="flex items-center gap-2 w-full max-w-md">
-            <span className="text-xs text-muted-foreground w-10 text-right tabular-nums">
+        <div className="flex items-center gap-3 w-full max-w-2xl">
+            <span className="text-[11px] text-neutral-400 w-10 text-right tabular-nums font-medium">
                 {formatTime(isRadio ? Infinity : (isDragging ? localValue[0] : currentTime))}
             </span>
 
@@ -39,7 +39,7 @@ export function ProgressBar() {
                 value={isRadio ? [100] : localValue}
                 max={isRadio ? 100 : (duration || 100)}
                 step={1}
-                className={cn("flex-1 cursor-pointer", isRadio && "opacity-50 cursor-not-allowed")}
+                className={cn("flex-1 cursor-pointer", isRadio && "opacity-40 cursor-not-allowed")}
                 disabled={isRadio}
                 onValueChange={(val) => {
                     if (isRadio) return
@@ -53,7 +53,7 @@ export function ProgressBar() {
                 }}
             />
 
-            <span className="text-xs text-muted-foreground w-10 tabular-nums">
+            <span className="text-[11px] text-neutral-400 w-10 tabular-nums font-medium">
                 {formatTime(duration)}
             </span>
         </div>

@@ -83,5 +83,20 @@ export function usePlaylists() {
         }
     })
 
-    return { playlists, isLoading, createPlaylist, addToPlaylist, removeFromPlaylist }
+    const deletePlaylist = useMutation({
+        mutationFn: async (playlistId: string) => {
+            const { error } = await supabase
+                .from('playlists')
+                .delete()
+                .eq('id', playlistId)
+
+            if (error) throw error
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['playlists'] })
+            queryClient.invalidateQueries({ queryKey: ['playlist-songs'] })
+        }
+    })
+
+    return { playlists, isLoading, createPlaylist, addToPlaylist, removeFromPlaylist, deletePlaylist }
 }

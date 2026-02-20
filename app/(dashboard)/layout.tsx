@@ -5,8 +5,10 @@ import { Sidebar } from "@/components/layout/sidebar";
 import { Header } from "@/components/layout/header";
 import { MobileNav } from "@/components/layout/mobile-nav";
 import { ScrollProgress } from "@/components/ui/scroll-progress";
-
 import { ClientOnly } from "@/components/ui/client-only";
+import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
+import { PageTransition } from "@/components/layout/page-transition";
+import { DotPattern } from "@/components/ui/dot-pattern";
 
 export default function DashboardLayout({
     children,
@@ -14,6 +16,7 @@ export default function DashboardLayout({
     children: React.ReactNode;
 }>) {
     const mainRef = useRef<HTMLElement>(null);
+    useKeyboardShortcuts();
 
     return (
         <>
@@ -21,15 +24,22 @@ export default function DashboardLayout({
                 <ScrollProgress className="top-0" container={mainRef} />
             </ClientOnly>
             <div className="flex min-h-screen bg-mesh relative overflow-hidden">
-                {/* Decorative Background Orbs */}
-                <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-600/10 blur-[120px] rounded-full animate-float" />
-                <div className="absolute bottom-[10%] right-[-5%] w-[30%] h-[30%] bg-indigo-600/10 blur-[100px] rounded-full animate-float stagger-3" />
+                {/* Subtle background accent — static, no blur for perf */}
+                <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-ekko-600/5 rounded-full" />
+                <DotPattern
+                    className="hidden md:block opacity-[0.15] [mask-image:radial-gradient(circle_at_top,white,transparent_70%)]"
+                />
 
                 <Sidebar />
-                <main ref={mainRef} className="flex-1 pb-32 md:pb-24 border-l border-white/5 overflow-y-auto h-screen relative z-10 transition-colors">
+                <main
+                    ref={mainRef}
+                    className="flex-1 pb-[var(--floating-chat-offset)] md:pb-[calc(var(--player-bar-height)+1.5rem)] border-l border-white/5 overflow-y-auto h-screen relative z-10 transition-colors"
+                >
                     <Header />
                     <div className="relative z-10">
-                        {children}
+                        <PageTransition>
+                            {children}
+                        </PageTransition>
                     </div>
                 </main>
             </div>

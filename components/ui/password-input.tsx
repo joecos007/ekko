@@ -48,7 +48,7 @@ export function PasswordInput({
                     type={showPassword ? "text" : "password"}
                     placeholder={placeholder}
                     className={cn(
-                        "w-full h-10 px-3 py-2 pr-10 bg-neutral-900/50 border border-neutral-800 rounded-md text-sm text-white placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-white/20 transition-all",
+                        "w-full h-10 px-3 py-2 pr-10 bg-neutral-900/50 border border-neutral-800 rounded-none text-sm text-white placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-white/20 transition-all",
                         className
                     )}
                     value={value}
@@ -71,7 +71,7 @@ export function PasswordInput({
 
             {showStrength && value && (
                 <div className="space-y-1">
-                    <div className="h-1 w-full bg-neutral-800 rounded-full overflow-hidden">
+                    <div className="h-1 w-full bg-neutral-800 rounded-none overflow-hidden">
                         <div
                             className={cn("h-full transition-all duration-300", strength.color)}
                             style={{ width: strength.width }}

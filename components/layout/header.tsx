@@ -1,14 +1,15 @@
-'use client'
-
 import { Button } from "@/components/ui/button"
 import { createClient } from "@/utils/supabase/client"
 import { useUser } from "@/hooks/use-user"
-import { ChevronLeft, ChevronRight, Disc } from "lucide-react"
+import { Search } from "lucide-react"
+import { EkkoLogo } from "@/components/brand/ekko-logo"
 import Link from "next/link"
+import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
+import { Input } from "@/components/ui/input"
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -17,26 +18,53 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { LogOut, User as UserSettings } from "lucide-react"
+import { LogOut, User as UserSettings, MessageCircle } from "lucide-react"
 import { toast } from "sonner"
+import { useChatUI } from "@/store/chat-ui-store"
+
+function getGreeting() {
+    const h = new Date().getHours()
+    if (h < 12) return 'Good Morning'
+    if (h < 17) return 'Good Afternoon'
+    return 'Good Evening'
+}
 
 export function Header() {
     const [supabase] = useState(() => createClient())
     const { user } = useUser()
     const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
+    // Start empty to match SSR, then set after mount to avoid hydration mismatch
+    const [greeting, setGreeting] = useState('')
+    useEffect(() => {
+        // Use timeout to avoid "setState during render" warning and strictly run on client
+        const t = setTimeout(() => setGreeting(getGreeting()), 0)
+        return () => clearTimeout(t)
+    }, [])
+    const [userName, setUserName] = useState('')
     const router = useRouter()
+    const { open: openChat } = useChatUI()
 
     useEffect(() => {
         const getProfile = async () => {
             if (user) {
-                const { data } = await supabase.from('profiles').select('avatar_url').eq('id', user.id).single()
-                if (data) setAvatarUrl(data.avatar_url)
+                const { data } = await supabase.from('profiles').select('avatar_url, full_name').eq('id', user.id).single()
+                if (data) {
+                    setAvatarUrl(data.avatar_url)
+                    // Try to get name from profile, fallback to metadata
+                    const name = data.full_name || user.user_metadata?.full_name || user.user_metadata?.name || ''
+                    setUserName(name.split(' ')[0])
+                } else {
+                    const name = user.user_metadata?.full_name || user.user_metadata?.name || ''
+                    setUserName(name.split(' ')[0])
+                }
             } else {
                 setAvatarUrl(null)
+                setUserName('')
             }
         }
         getProfile()
     }, [user, supabase])
+
 
     const handleSignOut = async () => {
         try {
@@ -49,44 +77,76 @@ export function Header() {
     }
 
     return (
-        <div className="h-16 flex items-center justify-between px-6 sticky top-0 bg-transparent border-b border-white/5 z-40">
-            <div className="flex items-center gap-4">
-                <div className="flex items-center gap-2 group md:hidden">
-                    <div className="relative">
-                        <div className="absolute inset-0 bg-blue-500/20 blur-md rounded-full group-hover:bg-blue-500/40 transition-all" />
-                        <Disc className="w-7 h-7 text-blue-400 relative z-10 animate-spin-slow" />
-                    </div>
-                    <span className="text-2xl font-black tracking-tighter bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 bg-clip-text text-transparent drop-shadow-[0_0_15px_rgba(59,130,246,0.3)]">EKKO</span>
+        <div className="h-20 flex items-center justify-between px-8 sticky top-0 bg-surface-1 z-40 border-b border-white/5">
+            <div className="flex items-center gap-4 w-1/3">
+                <div className="md:hidden">
+                    <EkkoLogo size="sm" />
                 </div>
-                <Button variant="ghost" size="icon" onClick={() => router.back()} className="rounded-full hover:bg-white/5 disabled:opacity-50 hidden md:flex transition-all">
-                    <ChevronLeft className="w-5 h-5" />
-                </Button>
-                <Button variant="ghost" size="icon" onClick={() => router.forward()} className="rounded-full hover:bg-white/5 disabled:opacity-50 hidden md:flex transition-all">
-                    <ChevronRight className="w-5 h-5" />
-                </Button>
+                {/* Dynamic Greeting Replaces Nav Buttons */}
+                <div className="hidden md:flex flex-col justify-center">
+                    <h1 className="text-xl md:text-2xl font-bold text-white tracking-tight">
+                        {greeting}{userName ? `, ${userName}` : ''}
+                    </h1>
+                </div>
             </div>
 
-            <div className="flex items-center gap-4">
+            {/* Central Search Bar */}
+            <div className="flex-1 max-w-xl mx-4 relative hidden md:block">
+                <form
+                    onSubmit={(e) => {
+                        e.preventDefault()
+                        const q = new FormData(e.currentTarget).get('q')?.toString().trim()
+                        if (q) router.push(`/search?q=${encodeURIComponent(q)}`)
+                        else router.push('/search')
+                    }}
+                    className="relative group"
+                >
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-500 group-focus-within:text-white transition-colors" />
+                    <Input
+                        name="q"
+                        placeholder="Search for a song"
+                        className="w-full bg-surface-2 border-transparent focus:border-white/10 rounded-none h-12 pl-12 text-base placeholder:text-neutral-500 text-white transition-all shadow-none focus-visible:ring-0 focus-visible:bg-surface-3"
+                    />
+                </form>
+            </div>
+
+            <div className="flex items-center justify-end gap-3 w-1/3">
                 {user ? (
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-3">
+                        {/* Removed Heart/Settings Icons & Static Name */}
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <Avatar className="h-8 w-8 transition-transform hover:scale-105 border-2 border-transparent hover:border-white/20 cursor-pointer">
-                                    <AvatarImage src={avatarUrl || user.user_metadata?.avatar_url || ""} className="object-cover" />
-                                    <AvatarFallback className="bg-gradient-to-br from-indigo-500 to-purple-600 text-white text-xs font-bold">
-                                        {user.email?.[0]?.toUpperCase() ?? "?"}
-                                    </AvatarFallback>
+                                <Avatar className="h-10 w-10 transition-transform hover:scale-105 border border-white/10 hover:border-white/20 cursor-pointer relative shadow-lg rounded-none">
+                                    {avatarUrl || user.user_metadata?.avatar_url ? (
+                                        <div className="relative h-full w-full">
+                                            <Image
+                                                src={avatarUrl || user.user_metadata?.avatar_url}
+                                                alt="Profile"
+                                                fill
+                                                className="object-cover"
+                                                unoptimized
+                                            />
+                                        </div>
+                                    ) : (
+                                        <AvatarFallback className="bg-gradient-to-br from-ekko-500 to-ekko-700 text-white text-xs font-bold rounded-none">
+                                            {user.email?.[0]?.toUpperCase() ?? "?"}
+                                        </AvatarFallback>
+                                    )}
                                 </Avatar>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" className="w-56 bg-neutral-900 border-neutral-800 text-white">
+                            <DropdownMenuContent align="end" className="w-56 bg-surface-2 border-white/5 text-white shadow-xl rounded-none">
                                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                                <DropdownMenuSeparator className="bg-neutral-800" />
+                                <DropdownMenuSeparator className="bg-white/5" />
                                 <DropdownMenuItem onClick={() => router.push('/profile')}>
                                     <UserSettings className="mr-2 h-4 w-4" />
                                     Profile
                                 </DropdownMenuItem>
-                                <DropdownMenuSeparator className="bg-neutral-800" />
-                                <DropdownMenuItem onClick={handleSignOut} className="text-red-400 focus:text-red-400 focus:bg-red-400/10">
+                                <DropdownMenuItem onClick={openChat}>
+                                    <MessageCircle className="mr-2 h-4 w-4" />
+                                    Community Chat
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator className="bg-white/5" />
+                                <DropdownMenuItem onClick={handleSignOut} className="text-red-400 focus:text-red-400 focus:bg-red-500/10">
                                     <LogOut className="mr-2 h-4 w-4" />
                                     <span>Log out</span>
                                 </DropdownMenuItem>
@@ -94,12 +154,14 @@ export function Header() {
                         </DropdownMenu>
                     </div>
                 ) : (
-                    <div className="flex items-center gap-4">
-                        <Link href="/signup" className="text-neutral-400 hover:text-white font-bold text-sm tracking-wide">
-                            Sign up
+                    <div className="flex items-center gap-3">
+                        <Link href="/signup">
+                            <Button variant="outline" className="rounded-none h-10 px-6 font-semibold text-sm tracking-wide uppercase text-white border-white/20 hover:bg-white/5">
+                                Sign up
+                            </Button>
                         </Link>
                         <Link href="/login">
-                            <Button className="rounded-full px-8 font-bold bg-white text-black hover:bg-neutral-200">
+                            <Button className="rounded-none h-10 px-6 font-semibold text-sm tracking-wide uppercase bg-white text-black hover:bg-neutral-200">
                                 Log in
                             </Button>
                         </Link>

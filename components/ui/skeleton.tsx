@@ -19,7 +19,7 @@ export function Skeleton({
     return (
         <div
             className={cn(
-                "bg-neutral-800/50 rounded-sm",
+                "bg-neutral-800/50 rounded-none",
                 animate && "animate-shimmer",
                 className
             )}
@@ -33,7 +33,7 @@ export function Skeleton({
  */
 export function SongCardSkeleton() {
     return (
-        <div className="glass-card p-4 rounded-md">
+        <div className="glass-card p-4 rounded-none">
             {/* Cover art skeleton */}
             <Skeleton className="aspect-square w-full mb-4" />
             {/* Title skeleton */}

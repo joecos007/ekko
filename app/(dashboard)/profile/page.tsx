@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
+import { Textarea } from "@/components/ui/textarea"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { toast } from "sonner"
 import { createClient } from "@/utils/supabase/client"
@@ -26,6 +27,7 @@ export default function ProfilePage() {
 
     // Form States
     const [fullName, setFullName] = useState("")
+    const [bio, setBio] = useState("")
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [highQuality, setHighQuality] = useState(false)
@@ -63,6 +65,7 @@ export default function ProfilePage() {
             if (data) {
                 setProfile(data)
                 setFullName(data.full_name || "")
+                setBio(data.bio || "")
             }
         } catch {
             toast.error("Error loading profile")
@@ -72,6 +75,11 @@ export default function ProfilePage() {
     }
 
     const updateProfile = async () => {
+        if (!user) {
+            toast.error('Session expired. Please sign in again.')
+            router.push('/login')
+            return
+        }
         try {
             setLoading(true)
             const { error } = await supabase
@@ -79,6 +87,7 @@ export default function ProfilePage() {
                 .upsert({
                     id: user.id,
                     full_name: fullName,
+                    bio: bio,
                     updated_at: new Date().toISOString(),
                 })
 
@@ -92,6 +101,11 @@ export default function ProfilePage() {
     }
 
     const uploadAvatar = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (!user) {
+            toast.error('Session expired. Please sign in again.')
+            router.push('/login')
+            return
+        }
         try {
             setUploading(true)
             if (!event.target.files || event.target.files.length === 0) {
@@ -106,7 +120,10 @@ export default function ProfilePage() {
                 .from('avatars')
                 .upload(filePath, file)
 
-            if (uploadError) throw uploadError
+            if (uploadError) {
+                console.error("Upload error:", uploadError)
+                throw uploadError
+            }
 
             // Get Public URL
             const { data: { publicUrl } } = supabase.storage.from('avatars').getPublicUrl(filePath)
@@ -125,7 +142,8 @@ export default function ProfilePage() {
             setProfile({ ...profile, avatar_url: publicUrl })
             toast.success("Avatar updated!")
         } catch (error: any) {
-            toast.error(error.message)
+            console.error("Avatar error:", error)
+            toast.error(error.message || "Error uploading avatar")
         } finally {
             setUploading(false)
         }
@@ -168,22 +186,27 @@ export default function ProfilePage() {
 
             <div className="max-w-2xl mx-auto space-y-8">
                 {/* Avatar Section */}
-                <ShineBorder className="relative overflow-hidden rounded-3xl bg-neutral-900/40 border border-white/5 p-8 backdrop-blur-md" shineColor={["#9E7AFF", "#FE8BBB"]}>
-                    <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 via-purple-500/5 to-pink-500/10" />
+                <div className="relative overflow-hidden rounded-none bg-neutral-900/40 border border-white/5 p-8 backdrop-blur-md">
+                    <ShineBorder shineColor={["#6366F1", "#A5B4FC"]} />
+                    <div className="absolute inset-0 bg-gradient-to-br from-ekko-500/15 via-ekko-600/10 to-transparent" />
 
                     <div className="relative z-10 flex flex-col md:flex-row items-center gap-8">
                         <div className="relative group">
-                            <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500 to-pink-500 rounded-full blur opacity-25 group-hover:opacity-75 transition duration-1000 group-hover:duration-200" />
-                            <Avatar className="w-32 h-32 border-4 border-black relative shadow-2xl">
+                            <div className="absolute -inset-1 bg-gradient-to-r from-ekko-500 to-ekko-300 rounded-full blur opacity-25 group-hover:opacity-75 transition duration-1000 group-hover:duration-200" />
+                            <Avatar className="w-32 h-32 border-4 border-black relative shadow-2xl z-10">
                                 <AvatarImage src={profile?.avatar_url} className="object-cover" />
                                 <AvatarFallback className="text-4xl bg-neutral-800 text-neutral-400 font-bold">
                                     {fullName?.[0]?.toUpperCase() || email?.[0]?.toUpperCase()}
                                 </AvatarFallback>
                             </Avatar>
                             <button
-                                onClick={() => fileInputRef.current?.click()}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    console.log("Camera button clicked");
+                                    fileInputRef.current?.click();
+                                }}
                                 disabled={uploading}
-                                className="absolute bottom-0 right-0 p-2.5 rounded-full bg-white text-black shadow-lg hover:scale-110 transition-transform disabled:opacity-50 hover:bg-neutral-100"
+                                className="absolute bottom-0 right-0 p-2.5 rounded-full bg-white text-black shadow-lg hover:scale-110 transition-transform disabled:opacity-50 hover:bg-neutral-100 z-20 cursor-pointer"
                             >
                                 {uploading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Camera className="w-5 h-5" />}
                             </button>
@@ -208,15 +231,15 @@ export default function ProfilePage() {
                             </div>
                         </div>
                     </div>
-                </ShineBorder>
+                </div>
 
                 {/* Settings Grid */}
                 <div className="grid gap-6">
                     {/* Profile Fields */}
-                    <MagicCard gradientColor="#4f46e5" className="rounded-2xl">
-                        <div className="space-y-6 bg-neutral-900/40 p-6 rounded-2xl border border-white/5 backdrop-blur-sm">
+                    <MagicCard gradientColor="#6366F1" className="rounded-none">
+                        <div className="space-y-6 bg-neutral-900/40 p-6 rounded-none border border-white/5 backdrop-blur-sm">
                             <h3 className="text-lg font-bold flex items-center gap-2">
-                                <User className="w-5 h-5 text-indigo-400" /> Personal Details
+                                <User className="w-5 h-5 text-ekko-400" /> Personal Details
                             </h3>
                             <div className="space-y-4">
                                 <div className="space-y-2">
@@ -225,7 +248,7 @@ export default function ProfilePage() {
                                         id="name"
                                         value={fullName}
                                         onChange={(e) => setFullName(e.target.value)}
-                                        className="bg-black/50 border-neutral-800 focus:border-indigo-500/50 transition-colors h-11"
+                                        className="bg-black/50 border-neutral-800 focus:border-ekko-500/50 transition-colors h-11"
                                         placeholder="Enter your name"
                                     />
                                 </div>
@@ -237,15 +260,37 @@ export default function ProfilePage() {
                                     Save Changes
                                 </Button>
                             </div>
+                            <div className="space-y-4 pt-4 border-t border-white/5">
+                                <h3 className="text-lg font-bold flex items-center gap-2">
+                                    <Music className="w-5 h-5 text-ekko-400" /> Professional Bio
+                                </h3>
+                                <div className="space-y-2">
+                                    <Label htmlFor="bio" className="text-neutral-300">About Me</Label>
+                                    <Textarea
+                                        id="bio"
+                                        value={bio}
+                                        onChange={(e) => setBio(e.target.value)}
+                                        className="bg-black/50 border-neutral-800 focus:border-ekko-500/50 transition-colors min-h-[120px] resize-none"
+                                        placeholder="Write a short bio about yourself..."
+                                    />
+                                </div>
+                                <Button
+                                    onClick={updateProfile}
+                                    className="w-full bg-white text-black hover:bg-neutral-200 font-bold h-11 rounded-full"
+                                    disabled={loading}
+                                >
+                                    Update Bio
+                                </Button>
+                            </div>
                         </div>
                     </MagicCard>
 
-                    <MagicCard gradientColor="#ec4899" className="rounded-2xl">
-                        <div className="space-y-6 bg-neutral-900/40 p-6 rounded-2xl border border-white/5 backdrop-blur-sm">
+                    <MagicCard gradientColor="#6366F1" className="rounded-none">
+                        <div className="space-y-6 bg-neutral-900/40 p-6 rounded-none border border-white/5 backdrop-blur-sm">
                             <h3 className="text-lg font-bold flex items-center gap-2">
-                                <Music className="w-5 h-5 text-pink-400" /> Preferences
+                                <Music className="w-5 h-5 text-ekko-400" /> Preferences
                             </h3>
-                            <div className="flex items-center justify-between p-4 rounded-xl bg-black/20 border border-white/5">
+                            <div className="flex items-center justify-between p-4 rounded-none bg-black/20 border border-white/5">
                                 <div className="space-y-1">
                                     <Label className="text-base font-medium">High Quality Audio</Label>
                                     <p className="text-xs text-neutral-400">Stream in 320kbps (uses more data)</p>
@@ -255,10 +300,10 @@ export default function ProfilePage() {
                         </div>
                     </MagicCard>
 
-                    <MagicCard gradientColor="#7c3aed" className="rounded-2xl">
-                        <div className="space-y-6 bg-neutral-900/40 p-6 rounded-2xl border border-white/5 backdrop-blur-sm">
+                    <MagicCard gradientColor="#6366F1" className="rounded-none">
+                        <div className="space-y-6 bg-neutral-900/40 p-6 rounded-none border border-white/5 backdrop-blur-sm">
                             <h3 className="text-lg font-bold flex items-center gap-2">
-                                <Lock className="w-5 h-5 text-purple-400" /> Security
+                                <Lock className="w-5 h-5 text-ekko-400" /> Security
                             </h3>
                             <div className="space-y-4">
                                 <div className="space-y-2">
@@ -268,7 +313,7 @@ export default function ProfilePage() {
                                         type="password"
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
-                                        className="bg-black/50 border-neutral-800 focus:border-purple-500/50 transition-colors h-11"
+                                        className="bg-black/50 border-neutral-800 focus:border-ekko-500/50 transition-colors h-11"
                                         placeholder="Enter new password"
                                     />
                                 </div>
@@ -288,13 +333,13 @@ export default function ProfilePage() {
                 <div className="pt-8 border-t border-neutral-900">
                     <Button
                         variant="ghost"
-                        className="w-full gap-2 text-red-400 hover:text-red-300 hover:bg-red-950/20 h-12 rounded-xl"
+                        className="w-full gap-2 text-ekko-400 hover:text-ekko-300 hover:bg-ekko-500/10 h-12 rounded-none"
                         onClick={handleSignOut}
                     >
                         <LogOut className="w-4 h-4" /> Sign Out
                     </Button>
                     <p className="text-center text-xs text-neutral-700 mt-6 font-mono">
-                        EKKO Music v1.0.0 • {user?.id}
+                        EKKO v1.0.0 • {user?.id}
                     </p>
                 </div>
             </div>

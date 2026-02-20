@@ -16,7 +16,7 @@ export function AudioVisualizer({
     barCount = 64,
     barWidth = 4,
     gap = 2,
-    color = "#a855f7" // purple-500
+    color = "#6366F1" // ekko-500
 }: AudioVisualizerProps) {
     const canvasRef = useRef<HTMLCanvasElement>(null)
     const { isPlaying } = usePlayer()
@@ -29,7 +29,6 @@ export function AudioVisualizer({
         const ctx = canvas.getContext("2d")
         if (!ctx) return
 
-        let analyser: AnalyserNode | null = null
         // buffer length for frequency data (usually fftSize / 2)
         const dataBuffer = new Uint8Array(256)
 
@@ -39,12 +38,13 @@ export function AudioVisualizer({
 
             ctx.clearRect(0, 0, width, height)
 
-            // Try to get analyser from global scope (exposed by AudioProvider)
-            if (!analyser && typeof window !== 'undefined' && (window as any).audioAnalyser) {
+            // Always re-read analyser each frame so we never hold a stale/disconnected node
+            let analyser: AnalyserNode | null = null
+            if (typeof window !== 'undefined' && (window as any).audioAnalyser) {
                 try {
-                    analyser = (window as any).audioAnalyser
+                    analyser = (window as any).audioAnalyser as AnalyserNode
                 } catch {
-                    // ignore
+                    // ignore: node may have been garbage-collected
                 }
             }
 
@@ -53,16 +53,19 @@ export function AudioVisualizer({
                 try {
                     analyser.getByteFrequencyData(dataBuffer)
                 } catch {
-                    // If node is disconnected or error, fallback
+                    // Node disconnected after track change — clear ref so simulation runs next frame
+                    (window as any).audioAnalyser = null
+                    dataBuffer.fill(0)
                 }
             } else if (isPlaying) {
-                // Simulated fallback
+                // Simulated fallback when no web audio analyser is available
                 const time = Date.now() / 1000
                 for (let i = 0; i < dataBuffer.length; i++) {
                     const value = Math.sin(i * 0.1 + time * 5) * 50 + 100
                     dataBuffer[i] = value
                 }
             } else {
+                // Idle and no analyser — draw silent bars and stop the loop
                 dataBuffer.fill(0)
             }
 
@@ -73,13 +76,11 @@ export function AudioVisualizer({
 
             ctx.fillStyle = color
 
-            // We want to distribute the spectrum across the bars.
-            // The first few bins of FFT are bass, higher are treble.
-            // We'll sample the buffer.
+            // Distribute spectrum across bars (first FFT bins = bass, higher = treble)
             const step = Math.floor(dataBuffer.length / barCount) || 1
 
             for (let i = 0; i < barCount; i++) {
-                // Get average of the step range to smooth it out
+                // Average the step range to smooth
                 let sum = 0
                 for (let j = 0; j < step; j++) {
                     sum += dataBuffer[(i * step) + j] || 0
@@ -95,7 +96,6 @@ export function AudioVisualizer({
 
                 // Rounded top bars
                 ctx.beginPath()
-                // Use standard rect if roundRect is not available in all envs
                 if (ctx.roundRect) {
                     ctx.roundRect(x, y, barWidth, value, [4, 4, 0, 0])
                 } else {
@@ -114,7 +114,10 @@ export function AudioVisualizer({
                 ctx.globalAlpha = 1.0
             }
 
-            requestRef.current = requestAnimationFrame(render)
+            // Only reschedule if actively playing or analyser is connected
+            if (isPlaying || (typeof window !== 'undefined' && (window as any).audioAnalyser)) {
+                requestRef.current = requestAnimationFrame(render)
+            }
         }
 
         render()

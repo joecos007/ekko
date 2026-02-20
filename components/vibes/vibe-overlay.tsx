@@ -3,7 +3,7 @@
 import { usePlayer } from "@/store/player-store"
 import { useVibeStore, Vibe } from "@/store/vibe-store"
 import { useEffect, useState, useRef } from "react"
-import { AnimatePresence, motion } from "framer-motion"
+import { AnimatePresence, motion } from "motion/react"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { Howl } from "howler"
 
@@ -16,6 +16,7 @@ export function VibeOverlay() {
     const soundRef = useRef<Howl | null>(null)
 
     const processedVibesRef = useRef<Set<string>>(new Set())
+    const timeoutIdsRef = useRef<Set<ReturnType<typeof setTimeout>>>(new Set())
 
     // Init sound
     useEffect(() => {
@@ -37,10 +38,16 @@ export function VibeOverlay() {
         // Capture ref value for cleanup to avoid stale ref warning
         const processedVibes = processedVibesRef.current
 
+        // Capture ref value for cleanup to avoid stale ref warning
+        const pendingTimeouts = timeoutIdsRef.current
+
         return () => {
             unsubscribeFromVibes()
             setVisibleVibes([])
             processedVibes.clear()
+            // Clear all pending timeouts to prevent stale state updates
+            pendingTimeouts.forEach(id => clearTimeout(id))
+            pendingTimeouts.clear()
         }
     }, [currentSong?.id, isRadio, fetchVibes, subscribeToVibes, unsubscribeFromVibes])
 
@@ -63,24 +70,12 @@ export function VibeOverlay() {
                     soundRef.current.play()
                 }
 
-                // Auto remove after 5 seconds
-                setTimeout(() => {
+                // Auto remove after 5 seconds, track timeout for cleanup
+                const timeoutId = setTimeout(() => {
                     setVisibleVibes(prev => prev.filter(existing => existing.id !== v.id))
+                    timeoutIdsRef.current.delete(timeoutId)
                 }, 5000)
-
-                // Track timeout for cleanup
-                // We're using a simple object/array to track timeouts if needed, 
-                // but since we can't easily add a new ref variable in this replace block without changing the whole file,
-                // we'll rely on the existing effect cleanup to clear visibleVibes which is 'good enough' for preventing the visual update,
-                // BUT better is to actually clear the timeout. 
-                // Let's modify the component to include a timeout ref in a separate step or just check if mounted.
-                // Actually, checking if mounted is easier if we had a useMounted hook or ref. 
-                // Let's assume the component stays mounted mostly, but for strict correctness:
-
-                // Since I can't add a ref declaration easily here without replacing the whole file header,
-                // I will add a mounted check using a local variable in the effect closure? No, that doesn't work across renders.
-                // Let's replace the whole useEffect to include a cleanup function that clears a set of timeouts.
-
+                timeoutIdsRef.current.add(timeoutId)
             }
         })
 
@@ -104,7 +99,7 @@ export function VibeOverlay() {
                             bottom: "25%"
                         }}
                     >
-                        <div className="flex items-center gap-2 bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10 shadow-2xl">
+                        <div className="flex items-center gap-2 bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-none border border-white/10 shadow-2xl">
                             <Avatar className="w-6 h-6 border border-white/20">
                                 <AvatarImage src={vibe.profiles?.avatar_url || undefined} />
                                 <AvatarFallback className="text-[10px] bg-neutral-800 text-neutral-400">

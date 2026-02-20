@@ -67,16 +67,16 @@ export function StudioSheet({ open, onOpenChange, children }: StudioSheetProps) 
                                     <Label className="text-base font-bold text-neutral-300">Song Description</Label>
                                     <Textarea
                                         placeholder="Describe the song you want to create (e.g. A synth-pop song about a robot learning to love...)"
-                                        className="bg-neutral-900/50 border-neutral-800 min-h-[140px] resize-none focus:ring-1 focus:ring-orange-500/50 focus:border-orange-500/50 text-base placeholder:text-neutral-600 rounded-xl p-4"
+                                        className="bg-neutral-900/50 border-neutral-800 min-h-[140px] resize-none focus:ring-1 focus:ring-ekko-500/50 focus:border-ekko-500/50 text-base placeholder:text-neutral-600 rounded-none p-4"
                                         value={prompt}
                                         onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setPrompt(e.target.value)}
                                     />
                                 </div>
 
-                                <div className="flex items-center justify-between p-4 bg-neutral-900/50 rounded-xl border border-neutral-800/50">
+                                <div className="flex items-center justify-between p-4 bg-neutral-900/50 rounded-none border border-neutral-800/50">
                                     <div className="flex items-center gap-4">
-                                        <div className="w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center border border-blue-500/20">
-                                            <Music className="w-5 h-5 text-blue-400" />
+                                        <div className="w-10 h-10 rounded-full bg-ekko-500/10 flex items-center justify-center border border-ekko-500/20">
+                                            <Music className="w-5 h-5 text-ekko-400" />
                                         </div>
                                         <div className="flex flex-col">
                                             <span className="text-sm font-bold text-white">Instrumental</span>
@@ -91,14 +91,14 @@ export function StudioSheet({ open, onOpenChange, children }: StudioSheetProps) 
                                 <div className="space-y-3">
                                     <div className="flex justify-between items-center">
                                         <Label className="text-base font-bold text-neutral-300">Lyrics</Label>
-                                        <Button variant="ghost" size="sm" className="h-auto p-0 text-xs font-bold text-orange-400 hover:text-orange-300">
+                                        <Button variant="ghost" size="sm" className="h-auto p-0 text-xs font-bold text-ekko-400 hover:text-ekko-300">
                                             <Wand2 className="w-3 h-3 mr-1" />
                                             Generate
                                         </Button>
                                     </div>
                                     <Textarea
                                         placeholder="[Verse 1]&#10;Enter your own lyrics..."
-                                        className="bg-neutral-900/50 border-neutral-800 min-h-[180px] font-mono text-sm resize-none focus:ring-1 focus:ring-orange-500/50 focus:border-orange-500/50 rounded-xl p-4 placeholder:text-neutral-600"
+                                        className="bg-neutral-900/50 border-neutral-800 min-h-[180px] font-mono text-sm resize-none focus:ring-1 focus:ring-ekko-500/50 focus:border-ekko-500/50 rounded-none p-4 placeholder:text-neutral-600"
                                     />
                                 </div>
 
@@ -107,9 +107,9 @@ export function StudioSheet({ open, onOpenChange, children }: StudioSheetProps) 
                                     <div className="relative">
                                         <Input
                                             placeholder="Enter style (e.g. Pop, Rock, 80s)"
-                                            className="bg-neutral-900/50 border-neutral-800 pr-10 focus:ring-1 focus:ring-orange-500/50 focus:border-orange-500/50 h-12 rounded-xl text-base placeholder:text-neutral-600"
+                                            className="bg-neutral-900/50 border-neutral-800 pr-10 focus:ring-1 focus:ring-ekko-500/50 focus:border-ekko-500/50 h-12 rounded-none text-base placeholder:text-neutral-600"
                                         />
-                                        <Button size="icon" variant="ghost" className="absolute right-2 top-2 h-8 w-8 text-neutral-500 hover:text-white rounded-lg hover:bg-white/5">
+                                        <Button size="icon" variant="ghost" className="absolute right-2 top-2 h-8 w-8 text-neutral-500 hover:text-white rounded-none hover:bg-white/5">
                                             <Shuffle className="w-4 h-4" />
                                         </Button>
                                     </div>
@@ -119,7 +119,7 @@ export function StudioSheet({ open, onOpenChange, children }: StudioSheetProps) 
                                     <Label className="text-base font-bold text-neutral-300">Title</Label>
                                     <Input
                                         placeholder="Enter a title"
-                                        className="bg-neutral-900/50 border-neutral-800 focus:ring-1 focus:ring-orange-500/50 focus:border-orange-500/50 h-12 rounded-xl text-base placeholder:text-neutral-600"
+                                        className="bg-neutral-900/50 border-neutral-800 focus:ring-1 focus:ring-ekko-500/50 focus:border-ekko-500/50 h-12 rounded-none text-base placeholder:text-neutral-600"
                                     />
                                 </div>
                             </div>
@@ -127,7 +127,7 @@ export function StudioSheet({ open, onOpenChange, children }: StudioSheetProps) 
                     </div>
 
                     <div className="p-6 border-t border-white/5 bg-neutral-950 pb-8 safe-area-bottom">
-                        <Button className="w-full bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-400 hover:to-rose-400 text-white font-black h-14 text-lg shadow-[0_0_30px_rgba(249,115,22,0.2)] border-0 rounded-full active:scale-95 transition-transform flex items-center justify-center gap-2">
+                        <Button className="w-full bg-gradient-to-r from-ekko-600 to-ekko-400 hover:from-ekko-500 hover:to-ekko-300 text-white font-black h-14 text-lg shadow-[0_0_30px_rgba(99,102,241,0.35)] border-0 rounded-full active:scale-95 transition-transform flex items-center justify-center gap-2">
                             <span className="tracking-wide">CREATE</span>
                             <div className="bg-white/20 p-1 rounded-full">
                                 <Music className="w-4 h-4 fill-current" />
@@ -136,7 +136,7 @@ export function StudioSheet({ open, onOpenChange, children }: StudioSheetProps) 
                         <div className="flex justify-center mt-4 gap-2 text-[10px] items-center text-neutral-500 font-medium uppercase tracking-widest">
                             <span>0 credits</span>
                             <span className="w-1 h-1 rounded-full bg-neutral-700" />
-                            <span className="text-orange-400">Upgrade</span>
+                            <span className="text-ekko-400">Upgrade</span>
                         </div>
                     </div>
                 </div>

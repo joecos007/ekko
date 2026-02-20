@@ -12,14 +12,14 @@ interface Artist {
 }
 
 const FEATURED_ARTISTS: Artist[] = [
-    { id: 'a1', name: 'Team Ekko', avatarUrl: '/song-cover/mga-isla-sa-gitna-natin.png', gradient: 'from-blue-500 to-indigo-600' },
-    { id: 'a2', name: 'Chele', avatarUrl: '/song-cover/groove-ni-chele.png', gradient: 'from-purple-500 to-pink-600' },
-    { id: 'a3', name: 'Jai', avatarUrl: '/song-cover/si-jai.png', gradient: 'from-emerald-500 to-teal-600' },
-    { id: 'a4', name: 'Tiaong Sound', avatarUrl: '/song-cover/dito-sa-tiaong.png', gradient: 'from-orange-500 to-red-500' },
-    { id: 'a5', name: 'Isla Beats', avatarUrl: '/song-cover/sarap-ng-buhay.png', gradient: 'from-cyan-500 to-blue-600' },
-    { id: 'a6', name: 'Pagsikat', avatarUrl: '/song-cover/sa-muling-pagsikat.png', gradient: 'from-rose-500 to-purple-600' },
-    { id: 'a7', name: 'Uwian', avatarUrl: '/song-cover/uwian-na.png', gradient: 'from-amber-500 to-orange-600' },
-    { id: 'a8', name: 'Poblacion', avatarUrl: '/song-cover/poblacion-3-groove.jpeg', gradient: 'from-violet-500 to-indigo-600' },
+    { id: 'a1', name: 'Team Ekko', avatarUrl: '/song-cover/mga-isla-sa-gitna-natin.png', gradient: 'from-ekko-400 to-ekko-600' },
+    { id: 'a2', name: 'Chele', avatarUrl: '/song-cover/groove-ni-chele.png', gradient: 'from-ekko-300 to-ekko-500' },
+    { id: 'a3', name: 'Jai', avatarUrl: '/song-cover/si-jai.png', gradient: 'from-ekko-500 to-ekko-700' },
+    { id: 'a4', name: 'Tiaong Sound', avatarUrl: '/song-cover/dito-sa-tiaong.png', gradient: 'from-ekko-300 to-ekko-600' },
+    { id: 'a5', name: 'Isla Beats', avatarUrl: '/song-cover/sarap-ng-buhay.png', gradient: 'from-ekko-400 to-ekko-500' },
+    { id: 'a6', name: 'Pagsikat', avatarUrl: '/song-cover/sa-muling-pagsikat.png', gradient: 'from-ekko-500 to-ekko-800' },
+    { id: 'a7', name: 'Uwian', avatarUrl: '/song-cover/uwian-na.png', gradient: 'from-ekko-400 to-ekko-700' },
+    { id: 'a8', name: 'Poblacion', avatarUrl: '/song-cover/poblacion-3-groove.jpeg', gradient: 'from-ekko-300 to-ekko-600' },
 ]
 
 export function ArtistPills() {
@@ -38,7 +38,7 @@ export function ArtistPills() {
         <section className="mb-10 relative z-10">
             <div className="flex items-center justify-between mb-5">
                 <h2 className="text-2xl font-black tracking-tight text-white/90 flex items-center gap-3">
-                    <span className="bg-rose-500 w-1.5 h-6 rounded-full" />
+                    <span className="bg-ekko-500 w-1.5 h-6 rounded-full" />
                     Popular Artists
                 </h2>
                 <div className="flex items-center gap-2">
@@ -71,7 +71,7 @@ export function ArtistPills() {
                         style={{ scrollSnapAlign: 'start' }}
                     >
                         {/* Circular Avatar with Gradient Ring */}
-                        <div className={`relative w-16 h-16 md:w-24 md:h-24 rounded-full p-[3px] bg-gradient-to-br ${artist.gradient} group-hover:scale-110 transition-all duration-500 group-hover:shadow-[0_0_25px_rgba(139,92,246,0.3)]`}>
+                        <div className={`relative w-16 h-16 md:w-24 md:h-24 rounded-full p-[3px] bg-gradient-to-br ${artist.gradient} group-hover:scale-110 transition-all duration-500 group-hover:shadow-[0_0_25px_rgba(99,102,241,0.3)]`}>
                             <div className="w-full h-full rounded-full overflow-hidden bg-neutral-900 border-2 border-neutral-900">
                                 <Image
                                     src={artist.avatarUrl}
@@ -83,7 +83,7 @@ export function ArtistPills() {
                                 />
                             </div>
                             {/* Online Indicator */}
-                            <div className="absolute bottom-0 right-0 w-4 h-4 md:w-5 md:h-5 bg-emerald-500 rounded-full border-[3px] border-neutral-950 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                            <div className="absolute bottom-0 right-0 w-4 h-4 md:w-5 md:h-5 bg-ekko-500 rounded-full border-[3px] border-neutral-950 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                         </div>
 
                         {/* Artist Name */}

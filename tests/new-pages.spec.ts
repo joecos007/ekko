@@ -1,0 +1,84 @@
+import { test, expect } from '@playwright/test'
+
+const EMAIL = process.env.TEST_USER_EMAIL;
+const PASSWORD = process.env.TEST_USER_PASSWORD;
+const HAS_CREDENTIALS = !!(EMAIL && PASSWORD);
+
+test.describe('Phase 18: New Pages & Link Fixes', () => {
+
+    // ── Public pages (no auth needed) ───────────────────────────────────────
+
+    test('should navigate to public contact page', async ({ page }) => {
+        await page.goto('/contact')
+        await expect(page).toHaveURL(/.*contact/)
+        await expect(page.getByRole('heading', { name: /Get in Touch/i })).toBeVisible()
+        await expect(page.getByLabel('Name')).toBeVisible()
+        await expect(page.getByLabel('Message')).toBeVisible()
+    })
+
+    test('should navigate to forgot password page from login', async ({ page }) => {
+        await page.goto('/login')
+        await page.getByRole('link', { name: /forgot password/i }).click()
+        await expect(page).toHaveURL(/.*forgot-password/)
+        await expect(page.getByRole('heading', { name: /Reset Password/i })).toBeVisible()
+        await expect(page.getByLabel('Email')).toBeVisible()
+    })
+
+    test('should verify fixed legal links in signup', async ({ page }) => {
+        await page.goto('/signup')
+
+        // Check Terms link
+        const termsLink = page.getByRole('link', { name: /terms of service/i })
+        await expect(termsLink).toHaveAttribute('href', '/legal/terms')
+
+        // Check Privacy link
+        const privacyLink = page.getByRole('link', { name: /privacy policy/i })
+        await expect(privacyLink).toHaveAttribute('href', '/legal/privacy')
+    })
+
+    // ── Auth-gated: protected dashboard pages ────────────────────────────────
+
+    test('should verify protected dashboard pages (require login)', async ({ page }) => {
+        test.skip(!HAS_CREDENTIALS, 'Skipped: TEST_USER_EMAIL / TEST_USER_PASSWORD not set');
+
+        // Login
+        await page.goto('/login')
+
+        // Use robust selectors like in complete-workflow
+        const emailInput = page.locator('input[type="email"], input[name="email"], input[placeholder*="email" i]').first()
+        await emailInput.fill(EMAIL!)
+
+        const passwordInput = page.locator('input[type="password"], input[name="password"], input[placeholder*="password" i]').first()
+        await passwordInput.fill(PASSWORD!)
+
+        const submitBtn = page.locator('button[type="submit"], button:has-text("Sign In"), button:has-text("Login")').first()
+        await submitBtn.click()
+
+        await page.waitForURL('**/home', { timeout: 60000 })
+        await page.waitForLoadState('domcontentloaded')
+
+        // 1. Categories Page
+        await page.goto('/categories')
+        await expect(page).toHaveURL(/.*categories/)
+        await expect(page.getByText('Browse Categories')).toBeVisible()
+        await expect(page.getByText('Pop')).toBeVisible()
+        await expect(page.getByText('Hip-Hop')).toBeVisible()
+        await expect(page.getByText('Lo-Fi')).toBeVisible()
+
+        // 2. Artists Page
+        await page.goto('/artists')
+        await expect(page).toHaveURL(/.*artists/)
+        await expect(page.getByText('Discover the voices behind EKKO')).toBeVisible()
+        await expect(page.getByText('Team Ekko')).toBeVisible()
+
+        // 3. Verify Sidebar Links work
+        const sidebar = page.locator('aside')
+        if (await sidebar.isVisible()) {
+            await sidebar.getByRole('link', { name: /categories/i }).click()
+            await expect(page).toHaveURL(/.*categories/)
+
+            await sidebar.getByRole('link', { name: /artists/i }).click()
+            await expect(page).toHaveURL(/.*artists/)
+        }
+    })
+})

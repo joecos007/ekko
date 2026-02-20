@@ -76,6 +76,12 @@ export function DotPattern({
   if (width <= 0) width = 16
   if (height <= 0) height = 16
 
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    const timer = setTimeout(() => setMounted(true), 100)
+    return () => clearTimeout(timer)
+  }, [])
   const id = useId()
   const containerRef = useRef<SVGSVGElement>(null)
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 })
@@ -130,41 +136,45 @@ export function DotPattern({
       )}
       {...props}
     >
-      <defs>
-        <radialGradient id={`${id}-gradient`}>
-          <stop offset="0%" stopColor="currentColor" stopOpacity="1" />
-          <stop offset="100%" stopColor="currentColor" stopOpacity="0" />
-        </radialGradient>
-      </defs>
-      {dots.map((dot) => (
-        <motion.circle
-          key={`${dot.x}-${dot.y}`}
-          cx={dot.x}
-          cy={dot.y}
-          r={cr}
-          fill={glow ? `url(#${id}-gradient)` : "currentColor"}
-          initial={glow ? { opacity: 0.4, scale: 1 } : {}}
-          animate={
-            glow
-              ? {
-                opacity: [0.4, 1, 0.4],
-                scale: [1, 1.5, 1],
+      {mounted && (
+        <>
+          <defs>
+            <radialGradient id={`${id}-gradient`}>
+              <stop offset="0%" stopColor="currentColor" stopOpacity="1" />
+              <stop offset="100%" stopColor="currentColor" stopOpacity="0" />
+            </radialGradient>
+          </defs>
+          {dots.map((dot) => (
+            <motion.circle
+              key={`${dot.x}-${dot.y}`}
+              cx={dot.x}
+              cy={dot.y}
+              r={cr}
+              fill={glow ? `url(#${id}-gradient)` : "currentColor"}
+              initial={glow ? { opacity: 0.4, scale: 1 } : {}}
+              animate={
+                glow
+                  ? {
+                    opacity: [0.4, 1, 0.4],
+                    scale: [1, 1.5, 1],
+                  }
+                  : {}
               }
-              : {}
-          }
-          transition={
-            glow
-              ? {
-                duration: dot.duration,
-                repeat: Infinity,
-                repeatType: "reverse",
-                delay: dot.delay,
-                ease: "easeInOut",
+              transition={
+                glow
+                  ? {
+                    duration: dot.duration,
+                    repeat: Infinity,
+                    repeatType: "reverse",
+                    delay: dot.delay,
+                    ease: "easeInOut",
+                  }
+                  : {}
               }
-              : {}
-          }
-        />
-      ))}
+            />
+          ))}
+        </>
+      )}
     </svg>
   )
 }

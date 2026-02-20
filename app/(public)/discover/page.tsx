@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 
 export default function DiscoverPage() {
     return (
-        <div className="min-h-screen bg-black text-white pt-32 pb-24 px-6 md:px-12 font-geist-sans selection:bg-purple-500 selection:text-white">
+        <div className="min-h-screen bg-black text-white pt-32 pb-24 px-6 md:px-12 font-geist-sans selection:bg-ekko-500/30 selection:text-white">
             <div className="fixed inset-0 z-0 pointer-events-none">
                 <AuroraBackground className="opacity-20" />
                 <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] opacity-10" />
@@ -13,12 +13,12 @@ export default function DiscoverPage() {
 
             <div className="relative z-10 max-w-6xl mx-auto">
                 <div className="text-center mb-24">
-                    <div className="inline-flex items-center gap-2 border border-purple-500/30 bg-purple-500/10 px-3 py-1 text-purple-400 text-[10px] uppercase tracking-widest mb-6 rounded-full">
+                    <div className="inline-flex items-center gap-2 border border-ekko-500/30 bg-ekko-500/10 px-3 py-1 text-ekko-400 text-[10px] uppercase tracking-widest mb-6 rounded-full">
                         <Search className="w-3 h-3" />
                         Beta Access
                     </div>
                     <h1 className="text-5xl md:text-8xl font-black tracking-tighter mb-6 text-white uppercase">
-                        Find Your <br /><span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">Frequency</span>
+                        Find Your <br /><span className="text-transparent bg-clip-text bg-gradient-to-r from-ekko-400 to-ekko-600">Frequency</span>
                     </h1>
                     <p className="text-xl text-neutral-400 max-w-2xl mx-auto leading-relaxed">
                         Explore a universe of sound generated in real-time. No two listening sessions are ever the same.
@@ -26,7 +26,7 @@ export default function DiscoverPage() {
                 </div>
 
                 <div className="grid md:grid-cols-3 gap-8 mb-20">
-                    <div className="col-span-1 md:col-span-2 relative h-[400px] rounded-3xl overflow-hidden border border-white/10 group">
+                    <div className="col-span-1 md:col-span-2 relative h-[400px] rounded-none overflow-hidden border border-white/10 group">
                         <div className="absolute inset-0 bg-gradient-to-br from-neutral-900 to-black" />
                         <div className="absolute inset-0 flex items-center justify-center">
                             <Disc className="w-32 h-32 text-neutral-800 animate-spin-slow duration-[10s]" />
@@ -37,7 +37,7 @@ export default function DiscoverPage() {
                         </div>
                     </div>
 
-                    <div className="col-span-1 relative h-[400px] rounded-3xl overflow-hidden border border-white/10 bg-neutral-900/50 backdrop-blur-md p-8 flex flex-col justify-between">
+                    <div className="col-span-1 relative h-[400px] rounded-none overflow-hidden border border-white/10 bg-neutral-900/50 backdrop-blur-md p-8 flex flex-col justify-between">
                         <Compass className="w-12 h-12 text-white/20 mb-4" />
                         <div>
                             <h3 className="text-2xl font-bold mb-2">Mood Matching</h3>

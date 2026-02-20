@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Disc } from "lucide-react";
+import { EkkoLogo } from "@/components/brand/ekko-logo";
 import { PublicMobileNav } from "@/components/layout/public-mobile-nav";
 import { PublicFooter } from "@/components/layout/public-footer";
 
@@ -12,12 +12,8 @@ export default function PublicLayout({
     return (
         <div className="min-h-[100dvh] bg-background text-foreground flex flex-col font-geist-sans">
             <header className="fixed top-0 w-full z-50 px-6 md:px-16 lg:px-24 py-4 flex items-center justify-between transition-all duration-300 bg-black/50 backdrop-blur-md border-b border-white/5 supports-[backdrop-filter]:bg-black/20">
-                <Link href="/" className="flex items-center gap-2 group cursor-pointer">
-                    <div className="relative">
-                        <div className="absolute inset-0 bg-blue-500/20 blur-md rounded-full group-hover:bg-blue-500/40 transition-all" />
-                        <Disc className="w-8 h-8 text-blue-500 relative z-10 animate-spin-slow" />
-                    </div>
-                    <span className="text-2xl font-black tracking-tighter bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent drop-shadow-sm">EKKO</span>
+                <Link href="/" className="cursor-pointer">
+                    <EkkoLogo size="md" />
                 </Link>
                 <div className="flex items-center gap-6">
                     <div className="hidden md:flex items-center gap-6">
@@ -27,7 +23,7 @@ export default function PublicLayout({
                             </Button>
                         </Link>
                         <Link href="/signup">
-                            <Button className="bg-white text-black hover:bg-neutral-200 rounded-full px-8 text-base font-bold shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:shadow-[0_0_30px_rgba(255,255,255,0.5)] transition-all transform hover:scale-105">
+                            <Button className="bg-white text-black hover:bg-neutral-200 rounded-none px-8 h-10 text-sm font-semibold tracking-wide uppercase shadow-[0_0_20px_rgba(255,255,255,0.15)] hover:shadow-[0_0_30px_rgba(255,255,255,0.3)] transition-all">
                                 Get Started
                             </Button>
                         </Link>

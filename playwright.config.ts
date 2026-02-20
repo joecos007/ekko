@@ -6,6 +6,10 @@ import dotenv from 'dotenv'; // Load env vars
 // Load env specific to tests if needed, but usually dev server handles it
 dotenv.config({ path: path.resolve(process.cwd(), '.env.local') });
 
+// When SKIP_WS=1, assume a dev server is already running on port 3000
+const skipWebServer = process.env.SKIP_WS === '1';
+const baseURL = skipWebServer ? 'http://localhost:3000' : 'http://localhost:3001';
+
 export default defineConfig({
     testDir: './tests',
     fullyParallel: true,
@@ -14,7 +18,7 @@ export default defineConfig({
     workers: process.env.CI ? 1 : undefined,
     reporter: 'html',
     use: {
-        baseURL: 'http://localhost:3000',
+        baseURL,
         trace: 'on-first-retry',
         screenshot: 'only-on-failure',
     },
@@ -32,10 +36,12 @@ export default defineConfig({
             use: { ...devices['iPhone 12'] },
         },
     ],
-    webServer: {
-        command: 'npm run dev',
-        url: 'http://localhost:3000',
-        reuseExistingServer: !process.env.CI,
-        timeout: 120 * 1000,
-    },
+    ...(skipWebServer ? {} : {
+        webServer: {
+            command: 'npm run dev -- -p 3001',
+            url: 'http://localhost:3001',
+            reuseExistingServer: !process.env.CI,
+            timeout: 120 * 1000,
+        },
+    }),
 });

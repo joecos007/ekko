@@ -1,7 +1,8 @@
 import { test, expect } from '@playwright/test'
 
 test('Landing page verification', async ({ page }) => {
-    await page.goto('http://localhost:3000')
+    // Use relative URL so Playwright's baseURL is respected (3000 local, 3001 CI)
+    await page.goto('/')
     await page.waitForLoadState('domcontentloaded')
 
     // Check Hero Heading
