@@ -133,7 +133,7 @@ test.describe('EKKO Complete User Workflow', () => {
             }
 
             // Navigate to Search via URL (more reliable than sidebar click in long sequential tests)
-            await page.goto('http://localhost:3000/search')
+            await page.goto('/search')
             await page.waitForLoadState('domcontentloaded')
             await page.waitForTimeout(1000)
 
@@ -146,7 +146,7 @@ test.describe('EKKO Complete User Workflow', () => {
             await expect(page.getByPlaceholder(/Ask the system/i).first()).toBeVisible()
 
             // Navigate to Library
-            await page.goto('http://localhost:3000/library')
+            await page.goto('/library')
             await page.waitForLoadState('domcontentloaded')
         })
 
@@ -155,7 +155,7 @@ test.describe('EKKO Complete User Workflow', () => {
         // ══════════════════════════════════════════════════════
         await test.step('Test search', async () => {
             console.log('Testing search...')
-            await page.goto('http://localhost:3000/search')
+            await page.goto('/search')
             await page.waitForLoadState('domcontentloaded')
 
             const searchInput = page.getByPlaceholder(/search/i)
@@ -174,7 +174,7 @@ test.describe('EKKO Complete User Workflow', () => {
         // 7. Featured Carousel Interaction
         // ══════════════════════════════════════════════════════
         await test.step('Test carousel navigation', async () => {
-            await page.goto('http://localhost:3000/home')
+            await page.goto('/home')
             await page.waitForLoadState('domcontentloaded')
             await page.waitForTimeout(2000)
 
@@ -202,7 +202,7 @@ test.describe('EKKO Complete User Workflow', () => {
         await test.step('Test mobile navigation', async () => {
             // Set mobile viewport
             await page.setViewportSize({ width: 375, height: 667 })
-            await page.goto('http://localhost:3000/home')
+            await page.goto('/home')
             await page.waitForLoadState('domcontentloaded')
 
             // Look for mobile menu toggle
@@ -225,11 +225,11 @@ test.describe('EKKO Complete User Workflow', () => {
         // 9. Visual Regression - Screenshots
         // ══════════════════════════════════════════════════════
         await test.step('Capture screenshots', async () => {
-            await page.goto('http://localhost:3000/home')
+            await page.goto('/home')
             await page.waitForLoadState('domcontentloaded')
             await page.screenshot({ path: 'test-results/dashboard-home.png', fullPage: true })
 
-            await page.goto('http://localhost:3000/search')
+            await page.goto('/search')
             await page.waitForLoadState('networkidle')
             await page.screenshot({ path: 'test-results/search-page.png', fullPage: true })
         })

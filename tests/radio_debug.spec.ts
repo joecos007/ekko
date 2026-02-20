@@ -10,7 +10,7 @@ test('analyze radio transition performance', async ({ page }) => {
     console.log('Starting Radio Performance Test...');
 
     // 1. Login first
-    await page.goto('http://localhost:3000/login');
+    await page.goto('/login');
     // Use robust locators matching complete-workflow
     await page.locator('input[type="email"], input[name="email"]').first().fill(EMAIL!);
     await page.locator('input[type="password"], input[name="password"]').first().fill(PASSWORD!);
