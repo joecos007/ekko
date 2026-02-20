@@ -2,7 +2,7 @@ import { Howl, Howler } from 'howler'
 import { usePlayer } from '@/store/player-store'
 
 const MAX_RETRIES = 3
-const LIVE_BUFFER_TIMEOUT_MS = 8000 // Force-play live streams after 8s
+const LIVE_BUFFER_TIMEOUT_MS = 5000 // Force-play live streams after 5s
 
 class AudioService {
     private sound: Howl | null = null
@@ -50,9 +50,8 @@ class AudioService {
         this.sound = new Howl({
             src: [src],
             html5: true,
-            preload: isLive ? 'metadata' as unknown as boolean : true,
+            preload: true,
             volume: 0,
-            format: isLive ? ['mp3'] : undefined,
             onplay: () => {
                 hasStartedPlaying = true
                 this.clearBufferTimeout()
@@ -77,8 +76,13 @@ class AudioService {
                 if (!isLive && store.currentTime > 0) {
                     this.sound?.seek(store.currentTime)
                 }
-                if (store.isPlaying && !this.sound?.playing()) {
+                // Always play on load — the user initiated playback
+                if (!this.sound?.playing()) {
                     this.sound?.play()
+                }
+                // Clear any previous radio error on successful load
+                if (isLive) {
+                    store.clearRadioError()
                 }
             },
             onloaderror: (_id, err) => {
@@ -86,11 +90,14 @@ class AudioService {
                 this.clearBufferTimeout()
                 if (this.retryCount < MAX_RETRIES) {
                     this.retryCount++
-                    const delay = Math.min(1000 * Math.pow(2, this.retryCount - 1), 8000)
+                    const delay = Math.min(1000 * Math.pow(2, this.retryCount - 1), 5000)
                     console.log(`[AudioService] Retry ${this.retryCount}/${MAX_RETRIES} in ${delay}ms`)
                     setTimeout(() => this.sound?.load(), delay)
                 } else {
                     store.setIsLoading(false)
+                    if (isLive) {
+                        store.setRadioError('Stream unavailable. Try another station.')
+                    }
                     console.error('[AudioService] Max retries reached, giving up.')
                 }
             },

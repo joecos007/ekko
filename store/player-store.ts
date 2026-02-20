@@ -65,6 +65,10 @@ type PlayerState = {
     isLoading: boolean
     setIsLoading: (loading: boolean) => void
 
+    radioError: string | null
+    setRadioError: (error: string) => void
+    clearRadioError: () => void
+
     reset: () => void
 }
 
@@ -89,6 +93,7 @@ export const usePlayer = create<PlayerState>((set, get) => ({
         duration: 0,
         isRadio: false,
         isLoading: false,
+        radioError: null,
         seekRequest: null,
         // We can keep volume and stations/metadata defaults
     }),
@@ -190,28 +195,28 @@ export const usePlayer = create<PlayerState>((set, get) => ({
         {
             id: 'smooth-jazz',
             name: 'Smooth Jazz & Pop',
-            url: 'https://smoothjazz.cdnstream1.com/2585_128.mp3',
+            url: 'https://streaming.radio.co/s774887f7b/listen',
             style: 'Jazz / Pop',
-            cover: '/images/stations/jazz.jpg' // Placeholder, will fallback
+            cover: '/images/stations/jazz.jpg'
         },
         {
             id: 'lofi-beats',
             name: 'Lofi Hip Hop',
-            url: 'https://boxradio-edge-00.streamafrica.net/lofi',
+            url: 'https://streams.ilovemusic.de/iloveradio17.mp3',
             style: 'Chill / Study',
             cover: '/images/stations/lofi.jpg'
         },
         {
             id: 'classical',
             name: 'Classical Flow',
-            url: 'https://wrti-live.streamguys1.com/classical-mp3',
+            url: 'https://wrti-live.streamguys1.com/jazz-mp3',
             style: 'Classical / Focus',
             cover: '/images/stations/classical.jpg'
         },
         {
             id: 'ambient',
             name: 'Deep Ambient',
-            url: 'https://stream.zeno.fm/f3wvbbqmdg8uv',
+            url: 'https://streams.ilovemusic.de/iloveradio21.mp3',
             style: 'Sleep / Meditate',
             cover: '/images/stations/ambient.jpg'
         }
@@ -219,7 +224,7 @@ export const usePlayer = create<PlayerState>((set, get) => ({
     currentStation: {
         id: 'smooth-jazz',
         name: 'Smooth Jazz & Pop',
-        url: 'https://smoothjazz.cdnstream1.com/2585_128.mp3',
+        url: 'https://streaming.radio.co/s774887f7b/listen',
         style: 'Jazz / Pop',
         cover: '/images/stations/jazz.jpg'
     },
@@ -229,6 +234,7 @@ export const usePlayer = create<PlayerState>((set, get) => ({
         return {
             isRadio: willBeRadio,
             isPlaying: willBeRadio,
+            radioError: null, // Clear errors on toggle
         }
     }),
 
@@ -242,11 +248,16 @@ export const usePlayer = create<PlayerState>((set, get) => ({
         isPlaying: true, // Auto play
         isLoading: true, // Start loading
         currentTime: 0, // Reset time
+        radioError: null, // Clear errors on station switch
         radioMetadata: {
             title: station.name,
             artist: station.style,
             coverUrl: "/digital-village.png", // Keep generic or use station specific
             listeners: 0
         }
-    }))
+    })),
+
+    radioError: null,
+    setRadioError: (error) => set({ radioError: error, isPlaying: false }),
+    clearRadioError: () => set({ radioError: null }),
 }))
