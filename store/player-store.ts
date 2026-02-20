@@ -230,6 +230,13 @@ export const usePlayer = create<PlayerState>((set, get) => ({
     },
 
     toggleRadio: () => set((state) => {
+        if (state.isRadio && state.radioError) {
+            return {
+                isRadio: true,
+                isPlaying: true,
+                radioError: null,
+            }
+        }
         const willBeRadio = !state.isRadio
         return {
             isRadio: willBeRadio,

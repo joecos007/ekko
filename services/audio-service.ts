@@ -76,8 +76,8 @@ class AudioService {
                 if (!isLive && store.currentTime > 0) {
                     this.sound?.seek(store.currentTime)
                 }
-                // Always play on load — the user initiated playback
-                if (!this.sound?.playing()) {
+                // Resume playback only if still intended
+                if (store.isPlaying && !this.sound?.playing()) {
                     this.sound?.play()
                 }
                 // Clear any previous radio error on successful load
