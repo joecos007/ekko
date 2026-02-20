@@ -1,13 +1,14 @@
 import { Button } from "@/components/ui/button"
 import { createClient } from "@/utils/supabase/client"
 import { useUser } from "@/hooks/use-user"
-import { Search } from "lucide-react"
+import { Search, PlusCircle } from "lucide-react"
 import { EkkoLogo } from "@/components/brand/ekko-logo"
 import Link from "next/link"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { Input } from "@/components/ui/input"
+import dynamic from "next/dynamic"
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import {
@@ -21,6 +22,11 @@ import {
 import { LogOut, User as UserSettings, MessageCircle } from "lucide-react"
 import { toast } from "sonner"
 import { useChatUI } from "@/store/chat-ui-store"
+
+const UploadSongDialog = dynamic(
+    () => import("@/components/upload/upload-song-dialog").then((mod) => mod.UploadSongDialog),
+    { ssr: false }
+)
 
 function getGreeting() {
     const h = new Date().getHours()
@@ -113,6 +119,12 @@ export function Header() {
             <div className="flex items-center justify-end gap-3 w-1/3">
                 {user ? (
                     <div className="flex items-center gap-3">
+                        <UploadSongDialog>
+                            <Button className="hidden md:inline-flex rounded-full bg-white text-black hover:bg-neutral-200 font-semibold px-5 h-10 shadow-glow-white border-none">
+                                <PlusCircle className="w-4 h-4 mr-2" />
+                                Upload Song
+                            </Button>
+                        </UploadSongDialog>
                         {/* Removed Heart/Settings Icons & Static Name */}
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
