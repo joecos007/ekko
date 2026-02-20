@@ -46,6 +46,14 @@ class AudioService {
         store.setIsLoading(true)
 
         let hasStartedPlaying = false
+        let playInitiated = false
+        let unlockQueued = false
+
+        const requestPlay = () => {
+            if (!this.sound || playInitiated) return
+            playInitiated = true
+            this.sound.play()
+        }
 
         this.sound = new Howl({
             src: [src],
@@ -55,10 +63,11 @@ class AudioService {
             onplay: () => {
                 hasStartedPlaying = true
                 this.clearBufferTimeout()
-                store.setIsLoading(false)
-                store.setDuration(isLive ? Infinity : this.sound?.duration() || 0)
+                const current = usePlayer.getState()
+                current.setIsLoading(false)
+                current.setDuration(isLive ? Infinity : this.sound?.duration() || 0)
                 this.startProgressLoop()
-                this.sound?.fade(0, store.volume, 300)
+                this.sound?.fade(0, current.volume, 300)
                 this.updateMediaSession(metadata, isLive)
             },
             onend: () => {
@@ -73,16 +82,17 @@ class AudioService {
                 this.stopProgressLoop()
             },
             onload: () => {
-                if (!isLive && store.currentTime > 0) {
-                    this.sound?.seek(store.currentTime)
+                const current = usePlayer.getState()
+                if (!isLive && current.currentTime > 0) {
+                    this.sound?.seek(current.currentTime)
                 }
                 // Resume playback only if still intended
-                if (store.isPlaying && !this.sound?.playing()) {
-                    this.sound?.play()
+                if (current.isPlaying && !this.sound?.playing()) {
+                    requestPlay()
                 }
                 // Clear any previous radio error on successful load
                 if (isLive) {
-                    store.clearRadioError()
+                    current.clearRadioError()
                 }
             },
             onloaderror: (_id, err) => {
@@ -103,23 +113,29 @@ class AudioService {
             },
             onplayerror: (_id, err) => {
                 console.warn('[AudioService] Play Error:', err)
+                playInitiated = false
+                if (unlockQueued) return
+                unlockQueued = true
                 this.sound?.once('unlock', () => {
-                    this.sound?.play()
+                    unlockQueued = false
+                    const current = usePlayer.getState()
+                    if (!current.isPlaying || this.sound?.playing()) return
+                    requestPlay()
                 })
             }
         })
 
-        this.sound.play()
-
         // For live streams: force-start after timeout to avoid infinite buffering
         if (isLive) {
             this.bufferTimeoutId = setTimeout(() => {
-                if (!hasStartedPlaying && this.sound && !this.sound.playing()) {
+                const current = usePlayer.getState()
+                if (!hasStartedPlaying && this.sound && !this.sound.playing() && current.isPlaying) {
                     console.log('[AudioService] Buffer timeout reached, force-starting playback')
-                    store.setIsLoading(false)
-                    store.setDuration(Infinity)
+                    current.setIsLoading(false)
+                    current.setDuration(Infinity)
+                    requestPlay()
                     this.startProgressLoop()
-                    this.sound.fade(0, store.volume, 300)
+                    this.sound.fade(0, current.volume, 300)
                     this.updateMediaSession(metadata, isLive)
                 }
             }, LIVE_BUFFER_TIMEOUT_MS)

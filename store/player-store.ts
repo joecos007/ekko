@@ -17,6 +17,39 @@ export type RadioStation = {
     cover?: string
 }
 
+const DEFAULT_STATION: RadioStation = {
+    id: 'smooth-jazz',
+    name: 'Smooth Jazz & Pop',
+    url: 'https://streaming.radio.co/s774887f7b/listen',
+    style: 'Jazz / Pop',
+    cover: '/images/stations/jazz.jpg'
+}
+
+const RADIO_STATIONS: RadioStation[] = [
+    DEFAULT_STATION,
+    {
+        id: 'lofi-beats',
+        name: 'Lofi Hip Hop',
+        url: 'https://streams.ilovemusic.de/iloveradio17.mp3',
+        style: 'Chill / Study',
+        cover: '/images/stations/lofi.jpg'
+    },
+    {
+        id: 'classical',
+        name: 'Classical Flow',
+        url: 'https://wrti-live.streamguys1.com/classical-mp3',
+        style: 'Classical / Focus',
+        cover: '/images/stations/classical.jpg'
+    },
+    {
+        id: 'ambient',
+        name: 'Deep Ambient',
+        url: 'https://streams.ilovemusic.de/iloveradio21.mp3',
+        style: 'Sleep / Meditate',
+        cover: '/images/stations/ambient.jpg'
+    }
+]
+
 type PlayerState = {
     queue: Song[]
     currentIndex: number
@@ -59,6 +92,7 @@ type PlayerState = {
     stations: RadioStation[]
     currentStation: RadioStation
     toggleRadio: () => void
+    retryRadio: () => void
     setRadioMetadata: (metadata: Partial<{ title: string; artist: string; coverUrl: string; listeners: number }>) => void
     setStation: (station: RadioStation) => void
 
@@ -99,7 +133,7 @@ export const usePlayer = create<PlayerState>((set, get) => ({
     }),
 
     setQueue: (songs, startIndex = 0) =>
-        set({ queue: songs, currentIndex: startIndex, isPlaying: true, isRadio: false, isLoading: true, currentTime: 0 }),
+        set({ queue: songs, currentIndex: startIndex, isPlaying: true, isRadio: false, isLoading: true, currentTime: 0, radioError: null }),
 
     play: () => set({ isPlaying: true }),
     pause: () => set({ isPlaying: false }),
@@ -191,52 +225,10 @@ export const usePlayer = create<PlayerState>((set, get) => ({
     },
 
     // Station Logic
-    stations: [
-        {
-            id: 'smooth-jazz',
-            name: 'Smooth Jazz & Pop',
-            url: 'https://streaming.radio.co/s774887f7b/listen',
-            style: 'Jazz / Pop',
-            cover: '/images/stations/jazz.jpg'
-        },
-        {
-            id: 'lofi-beats',
-            name: 'Lofi Hip Hop',
-            url: 'https://streams.ilovemusic.de/iloveradio17.mp3',
-            style: 'Chill / Study',
-            cover: '/images/stations/lofi.jpg'
-        },
-        {
-            id: 'classical',
-            name: 'Classical Flow',
-            url: 'https://wrti-live.streamguys1.com/jazz-mp3',
-            style: 'Classical / Focus',
-            cover: '/images/stations/classical.jpg'
-        },
-        {
-            id: 'ambient',
-            name: 'Deep Ambient',
-            url: 'https://streams.ilovemusic.de/iloveradio21.mp3',
-            style: 'Sleep / Meditate',
-            cover: '/images/stations/ambient.jpg'
-        }
-    ],
-    currentStation: {
-        id: 'smooth-jazz',
-        name: 'Smooth Jazz & Pop',
-        url: 'https://streaming.radio.co/s774887f7b/listen',
-        style: 'Jazz / Pop',
-        cover: '/images/stations/jazz.jpg'
-    },
+    stations: RADIO_STATIONS,
+    currentStation: DEFAULT_STATION,
 
     toggleRadio: () => set((state) => {
-        if (state.isRadio && state.radioError) {
-            return {
-                isRadio: true,
-                isPlaying: true,
-                radioError: null,
-            }
-        }
         const willBeRadio = !state.isRadio
         return {
             isRadio: willBeRadio,
@@ -244,6 +236,14 @@ export const usePlayer = create<PlayerState>((set, get) => ({
             radioError: null, // Clear errors on toggle
         }
     }),
+
+    retryRadio: () => set(() => ({
+        isRadio: true,
+        isPlaying: true,
+        isLoading: true,
+        currentTime: 0,
+        radioError: null,
+    })),
 
     setRadioMetadata: (metadata) => set((state) => ({
         radioMetadata: { ...state.radioMetadata, ...metadata }

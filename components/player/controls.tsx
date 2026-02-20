@@ -6,7 +6,7 @@ import { Play, Pause, SkipBack, SkipForward, Shuffle, Loader2 } from 'lucide-rea
 import { cn } from '@/lib/utils'
 
 export function Controls() {
-    const { isPlaying, play, pause, next, prev, toggleShuffle, shuffle, isRadio, toggleRadio, isLoading, radioError } = usePlayer()
+    const { isPlaying, play, pause, next, prev, toggleShuffle, shuffle, isRadio, toggleRadio, retryRadio, isLoading, radioError } = usePlayer()
 
     return (
         <div className="flex items-center gap-3">
@@ -72,7 +72,7 @@ export function Controls() {
                 className={cn("h-8 w-8 relative hidden md:inline-flex transition-all",
                     radioError ? "text-red-400 bg-red-500/10 hover:bg-red-500/15" :
                         isRadio ? "text-ekko-400 bg-ekko-500/10 hover:bg-ekko-500/15" : "text-neutral-400 hover:text-white")}
-                onClick={toggleRadio}
+                onClick={radioError ? retryRadio : toggleRadio}
                 title={radioError ? "Retry Live Radio" : "Toggle Live Radio"}
                 aria-label={radioError ? "Retry Live Radio" : "Toggle Live Radio"}
             >
