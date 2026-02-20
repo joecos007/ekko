@@ -2,7 +2,7 @@ import { Howl, Howler } from 'howler'
 import { usePlayer } from '@/store/player-store'
 
 const MAX_RETRIES = 3
-const LIVE_BUFFER_TIMEOUT_MS = 8000 // Force-play live streams after 8s
+const LIVE_BUFFER_TIMEOUT_MS = 5000 // Force-play live streams after 5s
 
 class AudioService {
     private sound: Howl | null = null
@@ -46,20 +46,28 @@ class AudioService {
         store.setIsLoading(true)
 
         let hasStartedPlaying = false
+        let playInitiated = false
+        let unlockQueued = false
+
+        const requestPlay = () => {
+            if (!this.sound || playInitiated) return
+            playInitiated = true
+            this.sound.play()
+        }
 
         this.sound = new Howl({
             src: [src],
             html5: true,
-            preload: isLive ? 'metadata' as unknown as boolean : true,
+            preload: true,
             volume: 0,
-            format: isLive ? ['mp3'] : undefined,
             onplay: () => {
                 hasStartedPlaying = true
                 this.clearBufferTimeout()
-                store.setIsLoading(false)
-                store.setDuration(isLive ? Infinity : this.sound?.duration() || 0)
+                const current = usePlayer.getState()
+                current.setIsLoading(false)
+                current.setDuration(isLive ? Infinity : this.sound?.duration() || 0)
                 this.startProgressLoop()
-                this.sound?.fade(0, store.volume, 300)
+                this.sound?.fade(0, current.volume, 300)
                 this.updateMediaSession(metadata, isLive)
             },
             onend: () => {
@@ -74,11 +82,17 @@ class AudioService {
                 this.stopProgressLoop()
             },
             onload: () => {
-                if (!isLive && store.currentTime > 0) {
-                    this.sound?.seek(store.currentTime)
+                const current = usePlayer.getState()
+                if (!isLive && current.currentTime > 0) {
+                    this.sound?.seek(current.currentTime)
                 }
-                if (store.isPlaying && !this.sound?.playing()) {
-                    this.sound?.play()
+                // Resume playback only if still intended
+                if (current.isPlaying && !this.sound?.playing()) {
+                    requestPlay()
+                }
+                // Clear any previous radio error on successful load
+                if (isLive) {
+                    current.clearRadioError()
                 }
             },
             onloaderror: (_id, err) => {
@@ -86,33 +100,43 @@ class AudioService {
                 this.clearBufferTimeout()
                 if (this.retryCount < MAX_RETRIES) {
                     this.retryCount++
-                    const delay = Math.min(1000 * Math.pow(2, this.retryCount - 1), 8000)
+                    const delay = Math.min(1000 * Math.pow(2, this.retryCount - 1), 5000)
                     console.log(`[AudioService] Retry ${this.retryCount}/${MAX_RETRIES} in ${delay}ms`)
                     setTimeout(() => this.sound?.load(), delay)
                 } else {
-                    store.setIsLoading(false)
-                    console.error('[AudioService] Max retries reached, giving up.')
+                    const current = usePlayer.getState()
+                    current.setIsLoading(false)
+                    if (isLive && current.isRadio && current.currentStation?.id === metadata?.id) {
+                        current.setRadioError('Stream unavailable. Try another station.')
+                    }
+                    console.warn('[AudioService] Max retries reached, giving up.')
                 }
             },
             onplayerror: (_id, err) => {
                 console.warn('[AudioService] Play Error:', err)
+                playInitiated = false
+                if (unlockQueued) return
+                unlockQueued = true
                 this.sound?.once('unlock', () => {
-                    this.sound?.play()
+                    unlockQueued = false
+                    const current = usePlayer.getState()
+                    if (!current.isPlaying || this.sound?.playing()) return
+                    requestPlay()
                 })
             }
         })
 
-        this.sound.play()
-
         // For live streams: force-start after timeout to avoid infinite buffering
         if (isLive) {
             this.bufferTimeoutId = setTimeout(() => {
-                if (!hasStartedPlaying && this.sound && !this.sound.playing()) {
+                const current = usePlayer.getState()
+                if (!hasStartedPlaying && this.sound && !this.sound.playing() && current.isPlaying) {
                     console.log('[AudioService] Buffer timeout reached, force-starting playback')
-                    store.setIsLoading(false)
-                    store.setDuration(Infinity)
+                    current.setIsLoading(false)
+                    current.setDuration(Infinity)
+                    requestPlay()
                     this.startProgressLoop()
-                    this.sound.fade(0, store.volume, 300)
+                    this.sound.fade(0, current.volume, 300)
                     this.updateMediaSession(metadata, isLive)
                 }
             }, LIVE_BUFFER_TIMEOUT_MS)

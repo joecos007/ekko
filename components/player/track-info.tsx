@@ -7,12 +7,12 @@ import { cn } from '@/lib/utils'
 import { RadioStationSelector } from './radio-station-selector'
 
 export function TrackInfo() {
-    const { queue, currentIndex, toggleExpanded, isRadio, radioMetadata } = usePlayer()
+    const { queue, currentIndex, toggleExpanded, isRadio, radioMetadata, radioError } = usePlayer()
     const song = queue[currentIndex]
 
     const display = isRadio ? {
-        title: radioMetadata.title,
-        artist: radioMetadata.artist,
+        title: radioError ? 'Stream Error' : radioMetadata.title,
+        artist: radioError || radioMetadata.artist,
         coverUrl: radioMetadata.coverUrl
     } : song
 
