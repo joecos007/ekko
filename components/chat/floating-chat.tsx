@@ -122,7 +122,8 @@ export function FloatingChat() {
                         "bottom-[var(--floating-chat-offset)]",
                         // Desktop: fixed right popover above the player bar
                         "md:left-auto md:right-8 md:w-[360px] md:rounded-2xl md:rounded-b-2xl",
-                        "md:max-h-[520px] md:h-[520px]",
+                        "md:max-h-[min(520px,calc(100dvh-var(--player-bar-height)-6rem))]",
+                        "md:h-[min(520px,calc(100dvh-var(--player-bar-height)-6rem))]",
                         "md:bottom-[calc(var(--player-bar-height)+1.5rem)]",
                     )}
                 >
